@@ -1,0 +1,14 @@
+node_modules
+pnpm-lock.yaml
+dist
+.expo
+web-build
+coverage
+
+# Ported / authored-as-is content — not prettier's domain
+.claude
+scripts/opsx
+openspec
+
+# Long-form prose (avoid reflow churn)
+*.md
