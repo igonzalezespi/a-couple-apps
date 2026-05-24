@@ -1,0 +1,54 @@
+{
+  "name": "a-couple-apps",
+  "version": "0.1.0",
+  "devDependencies": {
+    "@aca/eslint-config": "workspace:*",
+    "@aca/typescript-config": "workspace:*",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
+    "@types/node": "^22.10.5",
+    "eslint": "^9.17.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
+    "syncpack": "^13.0.0",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "license": "MIT",
+  "lint-staged": {
+    "*.{ts,tsx,mjs,cjs,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "packageManager": "pnpm@10.25.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "e2e": "turbo run e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "opsx:archive-doc-guard": "node scripts/opsx/archive-doc-edit-guard.mjs",
+    "opsx:manual-checks:lint": "node scripts/opsx/lint-manual-checks.mjs",
+    "opsx:review-report:lint": "node scripts/opsx/review-report-lint.mjs",
+    "opsx:tasks-md:lint": "node scripts/opsx/lint-tasks-md.mjs",
+    "opsx:verify-report:lint": "node scripts/opsx/verify-report-lint.mjs",
+    "preflight": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "prepare": "husky",
+    "sync": "syncpack fix-mismatches && syncpack format",
+    "test": "pnpm test:opsx && turbo run test",
+    "test:opsx": "node --test scripts/opsx/*.test.mjs",
+    "typecheck": "turbo run typecheck"
+  },
+  "type": "module"
+}
