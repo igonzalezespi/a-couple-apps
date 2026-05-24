@@ -31,10 +31,10 @@
 
 ## 5. `packages/config` — `couple.config.ts` + env
 
-- [ ] 5.1 Define the zod schema in `packages/config/src/schema.ts` for a single `couple.config.ts` shaped `{ config, movies, plans }`: shared `config` block (`people` tuple of two `{ id, displayName }`, `defaultLanguage: 'en'|'es'`, optional `theme`) + per-app sections each with an `enabled` flag; expose `getSharedConfig()`/`getAppConfig(name)` and a `defineCoupleConfig` helper
-- [ ] 5.2 Implement `load.ts` (loads + validates `couple.config.ts`, throws a readable error on invalid config) and `env.ts` (typed parsers + `SENSITIVE_ENV_VARS` registry)
-- [ ] 5.3 Author root `couple.config.example.ts` (neutral placeholders) and a committed placeholder `couple.config.ts`; assert (test) that no real personal names exist in the committed config
-- [ ] 5.4 Unit-test schema validation (valid config passes; missing/extra/wrong-type fails) and env parsing (missing required secret → clear error). Acceptance: `pnpm --filter @aca/config test` green; invalid configs rejected with helpful messages
+- [x] 5.1 Define the zod schema in `packages/config/src/schema.ts` for a single `couple.config.ts` shaped `{ config, movies, plans }`: shared `config` block (`people` tuple of two `{ id, displayName }`, `defaultLanguage: 'en'|'es'`, optional `theme`) + per-app sections each with an `enabled` flag; expose `getSharedConfig()`/`getAppConfig(name)` and a `defineCoupleConfig` helper
+- [x] 5.2 Implement `load.ts` (loads + validates `couple.config.ts`, throws a readable error on invalid config) and `env.ts` (typed parsers + `SENSITIVE_ENV_VARS` registry)
+- [x] 5.3 Author root `couple.config.example.ts` (neutral placeholders) and a committed placeholder `couple.config.ts`; assert (test) that no real personal names exist in the committed config
+- [x] 5.4 Unit-test schema validation (valid config passes; missing/extra/wrong-type fails) and env parsing (missing required secret → clear error). Acceptance: `pnpm --filter @aca/config test` green; invalid configs rejected with helpful messages
 
 ## 6. `packages/i18n` — translations + language switching
 
