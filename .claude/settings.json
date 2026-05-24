@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && [ -x node_modules/.bin/tsc ] && pnpm -s typecheck 2>&1 | tail -20 || true"
+          }
+        ]
+      }
+    ]
+  }
+}
