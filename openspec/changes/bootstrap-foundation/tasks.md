@@ -1,17 +1,17 @@
 ## 1. Repository & monorepo spine
 
 - [x] 1.1 `git init`; add `.gitignore` (node_modules, `.env`, `.expo`, `dist`, `.turbo`, coverage), `.gitattributes`, `.nvmrc` (Node 24), `.npmrc` (`engine-strict`, `auto-install-peers`, `only-allow pnpm` via `preinstall`)
-- [ ] 1.2 Root `package.json` (`private`, `packageManager: pnpm@...`, `engines.node >=24`, turbo scripts: `build/dev/lint/test/typecheck/e2e/format/preflight/verify`), `pnpm-workspace.yaml` (`apps/*`, `packages/*`), `turbo.json` (task graph + outputs)
-- [ ] 1.3 Add `syncpack` (`.syncpackrc.mjs`: internal deps `workspace:*`, `^` range policy) and a `pnpm sync` script
-- [ ] 1.4 Verify the empty workspace installs and `pnpm turbo run build` is a no-op green (acceptance: `pnpm install --frozen-lockfile` + `pnpm build` exit 0)
+- [x] 1.2 Root `package.json` (`private`, `packageManager: pnpm@...`, `engines.node >=24`, turbo scripts: `build/dev/lint/test/typecheck/e2e/format/preflight/verify`), `pnpm-workspace.yaml` (`apps/*`, `packages/*`), `turbo.json` (task graph + outputs)
+- [x] 1.3 Add `syncpack` (`.syncpackrc.mjs`: internal deps `workspace:*`, `^` range policy) and a `pnpm sync` script
+- [x] 1.4 Verify the empty workspace installs and `pnpm turbo run build` is a no-op green (acceptance: `pnpm install --frozen-lockfile` + `pnpm build` exit 0)
 
 ## 2. Shared config packages (`typescript-config`, `eslint-config`)
 
-- [ ] 2.1 Create `packages/typescript-config` with `base.json` (strict, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `useUnknownInCatchVariables`, `noImplicitOverride`) and `react-native.json` (extends base: `jsx: react-jsx`, `moduleResolution: bundler`, `types: ["expo"]`)
-- [ ] 2.2 Create `packages/eslint-config` flat config: `base.mjs` (js + typescript-eslint + import-sort + `no-restricted-imports` cross-package boundary rule) and `expo.mjs`/`react-native.mjs` layering `eslint-config-expo`
-- [ ] 2.3 Add root `eslint.config.mjs`, `prettier.config.mjs` (single-quote, no-semicolon-trailing-comma, import-sort), `commitlint.config.mjs` (`@commitlint/config-conventional` + `scope-enum` for this repo's packages/apps)
-- [ ] 2.4 Add Husky: `pre-commit` (lint-staged + syncpack lint + openspec normalize check + archive-doc guard), `commit-msg` (commitlint), `pre-push` (mirrors CI: format:check + lint + typecheck + test + gitleaks)
-- [ ] 2.5 Unit-test the `eslint-config` boundary rule (a fixture importing across packages fails lint). Acceptance: `pnpm lint` + `pnpm typecheck` green; a deliberate cross-package import is rejected
+- [x] 2.1 Create `packages/typescript-config` with `base.json` (strict, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `useUnknownInCatchVariables`, `noImplicitOverride`) and `react-native.json` (extends base: `jsx: react-jsx`, `moduleResolution: bundler`, `types: ["expo"]`)
+- [x] 2.2 Create `packages/eslint-config` flat config: `base.mjs` (js + typescript-eslint + import-sort + `no-restricted-imports` cross-package boundary rule) and `expo.mjs`/`react-native.mjs` layering `eslint-config-expo` — _base + boundary rule done; the `eslint-config-expo` layer lands with the first Expo app (Phase 2)_
+- [x] 2.3 Add root `eslint.config.mjs`, `prettier.config.mjs` (single-quote, no-semicolon-trailing-comma, import-sort), `commitlint.config.mjs` (`@commitlint/config-conventional` + `scope-enum` for this repo's packages/apps)
+- [x] 2.4 Add Husky: `pre-commit` (lint-staged + syncpack lint + openspec normalize check + archive-doc guard), `commit-msg` (commitlint), `pre-push` (mirrors CI: format:check + lint + typecheck + test + gitleaks) — _openspec-normalize check deferred until the openspec CLI is added_
+- [x] 2.5 Unit-test the `eslint-config` boundary rule (a fixture importing across packages fails lint). Acceptance: `pnpm lint` + `pnpm typecheck` green; a deliberate cross-package import is rejected
 
 ## 3. OpenSpec / opsx workflow (self-hosting)
 

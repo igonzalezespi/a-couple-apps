@@ -1,0 +1,6 @@
+# Mirror the CI gate so a green push implies green CI.
+pnpm format:check
+pnpm lint
+pnpm typecheck
+pnpm test
+command -v gitleaks >/dev/null 2>&1 && gitleaks detect --no-banner --redact --source . || true
