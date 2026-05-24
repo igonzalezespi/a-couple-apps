@@ -1,4 +1,5 @@
 # Mirror the CI gate so a green push implies green CI.
+pnpm install --frozen-lockfile
 pnpm format:check
 pnpm lint
 pnpm typecheck
