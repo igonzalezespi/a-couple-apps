@@ -1,0 +1,44 @@
+{
+  "name": "movies",
+  "version": "0.1.0",
+  "dependencies": {
+    "@aca/config": "workspace:*",
+    "@aca/core": "workspace:*",
+    "@aca/i18n": "workspace:*",
+    "@aca/ui": "workspace:*",
+    "@expo/metro-runtime": "^56.0.12",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "expo": "^56.0.4",
+    "expo-constants": "^56.0.15",
+    "expo-localization": "^56.0.6",
+    "expo-router": "^56.2.6",
+    "expo-status-bar": "^56.0.4",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-native": "^0.85.3",
+    "react-native-safe-area-context": "^5.7.0",
+    "react-native-screens": "^4.25.2",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "@aca/eslint-config": "workspace:*",
+    "@aca/typescript-config": "workspace:*",
+    "@tamagui/babel-plugin": "^2.0.0",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.2.14",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint-config-expo": "^56.0.4",
+    "jsdom": "^29.0.1",
+    "vitest": "^4.1.2"
+  },
+  "main": "expo-router/entry",
+  "private": true,
+  "scripts": {
+    "dev": "expo start",
+    "export:web": "expo export -p web",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "web": "expo start --web"
+  }
+}
