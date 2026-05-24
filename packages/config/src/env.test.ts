@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { EnvError, parseEnv, redact, SENSITIVE_ENV_VARS } from './index';
+import { EnvError, parseEnv, parseSupabaseEnv, redact, SENSITIVE_ENV_VARS } from './index';
 
 const validEnv = {
   SUPABASE_URL: 'https://example.supabase.co',
@@ -21,6 +21,28 @@ describe('parseEnv', () => {
 
   it('rejects a malformed SUPABASE_URL', () => {
     expect(() => parseEnv({ ...validEnv, SUPABASE_URL: 'not-a-url' })).toThrow(/SUPABASE_URL/);
+  });
+});
+
+describe('parseSupabaseEnv', () => {
+  it('parses the Supabase subset without requiring TMDB_API_KEY', () => {
+    const env = parseSupabaseEnv({
+      SUPABASE_URL: 'https://example.supabase.co',
+      SUPABASE_ANON_KEY: 'anon-key'
+    });
+    expect(env).toEqual({
+      SUPABASE_URL: 'https://example.supabase.co',
+      SUPABASE_ANON_KEY: 'anon-key'
+    });
+  });
+
+  it('throws when a client var is missing', () => {
+    expect(() => parseSupabaseEnv({ SUPABASE_URL: 'https://example.supabase.co' })).toThrow(
+      EnvError
+    );
+    expect(() => parseSupabaseEnv({ SUPABASE_URL: 'https://example.supabase.co' })).toThrow(
+      /SUPABASE_ANON_KEY/
+    );
   });
 });
 

@@ -21,4 +21,14 @@ export {
   getSharedConfig,
   getAppConfig
 } from './load';
-export { SENSITIVE_ENV_VARS, envSchema, parseEnv, redact, EnvError, type Env } from './env';
+export {
+  SENSITIVE_ENV_VARS,
+  envSchema,
+  parseEnv,
+  supabaseEnvSchema,
+  parseSupabaseEnv,
+  redact,
+  EnvError,
+  type Env,
+  type SupabaseClientEnv
+} from './env';

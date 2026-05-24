@@ -1,23 +1,15 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { createI18n, I18nProvider } from '@aca/i18n';
-import { UIProvider } from '@aca/ui';
-
 import { HomeScreen } from './HomeScreen';
+import { makeFakeClient, renderWithProviders } from './test/fakeClient';
 
 describe('HomeScreen', () => {
-  it('renders localized strings from the shared packages', () => {
-    render(
-      <UIProvider>
-        <I18nProvider i18n={createI18n('en')}>
-          <HomeScreen />
-        </I18nProvider>
-      </UIProvider>
-    );
+  it('renders localized strings + a sign-out action from the shared packages', () => {
+    renderWithProviders(<HomeScreen />, makeFakeClient({ user: { id: 'u1' } }).client);
 
     expect(screen.getByText('A Couple Apps')).toBeTruthy();
     expect(screen.getByText('Movies')).toBeTruthy();
-    expect(screen.getByRole('button')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Sign out' })).toBeTruthy();
   });
 });

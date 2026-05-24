@@ -7,9 +7,9 @@
 
 ## 2. Auth gate
 
-- [ ] 2.1 `createSupabaseClient` wired with AsyncStorage on native (via the options passthrough) + `EXPO_PUBLIC_*` env
-- [ ] 2.2 Email-OTP sign-in screen + a session gate (unauthenticated → sign-in; authenticated → app) using `@aca/core` `useSession`
-- [ ] 2.3 Test the gate (mocked session): signed-out shows sign-in, signed-in shows the app
+- [x] 2.1 `createSupabaseClient` wired with AsyncStorage on native (via the options passthrough) + `EXPO_PUBLIC_*` env
+- [x] 2.2 Email-OTP sign-in screen + a session gate (unauthenticated → sign-in; authenticated → app) using `@aca/core` `useSession`
+- [x] 2.3 Test the gate (mocked session): signed-out shows sign-in, signed-in shows the app
 
 ## 3. TMDB search
 
