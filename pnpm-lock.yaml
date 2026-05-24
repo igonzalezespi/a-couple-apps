@@ -7,11 +7,10 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@aca/config':
         specifier: workspace:*
         version: link:packages/config
-    devDependencies:
       '@aca/eslint-config':
         specifier: workspace:*
         version: link:packages/eslint-config

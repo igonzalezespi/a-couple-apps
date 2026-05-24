@@ -5,7 +5,7 @@ export const SENSITIVE_ENV_VARS = ['SUPABASE_ANON_KEY', 'TMDB_API_KEY'] as const
 
 /** Required runtime environment. Secrets live here, never in `couple.config.ts`. */
 export const envSchema = z.object({
-  SUPABASE_URL: z.string().min(1, 'SUPABASE_URL is required'),
+  SUPABASE_URL: z.url('SUPABASE_URL must be a valid URL'),
   SUPABASE_ANON_KEY: z.string().min(1, 'SUPABASE_ANON_KEY is required'),
   TMDB_API_KEY: z.string().min(1, 'TMDB_API_KEY is required')
 });

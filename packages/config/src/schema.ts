@@ -42,7 +42,9 @@ export type CoupleConfig = z.infer<typeof coupleConfigSchema>;
 /**
  * Authoring shape for `couple.config.ts`. Used as the `defineCoupleConfig`
  * constraint so object literals get contextual typing (the people tuple and the
- * language enum infer correctly without `as const`).
+ * language enum infer correctly without `as const`). App sections are typed
+ * loosely (`SharedConfig | AppConfig`) so the `config` key satisfies the index
+ * signature; the runtime `coupleConfigSchema` is the authoritative validator.
  */
 export type CoupleConfigInput = {
   config: SharedConfig;
