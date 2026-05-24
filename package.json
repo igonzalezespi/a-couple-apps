@@ -1,13 +1,16 @@
 {
   "name": "a-couple-apps",
   "version": "0.1.0",
+  "dependencies": {
+    "@aca/config": "workspace:*"
+  },
   "devDependencies": {
     "@aca/eslint-config": "workspace:*",
     "@aca/typescript-config": "workspace:*",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.19.15",
     "eslint": "^9.17.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.3.0",
