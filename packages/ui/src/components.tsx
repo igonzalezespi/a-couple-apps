@@ -1,4 +1,4 @@
-import { Text as CoreText, styled, View } from '@tamagui/core';
+import { Text as CoreText, styled, View, type GetProps } from '@tamagui/core';
 
 /** Vertical flex container. */
 export const YStack = styled(View, {
@@ -40,22 +40,40 @@ export const Card = styled(YStack, {
   gap: '$2'
 });
 
-/** Pressable action surface. Compose a `<Text>` child for the label. */
-export const Button = styled(XStack, {
+const ButtonFrame = styled(XStack, {
   name: 'Button',
+  cursor: 'pointer',
   alignItems: 'center',
   justifyContent: 'center',
+  gap: '$2',
   paddingHorizontal: '$4',
   paddingVertical: '$3',
+  borderWidth: 0,
   borderRadius: '$3',
   backgroundColor: '$primary',
+  pressStyle: { opacity: 0.85 },
+  hoverStyle: { opacity: 0.95 },
   variants: {
     tone: {
       primary: { backgroundColor: '$primary' },
       neutral: { backgroundColor: '$backgroundHover' }
+    },
+    disabled: {
+      true: { opacity: 0.5, pointerEvents: 'none' }
     }
   } as const,
   defaultVariants: {
     tone: 'primary'
   }
 });
+
+export type ButtonProps = GetProps<typeof ButtonFrame>;
+
+/**
+ * Accessible, pressable action. Renders a real `<button>` on web (keyboard,
+ * focus and role for free) and an accessibility-roled View on native. Compose a
+ * `<Text>` child for the label; pass `onPress` at the call site.
+ */
+export function Button(props: ButtonProps) {
+  return <ButtonFrame role="button" {...props} />;
+}
