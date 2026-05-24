@@ -15,6 +15,11 @@ export default [
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      // Allow `interface X extends Y {}` — used for module augmentation (e.g. Tamagui config types).
+      '@typescript-eslint/no-empty-object-type': [
+        'error',
+        { allowInterfaces: 'with-single-extends' }
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
