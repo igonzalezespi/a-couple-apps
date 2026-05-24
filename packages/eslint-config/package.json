@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "@eslint/js": "^9.17.0",
+    "eslint-config-expo": "^56.0.4",
     "eslint-config-prettier": "^9.1.0",
     "typescript-eslint": "^8.18.0"
   },
@@ -10,10 +11,12 @@
     "eslint": "^9.17.0"
   },
   "exports": {
-    "./base": "./base.mjs"
+    "./base": "./base.mjs",
+    "./expo": "./expo.mjs"
   },
   "files": [
-    "base.mjs"
+    "base.mjs",
+    "expo.mjs"
   ],
   "peerDependencies": {
     "eslint": ">=9"

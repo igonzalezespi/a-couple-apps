@@ -1,4 +1,4 @@
-export { config, type Conf } from '../tamagui.config';
+export { config, createUIConfig, type Conf } from '../tamagui.config';
 export {
   baseThemes,
   createCoupleTheme,

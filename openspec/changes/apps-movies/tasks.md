@@ -1,7 +1,7 @@
 ## 1. Scaffold + foundation integration
 
 - [x] 1.1 Create `apps/movies` Expo app (`app.config.ts`, `package.json`, `tsconfig.json` extending `@aca/typescript-config/react-native.json`, `index.ts`/entry) consuming `@aca/{ui,core,i18n,config}`
-- [ ] 1.2 Add `babel.config.js` with the Tamagui plugin + `metro.config.js` for the workspace; add the deferred `eslint-config-expo` layer to `@aca/eslint-config` and wire the app's `eslint.config.mjs`
+- [x] 1.2 Add `babel.config.js` with the Tamagui plugin + `metro.config.js` for the workspace; add the deferred `eslint-config-expo` layer to `@aca/eslint-config` and wire the app's `eslint.config.mjs`
 - [x] 1.3 Expo Router `app/_layout.tsx` mounts `UIProvider` + `I18nProvider` + `CoreProvider`; an index screen renders `@aca/ui` primitives with `@aca/i18n` strings
 - [x] 1.4 Component test (Vitest + RN-Web) that the index screen renders a localized string. Acceptance: `pnpm --filter movies typecheck`/`lint`/`test` green; `expo export -p web` builds
 
