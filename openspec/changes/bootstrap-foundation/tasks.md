@@ -45,11 +45,11 @@
 
 ## 7. `packages/core` — Supabase, auth, realtime, query
 
-- [ ] 7.1 Create the Supabase client (reads `SUPABASE_URL`/`SUPABASE_ANON_KEY` via `@aca/config` env), typed for the project
-- [ ] 7.2 Add auth hooks (session, sign-in/out) and a `QueryClient` provider; define base zod contracts in `core/src/contracts.ts`
-- [ ] 7.3 Add a realtime helper that subscribes to a couple-scoped channel and invalidates/updates the TanStack Query cache so both users stay in sync
-- [ ] 7.4 Add Supabase migrations layout (`supabase/migrations/`) — one project; `shared` schema + auth/realtime plumbing only (per-app schemas `movies`/`plans` ship with their app changes)
-- [ ] 7.5 Unit-test the env-wiring and contract parsing with a mocked Supabase client; test the realtime→cache invalidation handler. Acceptance: `pnpm --filter @aca/core test` green; apps never import `@supabase/supabase-js` directly (lint boundary)
+- [x] 7.1 Create the Supabase client (reads `SUPABASE_URL`/`SUPABASE_ANON_KEY` via `@aca/config` env), typed for the project
+- [x] 7.2 Add auth hooks (session, sign-in/out) and a `QueryClient` provider; define base zod contracts in `core/src/contracts.ts`
+- [x] 7.3 Add a realtime helper that subscribes to a couple-scoped channel and invalidates/updates the TanStack Query cache so both users stay in sync
+- [x] 7.4 Add Supabase migrations layout (`supabase/migrations/`) — one project; `shared` schema + auth/realtime plumbing only (per-app schemas `movies`/`plans` ship with their app changes)
+- [x] 7.5 Unit-test the env-wiring and contract parsing with a mocked Supabase client; test the realtime→cache invalidation handler. Acceptance: `pnpm --filter @aca/core test` green; apps never import `@supabase/supabase-js` directly (lint boundary)
 
 ## 8. Testing harness
 
