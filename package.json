@@ -1,10 +1,8 @@
 {
   "name": "a-couple-apps",
   "version": "0.1.0",
-  "dependencies": {
-    "@aca/config": "workspace:*"
-  },
   "devDependencies": {
+    "@aca/config": "workspace:*",
     "@aca/eslint-config": "workspace:*",
     "@aca/typescript-config": "workspace:*",
     "@commitlint/cli": "^19.6.1",

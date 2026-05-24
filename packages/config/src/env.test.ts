@@ -18,6 +18,10 @@ describe('parseEnv', () => {
     expect(() => parseEnv(missing)).toThrow(EnvError);
     expect(() => parseEnv(missing)).toThrow(/SUPABASE_ANON_KEY/);
   });
+
+  it('rejects a malformed SUPABASE_URL', () => {
+    expect(() => parseEnv({ ...validEnv, SUPABASE_URL: 'not-a-url' })).toThrow(/SUPABASE_URL/);
+  });
 });
 
 describe('secret safety', () => {
