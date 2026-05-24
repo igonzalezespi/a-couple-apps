@@ -11,6 +11,14 @@ export const envSchema = z.object({
 });
 export type Env = z.infer<typeof envSchema>;
 
+/**
+ * The Supabase-client subset of the env. Apps validate this from `EXPO_PUBLIC_*`
+ * vars (the only ones Expo inlines into the client bundle) without requiring
+ * server-only secrets like `TMDB_API_KEY`.
+ */
+export const supabaseEnvSchema = envSchema.pick({ SUPABASE_URL: true, SUPABASE_ANON_KEY: true });
+export type SupabaseClientEnv = z.infer<typeof supabaseEnvSchema>;
+
 /** Thrown when the environment is missing or invalid. */
 export class EnvError extends Error {
   constructor(message: string) {
@@ -28,6 +36,23 @@ export function parseEnv(source: Record<string, string | undefined> = process.en
     );
     throw new EnvError(
       `Invalid environment (copy .env.example to .env and fill it in):\n${lines.join('\n')}`
+    );
+  }
+  return result.data;
+}
+
+/**
+ * Validate the Supabase client env (the `EXPO_PUBLIC_*` subset an app bundle needs).
+ * Throws a readable {@link EnvError} naming the missing/invalid var(s).
+ */
+export function parseSupabaseEnv(source: Record<string, string | undefined>): SupabaseClientEnv {
+  const result = supabaseEnvSchema.safeParse(source);
+  if (!result.success) {
+    const lines = result.error.issues.map(
+      (issue) => `  - ${issue.path.map(String).join('.')}: ${issue.message}`
+    );
+    throw new EnvError(
+      `Invalid Supabase environment (set EXPO_PUBLIC_SUPABASE_URL / EXPO_PUBLIC_SUPABASE_ANON_KEY):\n${lines.join('\n')}`
     );
   }
   return result.data;

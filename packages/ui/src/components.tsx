@@ -1,4 +1,5 @@
-import { Text as CoreText, styled, View, type GetProps } from '@tamagui/core';
+import { Text as CoreText, styled, useTheme, View, type GetProps } from '@tamagui/core';
+import { TextInput } from 'react-native';
 
 /** Vertical flex container. */
 export const YStack = styled(View, {
@@ -76,4 +77,35 @@ export type ButtonProps = GetProps<typeof ButtonFrame>;
  */
 export function Button(props: ButtonProps) {
   return <ButtonFrame role="button" {...props} />;
+}
+
+const InputFrame = styled(TextInput, {
+  name: 'Input',
+  backgroundColor: '$background',
+  borderColor: '$borderColor',
+  borderWidth: 1,
+  borderRadius: '$3',
+  paddingHorizontal: '$3',
+  paddingVertical: '$3'
+});
+
+export type InputProps = GetProps<typeof InputFrame>;
+
+/**
+ * Themed single-line text field. Renders an accessible input on web and a native
+ * TextInput on iOS/Android. Text + placeholder colors come from the theme (RN puts
+ * the typed-text color in `style`, not as a Tamagui style prop), so the field stays
+ * legible in both light and dark themes without ad-hoc colors at call sites.
+ */
+export function Input(props: InputProps) {
+  const theme = useTheme();
+  const color = theme.color?.val;
+  const placeholder = theme.colorMuted?.val;
+  return (
+    <InputFrame
+      style={color ? { color, fontSize: 16 } : { fontSize: 16 }}
+      {...(placeholder ? { placeholderTextColor: placeholder } : {})}
+      {...props}
+    />
+  );
 }
