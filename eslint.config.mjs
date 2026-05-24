@@ -10,7 +10,9 @@ export default [
       'coverage/**',
       'scripts/opsx/**',
       '.claude/**',
-      'openspec/**'
+      'openspec/**',
+      '**/babel.config.js',
+      '**/metro.config.js'
     ]
   },
   ...base
