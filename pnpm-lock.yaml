@@ -28,7 +28,7 @@ importers:
         specifier: ^4.4.0
         version: 4.7.1(prettier@3.8.1)
       '@types/node':
-        specifier: ^22.10.5
+        specifier: ^22.19.15
         version: 22.19.15
       eslint:
         specifier: ^9.17.0
