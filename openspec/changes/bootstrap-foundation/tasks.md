@@ -38,10 +38,10 @@
 
 ## 6. `packages/i18n` — translations + language switching
 
-- [ ] 6.1 Set up i18next + react-i18next; add `locales/en.ts` and `locales/es.ts` resource bundles with a shared key namespace
-- [ ] 6.2 Implement language resolution (user setting → `couple.config.defaultLanguage` → `expo-localization` device locale → `en`) and a `useLocale()` hook for runtime switching
-- [ ] 6.3 Implement `resolveExternalLang(lang)` mapping (`en`→`en-US`, `es`→`es-ES`) for external data providers (TMDB)
-- [ ] 6.4 Unit-test resolution precedence and external-language mapping; add a missing-translation-key guard test. Acceptance: switching language updates strings; `resolveExternalLang('es') === 'es-ES'`
+- [x] 6.1 Set up i18next + react-i18next; add `locales/en.ts` and `locales/es.ts` resource bundles with a shared key namespace
+- [x] 6.2 Implement language resolution (user setting → `couple.config.defaultLanguage` → `expo-localization` device locale → `en`) and a `useLocale()` hook for runtime switching — _device locale is supplied by the app (expo-localization) and passed to `resolveLanguage`; packages/i18n stays free of native deps_
+- [x] 6.3 Implement `resolveExternalLang(lang)` mapping (`en`→`en-US`, `es`→`es-ES`) for external data providers (TMDB)
+- [x] 6.4 Unit-test resolution precedence and external-language mapping; add a missing-translation-key guard test. Acceptance: switching language updates strings; `resolveExternalLang('es') === 'es-ES'`
 
 ## 7. `packages/core` — Supabase, auth, realtime, query
 
