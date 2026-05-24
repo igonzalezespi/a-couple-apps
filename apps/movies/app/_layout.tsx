@@ -6,7 +6,9 @@ import { createUIConfig, UIProvider } from '@aca/ui';
 
 import coupleConfig from '../../../couple.config';
 
-// Built once at startup. Device-locale wiring lands with auth/expo-localization.
+// Built once at startup. `createUIConfig(shared.theme)` re-skins the app from
+// couple.config (verified end-to-end: theme.primary drives component colors).
+// Device-locale wiring lands with auth/expo-localization.
 const shared = getSharedConfig(coupleConfig);
 const uiConfig = createUIConfig(shared.theme);
 const i18n = createI18n(resolveLanguage({ configDefault: shared.defaultLanguage }));
