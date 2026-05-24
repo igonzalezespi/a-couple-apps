@@ -1,9 +1,6 @@
 import { createFont, createTamagui, createTokens } from '@tamagui/core';
 
-import { createCoupleTheme } from './src/theme';
-
-// Themes carry semantic color keys ($background, $color, $primary, ...).
-const themes = createCoupleTheme();
+import { createCoupleTheme, type ThemeOverrides } from './src/theme';
 
 // Tokens drive spacing, sizing, radii and the raw palette ($space, $size, ...).
 const tokens = createTokens({
@@ -27,12 +24,22 @@ const bodyFont = createFont({
   letterSpacing: { 4: 0 }
 });
 
-export const config = createTamagui({
-  tokens,
-  themes,
-  fonts: { body: bodyFont, heading: bodyFont },
-  defaultFont: 'body'
-});
+/**
+ * Build the Tamagui config. `overrides` (from `couple.config.ts` `theme`) re-skin
+ * both apps without editing this package; theme values resolve at runtime, so
+ * passing an overridden config to `<UIProvider config>` re-themes the app.
+ */
+export function createUIConfig(overrides?: ThemeOverrides) {
+  return createTamagui({
+    tokens,
+    themes: createCoupleTheme(overrides),
+    fonts: { body: bodyFont, heading: bodyFont },
+    defaultFont: 'body'
+  });
+}
+
+// The default (no-override) config — also read by the Tamagui Babel plugin.
+export const config = createUIConfig();
 
 export type Conf = typeof config;
 

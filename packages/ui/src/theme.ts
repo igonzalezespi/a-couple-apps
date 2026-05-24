@@ -23,8 +23,8 @@ export type CoupleTheme = {
 
 /** Optional overrides surfaced through `couple.config.ts` (see @aca/config). */
 export type ThemeOverrides = {
-  primary?: string;
-  accent?: string;
+  primary?: string | undefined;
+  accent?: string | undefined;
 };
 
 const light: CoupleThemeColors = {

@@ -3,7 +3,7 @@ import prettier from 'eslint-config-prettier';
 import tseslint from 'typescript-eslint';
 
 /** Relative imports that reach into another workspace package. */
-const crossPackagePatterns = [
+export const crossPackagePatterns = [
   {
     group: ['**/packages/*', '**/packages/*/**', '**/apps/*', '**/apps/*/**'],
     message:
