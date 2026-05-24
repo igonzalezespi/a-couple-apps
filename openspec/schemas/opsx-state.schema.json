@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://a-couple-apps.local/openspec/schemas/opsx-state.schema.json",
+  "title": "OpsxState",
+  "description": "Per-change lifecycle state for the OpenSpec SDD workflow. Created by /opsx:propose, updated by each /opsx:* command, consumed by /opsx:archive and future tooling.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "changeName",
+    "createdAt",
+    "proposedAt",
+    "reviewedAt",
+    "reviewWaived",
+    "appliedAt",
+    "verifiedAt",
+    "verifyStatus",
+    "verifyIterations",
+    "lastVerifyReportPath",
+    "archivedAt",
+    "prUrl",
+    "prNumber",
+    "deferredIssues",
+    "manualActionIssues"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version. Bump on breaking changes to this file."
+    },
+    "changeName": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "description": "Kebab-case change name, must match openspec/changes/<name>/ directory."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when the state file was first written (typically at /opsx:propose time)."
+    },
+    "proposedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when /opsx:propose completed and all required artifacts were produced."
+    },
+    "reviewedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when /opsx:review last completed successfully for this change. Null means review has not run."
+    },
+    "reviewWaived": {
+      "type": "boolean",
+      "description": "True if the user explicitly waived the pre-apply review gate. Used together with reviewWaiveReason."
+    },
+    "reviewWaiveReason": {
+      "type": ["string", "null"],
+      "description": "Free-form rationale when reviewWaived is true. Null when reviewWaived is false."
+    },
+    "appliedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when /opsx:apply began (first task transitioned from [ ] to [x])."
+    },
+    "verifiedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when /opsx:verify last completed. Null until the first verify run."
+    },
+    "verifyStatus": {
+      "type": ["string", "null"],
+      "enum": [null, "READY", "READY_WITH_WARNINGS", "BLOCKED", "BLOCKED_LOOP", "RECONSTRUCTED"],
+      "description": "Status of the most recent /opsx:verify run. READY = no blockers. READY_WITH_WARNINGS = deferred or manual actions exist but archive is allowed. BLOCKED = CRITICAL findings remain. BLOCKED_LOOP = triage loop exhausted iterations. RECONSTRUCTED = report produced by /osx:backfill-verify for a legacy change."
+    },
+    "verifyIterations": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of triage-loop iterations executed by the most recent /opsx:verify run. 0 until the first run."
+    },
+    "lastVerifyReportPath": {
+      "type": ["string", "null"],
+      "description": "Relative path (from the change directory) to the most recently written verify report. Typically 'verify-report.md'."
+    },
+    "archivedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when /opsx:archive moved the change directory into openspec/changes/archive/YYYY-MM-DD-<name>/."
+    },
+    "prUrl": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "GitHub PR URL created by /opsx:archive. Null until archive runs."
+    },
+    "prNumber": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "GitHub PR number. Null until archive runs."
+    },
+    "deferredIssues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "number", "url", "findingId"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Internal deferred-work identifier assigned by /opsx:verify (finding-ID hash)."
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "GitHub issue number created by /opsx:archive for this deferred work entry."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Full URL of the GitHub issue."
+          },
+          "findingId": {
+            "type": "string",
+            "description": "Matches the finding ID in verify-report.md so archive can deep-link back."
+          }
+        }
+      },
+      "description": "Record of GitHub issues created from Deferred Work entries during /opsx:archive. Empty array until issues are created."
+    },
+    "manualActionIssues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "number", "url", "findingId"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Internal manual-action identifier assigned by /opsx:verify (finding-ID hash)."
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "GitHub issue number created by /opsx:archive for this manual action entry."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Full URL of the GitHub issue."
+          },
+          "findingId": {
+            "type": "string",
+            "description": "Matches the finding ID in verify-report.md so archive can deep-link back."
+          }
+        }
+      },
+      "description": "Record of GitHub issues created from Manual Actions Required entries during /opsx:archive. Empty array until issues are created."
+    }
+  }
+}

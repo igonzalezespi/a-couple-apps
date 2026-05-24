@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "changeName": "bootstrap-foundation",
+  "createdAt": "2026-05-24T12:00:00.000Z",
+  "proposedAt": "2026-05-24T12:00:00.000Z",
+  "reviewedAt": null,
+  "reviewWaived": true,
+  "reviewWaiveReason": "Foundation approved by the maintainer via the Conventions Report + architecture + ROADMAP review (2026-05-24). Formal /osx:review waived: the review tooling is created by this very change (bootstrap).",
+  "appliedAt": "2026-05-24T13:00:00.000Z",
+  "verifiedAt": null,
+  "verifyStatus": null,
+  "verifyIterations": 0,
+  "lastVerifyReportPath": null,
+  "archivedAt": null,
+  "prUrl": null,
+  "prNumber": null,
+  "deferredIssues": []
+}

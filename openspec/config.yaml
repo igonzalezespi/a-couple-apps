@@ -1,0 +1,94 @@
+schema: spec-driven
+context: |-
+  A Couple Apps is an open-source monorepo of small cross-platform apps for couples
+  (first two: a shared movie watchlist and a shared plans/events list). Spec-driven,
+  AI-assisted development.
+
+  # Tech stack
+  Language: TypeScript (strict), Node >= 24
+  Monorepo: pnpm workspaces + Turborepo
+  Runtime: Expo + React Native + React Native Web (iOS / Android / web from one codebase)
+  Routing: Expo Router (file-based)
+  Design system: Tamagui (packages/ui) — single source of truth; both apps look identical
+  State: TanStack Query (server cache) + Zustand (local UI state)
+  Backend: Supabase (one project; `shared` schema + per-app schemas) + realtime
+  i18n: i18next + react-i18next + expo-localization (en/es); drives external data language (TMDB)
+  Config: zod-validated couple.config.ts ({ config: shared, movies, plans }); secrets in .env
+  Tests: Vitest + @testing-library/react-native (unit/component); Maestro (native e2e) + Playwright (web e2e)
+  Lint/format: ESLint (flat) + typescript-eslint + eslint-config-expo + Prettier
+  CI: GitHub Actions — composite setup-repo, SHA-pinned actions, paths-filter, label-gated, aggregate ci-gate
+
+  # Architecture
+  Monorepo with package boundaries. Apps depend on packages; packages never depend on apps.
+  - apps/*          — Expo apps (movies, plans). Thin; consume shared packages only.
+  - packages/ui     — Tamagui design system: tokens, themes, primitives. Presentation only.
+  - packages/config — zod schema + typed loader for couple.config.ts; env + SENSITIVE_ENV_VARS.
+  - packages/i18n   — translations (en/es), language switching, resolveExternalLang().
+  - packages/core   — the only data boundary: Supabase client, auth, realtime, TanStack Query,
+                      shared hooks + zod contracts (packages/core/src/contracts.ts).
+  - packages/eslint-config, packages/typescript-config — shared base configs.
+
+  # Canonical project documents
+  - ROADMAP.md       — phased plan (scaffold -> ui -> config -> i18n -> data/auth -> apps -> test/CI -> release)
+  - ARCHITECTURE.md  — system design (distilled from the bootstrap-foundation design)
+  - docs/decisions/  — ADRs (MADR format)
+  - openspec/specs/  — canonical capability specs (one dir per capability)
+
+  # Conventions
+  - All source, docs, comments, and markdown in English. UI strings are translatable (en/es).
+  - ZERO personal data in source; everything personal lives in couple.config.ts (neutral placeholders upstream).
+  - Secrets (SUPABASE_URL, SUPABASE_ANON_KEY, TMDB_API_KEY) in .env only; never committed.
+  - packages/core is the only place that imports @supabase/supabase-js.
+  - Tests live beside source (*.test.ts(x)) or in __tests__/; web e2e in e2e/, native flows in .maestro/.
+  - Conventional commits: feat / fix / chore / test / docs / refactor / build / ci.
+
+rules:
+  proposal:
+    - State the user-facing behavior change first; shared-package work follows.
+    - Identify affected packages/apps explicitly.
+    - Note any new dependencies with justification.
+    - Include a rollback plan when the change touches Supabase schema, the couple.config schema, or a shared package's public API.
+    - Estimate test impact (unit / component / e2e).
+  specs:
+    - Use Given / When / Then scenarios for behavioral specs.
+    - Each requirement uses RFC 2119 keywords (SHALL / MUST / SHOULD / MAY).
+    - Reference zod contracts in packages/core/src/contracts.ts where applicable.
+    - Include error / edge-case scenarios (offline, missing config, missing secret, realtime drop).
+  design:
+    - Identify which packages/apps are modified and why.
+    - Document new dependencies and any change to package boundaries or contracts.
+    - Sequence diagrams for cross-package flows (app -> core -> Supabase; realtime -> cache).
+    - Note any Supabase schema change (require migration + RLS plan).
+  tasks:
+    - Group tasks by package in dependency order (config/contracts first, then consumers).
+    - Every task that adds or modifies code MUST include a test step.
+    - Build/verify step per package (pnpm --filter <pkg> test / lint / typecheck).
+    - Manual device verification step for any UI-touching change (reference a manual-checks recipe).
+
+quick-change:
+  description: >-
+    Changes meeting ALL criteria may skip the full OpenSpec ceremony and be
+    committed directly with a conventional commit message.
+  threshold:
+    max-lines: 50
+    max-files: 2
+  disqualifiers:
+    - Adds or modifies a Supabase table/schema or RLS policy
+    - Changes the couple.config.ts schema or the env/secret surface
+    - Introduces a new runtime dependency
+    - Adds or changes a shared package's public API
+    - Adds a new app, route, or screen
+    - Modifies cross-package zod contracts (packages/core/src/contracts.ts)
+    - Affects CI/CD pipeline configuration
+  qualifying-examples:
+    - Typo fix in docs or comments
+    - Single-file refactor (rename, extract function) within one package
+    - Dependency version bump (patch / minor) without API changes
+    - Test-only additions for existing code
+    - Lint / format config tweaks
+    - Adding a translation string to both en and es
+  disqualifying-examples:
+    - New Supabase table or RLS policy
+    - New screen or Expo Router route
+    - New zod contract in packages/core
+    - New shared-package export
