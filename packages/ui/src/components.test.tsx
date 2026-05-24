@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { Button, Card, Screen, Text } from './components';
+import { Button, Card, Input, Screen, Text } from './components';
 import { UIProvider } from './Provider';
 
 const renderUI = (ui: ReactNode) => render(<UIProvider>{ui}</UIProvider>);
@@ -38,5 +38,11 @@ describe('UI primitives', () => {
     );
 
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeTruthy();
+  });
+
+  it('Input renders an accessible text field exposing its placeholder', () => {
+    renderUI(<Input placeholder="you@example.com" value="" onChangeText={() => {}} />);
+
+    expect(screen.getByPlaceholderText('you@example.com')).toBeTruthy();
   });
 });

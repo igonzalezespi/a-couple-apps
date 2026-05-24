@@ -8,7 +8,19 @@ export const en = {
   add: 'Add',
   cancel: 'Cancel',
   save: 'Save',
-  remove: 'Remove'
+  remove: 'Remove',
+  signIn: 'Sign in',
+  signInPrompt: 'Enter your email to get a sign-in code.',
+  email: 'Email',
+  emailPlaceholder: 'you@example.com',
+  sendCode: 'Send code',
+  codePrompt: 'Enter the code we sent to {{email}}.',
+  code: 'Code',
+  codePlaceholder: '123456',
+  verify: 'Verify',
+  back: 'Back',
+  signOut: 'Sign out',
+  loading: 'Loading…'
 } as const;
 
 /** The translation keys every locale must provide. */

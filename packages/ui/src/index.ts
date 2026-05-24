@@ -6,7 +6,17 @@ export {
   type CoupleThemeColors,
   type ThemeOverrides
 } from './theme';
-export { Button, type ButtonProps, Card, Screen, Text, XStack, YStack } from './components';
+export {
+  Button,
+  type ButtonProps,
+  Card,
+  Input,
+  type InputProps,
+  Screen,
+  Text,
+  XStack,
+  YStack
+} from './components';
 export { UIProvider, type UIProviderProps } from './Provider';
 
 // Re-export the core escape hatches so apps never import @tamagui/core directly.

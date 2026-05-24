@@ -11,5 +11,17 @@ export const es: Record<TranslationKey, string> = {
   add: 'Añadir',
   cancel: 'Cancelar',
   save: 'Guardar',
-  remove: 'Quitar'
+  remove: 'Quitar',
+  signIn: 'Iniciar sesión',
+  signInPrompt: 'Introduce tu correo para recibir un código de acceso.',
+  email: 'Correo',
+  emailPlaceholder: 'tu@ejemplo.com',
+  sendCode: 'Enviar código',
+  codePrompt: 'Introduce el código que enviamos a {{email}}.',
+  code: 'Código',
+  codePlaceholder: '123456',
+  verify: 'Verificar',
+  back: 'Atrás',
+  signOut: 'Cerrar sesión',
+  loading: 'Cargando…'
 };
