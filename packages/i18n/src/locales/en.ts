@@ -32,7 +32,9 @@ export const en = {
   watchlistEmpty: 'Your watchlist is empty.',
   added: 'Added',
   alreadyOnWatchlist: 'Already on your watchlist.',
-  poster: '{{title}} poster'
+  poster: '{{title}} poster',
+  authError: 'Could not sign in. Please try again.',
+  tooManyRequests: 'Too many attempts. Wait a minute and try again.'
 } as const;
 
 /** The translation keys every locale must provide. */
