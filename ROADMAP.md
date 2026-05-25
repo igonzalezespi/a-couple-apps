@@ -186,12 +186,16 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ done
 
 **Tasks**
 - Composite `setup-repo` action; `quality-gates.yml` (paths-filter, label gating, parallel lint/typecheck/test → build → e2e → `ci-gate`).
+- Web e2e job: Playwright on a Linux runner, installing the browser with `pnpm --filter movies exec playwright install --with-deps chromium` (cached); runs on every PR. Hermetic (the spec stubs Supabase + TMDB), so it needs no secrets.
+- Native e2e jobs, label-gated and default-skipped (expensive): Android via `reactivecircus/android-emulator-runner` + Maestro, and iOS on a macOS runner + simulator + Maestro, each running the `.maestro/` flows. Trigger with `ci:e2e-native` (or per-platform `ci:android` / `ci:ios`); both report skipped to `ci-gate` when the label is absent. Needs repo secrets for a test Supabase project + a configured test OTP.
 - SHA-pin all actions; `renovate.json`; PR template (strict schema for `/opsx:archive`).
 - Confirm `pre-push` mirrors the gate.
 
 **Acceptance criteria**
 - `ci-gate` is the single required check and fails unless all needed jobs are `success`/`skipped`.
 - Expensive jobs skip without the `ci:*` label; SHA-pin lint passes.
+- Web e2e (Playwright) runs and passes on PRs with no secrets configured.
+- Native e2e runs only when its label is present; without the label both platform jobs report skipped and `ci-gate` still passes.
 
 **Packages touched:** `ci` (repo infra)
 
