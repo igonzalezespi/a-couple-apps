@@ -25,7 +25,11 @@ export const en = {
   searchPlaceholder: 'Search movies',
   searchPrompt: 'Search for a movie.',
   noResults: 'No results.',
-  searchError: 'Something went wrong. Try again.'
+  searchError: 'Something went wrong. Try again.',
+  watchlist: 'Watchlist',
+  watched: 'Watched',
+  markWatched: 'Mark watched',
+  watchlistEmpty: 'Your watchlist is empty.'
 } as const;
 
 /** The translation keys every locale must provide. */

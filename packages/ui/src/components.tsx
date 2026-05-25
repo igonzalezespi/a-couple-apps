@@ -1,5 +1,5 @@
 import { Text as CoreText, styled, useTheme, View, type GetProps } from '@tamagui/core';
-import { TextInput } from 'react-native';
+import { Image as RNImage, TextInput } from 'react-native';
 
 /** Vertical flex container. */
 export const YStack = styled(View, {
@@ -109,3 +109,13 @@ export function Input(props: InputProps) {
     />
   );
 }
+
+/** Themed image (e.g. a movie poster). Wraps RN Image so token radius applies on web + native. */
+export const Image = styled(RNImage, {
+  name: 'Image',
+  borderRadius: '$2',
+  overflow: 'hidden',
+  backgroundColor: '$backgroundHover'
+});
+
+export type ImageProps = GetProps<typeof Image>;

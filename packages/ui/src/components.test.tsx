@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { Button, Card, Input, Screen, Text } from './components';
+import { Button, Card, Image, Input, Screen, Text } from './components';
 import { UIProvider } from './Provider';
 
 const renderUI = (ui: ReactNode) => render(<UIProvider>{ui}</UIProvider>);
@@ -44,5 +44,11 @@ describe('UI primitives', () => {
     renderUI(<Input placeholder="you@example.com" value="" onChangeText={() => {}} />);
 
     expect(screen.getByPlaceholderText('you@example.com')).toBeTruthy();
+  });
+
+  it('renders an Image addressable by testID', () => {
+    renderUI(<Image testID="poster" source={{ uri: 'https://image.tmdb.org/t/p/w185/x.jpg' }} />);
+
+    expect(screen.getByTestId('poster')).toBeTruthy();
   });
 });
