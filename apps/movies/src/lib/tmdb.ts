@@ -12,19 +12,19 @@ export interface MovieResult {
   releaseDate: string;
   /** TMDB poster path (e.g. `/x.jpg`), or null when none. */
   posterPath: string | null;
-  /** Average rating, 0–10. */
+  /** Average rating, 0-10. */
   voteAverage: number;
 }
 
 export interface SearchMoviesParams {
   query: string;
-  /** App language, mapped to a TMDB locale (`en`→`en-US`, `es`→`es-ES`). */
+  /** App language, mapped to a TMDB locale (`en` to `en-US`, `es` to `es-ES`). */
   language: Language;
   /** Abort signal from the caller (e.g. TanStack Query cancellation). */
   signal?: AbortSignal;
 }
 
-// Raw TMDB response — only the fields we read; the API returns many more.
+// Raw TMDB response: only the fields we read; the API returns many more.
 interface RawMovie {
   id: number;
   title?: string;
@@ -50,7 +50,7 @@ function toMovieResult(raw: RawMovie): MovieResult {
 }
 
 // React Native's URL / URLSearchParams polyfill is incomplete, so we encode the query
-// string by hand rather than rely on `searchParams` — portable across web and native.
+// string by hand rather than rely on `searchParams`; portable across web and native.
 function toQueryString(params: Record<string, string>): string {
   return Object.entries(params)
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)

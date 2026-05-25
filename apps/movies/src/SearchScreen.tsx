@@ -9,7 +9,7 @@ import { searchMovies, type MovieResult } from './lib/tmdb';
 
 /**
  * Search TMDB and list results in the configured language. Adding a result to the
- * shared watchlist arrives in a later slice — this screen is search + display only.
+ * shared watchlist arrives in a later slice; this screen is search + display only.
  */
 export function SearchScreen() {
   const router = useRouter();
@@ -81,7 +81,7 @@ function MovieRow({ movie }: { movie: MovieResult }) {
     <Card>
       <Text fontWeight="600">{year ? `${movie.title} (${year})` : movie.title}</Text>
       {movie.voteAverage > 0 ? (
-        <Text color="$colorMuted">{`★ ${movie.voteAverage.toFixed(1)}`}</Text>
+        <Text color="$colorMuted">{`${movie.voteAverage.toFixed(1)}/10`}</Text>
       ) : null}
       {movie.overview ? (
         <Text color="$colorMuted" numberOfLines={3}>

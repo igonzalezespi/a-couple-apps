@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /**
  * Contract for a `movies.watchlist_items` row. Supabase responses are validated
- * against this at the data boundary (per-app contract — `@aca/core` holds only the
+ * against this at the data boundary (per-app contract; `@aca/core` holds only the
  * shared ones).
  */
 export const watchlistItemContract = z.object({
