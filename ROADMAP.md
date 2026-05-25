@@ -16,7 +16,7 @@ design system is Tamagui, backend is Supabase (free tier) with realtime.
 
 Status legend: ⬜ not started · 🟡 in progress · ✅ done
 
-Current status (2026-05): Phases 0-6 are implemented on `feat/bootstrap-foundation` (PR #1, in review); CI (Phase 9) is wired pending a workflow-scope push. Phases 7-8, 10-11 are planned.
+Current status (2026-05): the foundation + the movies app are implemented and **web-verified** on `feat/bootstrap-foundation` (PR #1, unmerged; `main` has only the Phase-0 scaffold). Not yet closed: native iOS/Android has never been built or run; CI is written but never executed (untracked, pending a `workflow`-scope push); the OpenSpec verify -> archive loop has not run (`openspec/specs/` is empty). See `docs/reviews/2026-05-foundation-review.md` for the full per-task verification and the critical path to v1. Near-term focus is **Phase 6.5** (below) -- making the watchlist genuinely couple-friendly -- which is what turns this into a real v1.
 
 ---
 
@@ -148,9 +148,47 @@ Current status (2026-05): Phases 0-6 are implemented on `feat/bootstrap-foundati
 
 ---
 
+## Phase 6.5 — Make the watchlist couple-friendly (the real v1)
+
+**Goal:** Help a couple *decide* what to watch, not just store a list -- the difference
+between "functional" and "opened every Friday." (From the 2026-05 product review.)
+
+**Done**
+- Split into "To watch" (the working list) and "Watched" (history).
+- Attribution: each item shows "Added by you / by your partner".
+- Empty state is a call to action; the language toggle is de-emphasized.
+
+**Tasks (remaining, by value)**
+- **Tonight's pick (headline feature).** Either partner nominates one unwatched movie as
+  tonight's pick; it floats to the top with a distinct treatment and the other partner sees it
+  live. Needs a small schema change (`picked_by` / `picked_at` on `watchlist_items`) + realtime
+  + one UI treatment + one sort rule. No new screens. This is the coordination primitive that
+  turns a list into a shared decision.
+- Movie detail view (`/movie/[id]`): overview, rating, year -- so a couple can choose from the list.
+- Optimistic watched toggle + undo-on-remove (instant feedback; safe shared deletes).
+- Auth polish: resend-code + differentiated expired/invalid-code messages.
+- Search-as-you-type (debounce) + a clear button; a real settings screen (move the language switch there).
+
+**Acceptance**
+- In one screen a couple can see what's left to watch, who suggested it, and nominate tonight's pick.
+- Watched items are out of the way; the first-run/empty experience guides to search.
+
+**Packages touched:** `apps/movies` (+ a `watchlist_items` column for the pick)
+
+---
+
 ## Phase 7 — App 2: Shared plans / events (`apps/plans`)
 
 **Goal:** Second app — shared plans/events list, proving app-addition is trivial and the UI is identical.
+
+**Prerequisite (do first -- see the 2026-05 review):** decouple per-app schema types from
+`@aca/core` (today `packages/core/src/types.ts` hard-codes the `movies` schema, and it is dead
+code -- the app uses untyped `.schema('movies')`) and introduce per-app i18n namespaces. Without
+this, adding `apps/plans` forces edits to shared packages, breaking this phase's own acceptance.
+
+**Sequencing note:** the product review recommends shipping Phase 6.5 (a loved movies v1) and a
+first release *before* App 2, so the second app builds on a validated pattern rather than
+duplicating an unproven UX. Define the plans product shape (what a "plan/event" is) before scaffolding.
 
 **Tasks** _(separate OpenSpec change)_
 - Expo app scaffold (same pattern as App 1); Supabase `plans` schema (plans/events tables) + RLS.
