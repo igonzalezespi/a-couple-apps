@@ -4,4 +4,10 @@ pnpm format:check
 pnpm lint
 pnpm typecheck
 pnpm test
-command -v gitleaks >/dev/null 2>&1 && gitleaks detect --no-banner --redact --source . || true
+# Scan for secrets. Skip gracefully if gitleaks is not installed (CI enforces it
+# non-bypassably), but never swallow a real detection.
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks detect --no-banner --redact --source .
+else
+  echo "gitleaks not installed; skipping local scan (CI enforces it)"
+fi
