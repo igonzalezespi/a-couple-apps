@@ -8,7 +8,8 @@ import {
   useAddToWatchlist,
   useRemoveFromWatchlist,
   useSetWatched,
-  useWatchlist
+  useWatchlist,
+  useWatchlistRealtime
 } from '../hooks/useWatchlist';
 
 interface PostgrestLike {
@@ -117,5 +118,46 @@ describe('watchlist hooks', () => {
 
     expect(builder.update).toHaveBeenCalledWith({ watched: true });
     expect(builder.eq).toHaveBeenCalledWith('id', 'the-id');
+  });
+});
+
+describe('useWatchlistRealtime', () => {
+  it('subscribes on the movies schema and invalidates watchlist_items on a change', () => {
+    let onChange: ((payload: { table: string }) => void) | undefined;
+    const channel = {
+      on: vi.fn((_event: string, _filter: unknown, handler: (p: { table: string }) => void) => {
+        onChange = handler;
+        return channel;
+      }),
+      subscribe: vi.fn(() => channel)
+    };
+    const removeChannel = vi.fn();
+    const client = {
+      channel: vi.fn(() => channel),
+      removeChannel
+    } as unknown as AppSupabaseClient;
+
+    const queryClient = createQueryClient();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+      <CoreProvider client={client} queryClient={queryClient}>
+        {children}
+      </CoreProvider>
+    );
+
+    const { unmount } = renderHook(() => useWatchlistRealtime(), { wrapper: Wrapper });
+
+    expect(channel.on).toHaveBeenCalledWith(
+      'postgres_changes',
+      { event: '*', schema: 'movies' },
+      expect.any(Function)
+    );
+    expect(channel.subscribe).toHaveBeenCalled();
+
+    onChange?.({ table: 'watchlist_items' });
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['watchlist_items'] });
+
+    unmount();
+    expect(removeChannel).toHaveBeenCalledWith(channel);
   });
 });

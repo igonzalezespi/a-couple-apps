@@ -13,7 +13,8 @@ const h = vi.hoisted(() => ({
 vi.mock('./hooks/useWatchlist', () => ({
   useWatchlist: () => h.result,
   useSetWatched: () => ({ mutate: h.setWatched }),
-  useRemoveFromWatchlist: () => ({ mutate: h.remove })
+  useRemoveFromWatchlist: () => ({ mutate: h.remove }),
+  useWatchlistRealtime: () => {}
 }));
 
 const ITEMS = [
