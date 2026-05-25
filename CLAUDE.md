@@ -72,5 +72,5 @@ Open-source monorepo of small cross-platform apps for couples (movie watchlist, 
 - **UI**: Tamagui (`packages/ui`) · **State**: TanStack Query + Zustand
 - **Backend**: Supabase (one project; `shared` + per-app schemas) + realtime
 - **i18n**: i18next + react-i18next + expo-localization (en/es)
-- **Test**: Vitest + @testing-library/react-native · Maestro (native e2e) · Playwright (web e2e)
+- **Test**: Vitest + @testing-library/react (jsdom + a react-native -> react-native-web alias) · Maestro (native e2e) · Playwright (web e2e)
 - **Lint/format**: ESLint (flat) + typescript-eslint + eslint-config-expo + Prettier
