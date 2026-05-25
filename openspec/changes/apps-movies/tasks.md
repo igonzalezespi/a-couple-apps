@@ -25,8 +25,8 @@
 
 ## 5. Watchlist UI
 
-- [ ] 5.1 Watchlist screen: items with poster/title/watched toggle; add-from-search; remove
-- [ ] 5.2 Component tests for the watchlist screen (render items, toggle watched, remove) with mocked data
+- [x] 5.1 Watchlist screen: items with poster/title/watched toggle; add-from-search; remove
+- [x] 5.2 Component tests for the watchlist screen (render items, toggle watched, remove) with mocked data
 
 ## 6. Realtime sync
 

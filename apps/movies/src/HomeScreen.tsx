@@ -6,6 +6,7 @@ import { useLocale } from '@aca/i18n';
 import { Button, Card, Screen, Text } from '@aca/ui';
 
 import coupleConfig from '../../../couple.config';
+import { Watchlist } from './Watchlist';
 
 const [personA, personB] = getSharedConfig(coupleConfig).people;
 
@@ -28,6 +29,8 @@ export function HomeScreen() {
       <Button onPress={() => router.push('/search')}>
         <Text color="$onPrimary">{t('search')}</Text>
       </Button>
+      <Text fontWeight="700">{t('watchlist')}</Text>
+      <Watchlist />
       <Button onPress={() => void setLanguage(language === 'en' ? 'es' : 'en')}>
         <Text color="$onPrimary">
           {t('language')}: {language}
