@@ -122,9 +122,9 @@ Native e2e flows live in `.maestro/` and run on a local simulator/emulator (see
 
 Code contributions to the shared foundation and apps are welcome. See
 [CONTRIBUTING.md](CONTRIBUTING.md) for the spec-driven workflow, branching, and the quality
-gate. Development is documented as OpenSpec changes under `openspec/`; the phased plan is in
-[ROADMAP.md](ROADMAP.md).
+gate. The system design is in [ARCHITECTURE.md](ARCHITECTURE.md); development is documented as
+OpenSpec changes under `openspec/`; the phased plan is in [ROADMAP.md](ROADMAP.md).
 
 ## License
 
-MIT. The `LICENSE` file is added at the first tagged release (see ROADMAP Phase 10).
+MIT -- see [LICENSE](LICENSE).

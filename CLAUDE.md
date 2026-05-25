@@ -38,11 +38,11 @@ Open-source monorepo of small cross-platform apps for couples (movie watchlist, 
 
 ## Commands
 
-> Full tooling (pnpm + Turborepo) lands in Phase 1. Until then the OpenSpec/opsx scripts run via plain `node` (zero-dependency).
+> Tooling (pnpm + Turborepo) is in place. The OpenSpec/opsx scripts also run via plain `node` (zero-dependency).
 
 - **opsx scripts**: `node scripts/opsx/<script>.mjs` — `state`, `project-config`, `verify-report-parser`, `verify-report-lint`, `review-report-lint`, `lint-tasks-md`, `lint-manual-checks`, `archive-doc-edit-guard`, `post-archive-safety-check`.
 - **Tasks lint**: `node scripts/opsx/lint-tasks-md.mjs openspec/changes/<name>`
-- (Phase 1+) **Tests**: `pnpm test` · **Lint**: `pnpm lint` · **Typecheck**: `pnpm typecheck` · **Format**: `pnpm format` · **Build**: `pnpm build` · **Dev**: `pnpm dev` · **Web e2e**: `pnpm e2e` (Playwright) · **Native e2e**: Maestro flows in `.maestro/`.
+- **Tests**: `pnpm test` · **Lint**: `pnpm lint` · **Typecheck**: `pnpm typecheck` · **Format**: `pnpm format` · **Build**: `pnpm build` · **Dev**: `pnpm dev` · **Web e2e**: `pnpm e2e` (Playwright) · **Native e2e**: Maestro flows in `.maestro/`.
 
 ## Commits
 
@@ -53,7 +53,7 @@ Open-source monorepo of small cross-platform apps for couples (movie watchlist, 
 ## Project Knowledge
 
 - Roadmap: `ROADMAP.md` (phased plan; the foundation is being bootstrapped now)
-- Architecture: `ARCHITECTURE.md` (added in a later phase; for now see `openspec/changes/bootstrap-foundation/design.md`)
+- Architecture: `ARCHITECTURE.md` (system design; originating detail in `openspec/changes/bootstrap-foundation/design.md`)
 - SDD specs: `openspec/specs/` (canonical) · change proposals: `openspec/changes/`
 - OpenSpec config / thresholds: `openspec/config.yaml`, `openspec/project.md`
 - ADRs: `docs/decisions/` (MADR)
