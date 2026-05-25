@@ -16,6 +16,8 @@ design system is Tamagui, backend is Supabase (free tier) with realtime.
 
 Status legend: ⬜ not started · 🟡 in progress · ✅ done
 
+Current status (2026-05): Phases 0-6 are implemented on `feat/bootstrap-foundation` (PR #1, in review); CI (Phase 9) is wired pending a workflow-scope push. Phases 7-8, 10-11 are planned.
+
 ---
 
 ## Phase 0 — Foundation approval & repo init
