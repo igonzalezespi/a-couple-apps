@@ -31,13 +31,15 @@ export function HomeScreen() {
       </Button>
       <Text fontWeight="700">{t('watchlist')}</Text>
       <Watchlist />
-      <Button onPress={() => void setLanguage(language === 'en' ? 'es' : 'en')}>
-        <Text color="$onPrimary">
-          {t('language')}: {t(language === 'en' ? 'english' : 'spanish')}
-        </Text>
-      </Button>
       <Button tone="neutral" onPress={() => void signOut(client)}>
         <Text>{t('signOut')}</Text>
+      </Button>
+      {/* Settings-ish controls are secondary: a language switch is a setup preference, not a
+          weekly action, so it sits last and quiet (a real settings screen lands later). */}
+      <Button tone="neutral" onPress={() => void setLanguage(language === 'en' ? 'es' : 'en')}>
+        <Text color="$colorMuted">
+          {t('language')}: {t(language === 'en' ? 'english' : 'spanish')}
+        </Text>
       </Button>
     </Screen>
   );

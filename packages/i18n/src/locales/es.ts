@@ -32,10 +32,14 @@ export const es: Record<TranslationKey, string> = {
   watchlist: 'Lista',
   watched: 'Vista',
   markWatched: 'Marcar vista',
-  watchlistEmpty: 'Tu lista está vacía.',
+  watchlistEmpty: 'Aún no hay nada. Añade una película para ver juntos.',
   added: 'En la lista',
   alreadyOnWatchlist: 'Ya está en tu lista.',
   poster: 'Póster de {{title}}',
   authError: 'No se pudo iniciar sesión. Inténtalo de nuevo.',
-  tooManyRequests: 'Demasiados intentos. Espera un minuto e inténtalo de nuevo.'
+  tooManyRequests: 'Demasiados intentos. Espera un minuto e inténtalo de nuevo.',
+  toWatch: 'Por ver',
+  addedByYou: 'Añadida por ti',
+  addedByPartner: 'Añadida por tu pareja',
+  addFirstMovie: 'Buscar una película'
 };
