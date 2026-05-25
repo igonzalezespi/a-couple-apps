@@ -49,6 +49,8 @@ const ButtonFrame = styled(XStack, {
   gap: '$2',
   paddingHorizontal: '$4',
   paddingVertical: '$3',
+  // Accessible minimum touch target (WCAG 2.5.5 / platform guidance ~44px).
+  minHeight: 44,
   borderWidth: 0,
   borderRadius: '$3',
   backgroundColor: '$primary',
@@ -76,7 +78,16 @@ export type ButtonProps = GetProps<typeof ButtonFrame>;
  * `<Text>` child for the label; pass `onPress` at the call site.
  */
 export function Button(props: ButtonProps) {
-  return <ButtonFrame role="button" {...props} />;
+  // Announce disabled state to assistive tech (RN-Web maps accessibilityState.disabled
+  // to aria-disabled; native exposes it via the accessibility tree). Placed before the
+  // spread so a call site can still override it.
+  return (
+    <ButtonFrame
+      role="button"
+      accessibilityState={{ disabled: Boolean(props.disabled) }}
+      {...props}
+    />
+  );
 }
 
 const InputFrame = styled(TextInput, {
