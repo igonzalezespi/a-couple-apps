@@ -1,6 +1,6 @@
--- Movies app schema: the couple's shared watchlist. One Supabase project per couple,
--- so "the couple" is every authenticated user of this instance (same model as the
--- shared.profiles policies in 0001).
+-- Movies app schema: the couple's shared watchlist. One Supabase project per couple, built with
+-- that couple's own anon key (the access boundary -- there is no per-user auth). Identity is the
+-- locally-selected person from couple.config, so added_by is that person's id, not an auth user.
 
 create schema if not exists movies;
 
@@ -11,9 +11,8 @@ create table if not exists movies.watchlist_items (
   poster_path text,
   release_date text,
   watched boolean not null default false,
-  -- Who added it. Defaults to the caller; FK to auth.users (shared.profiles has no
-  -- auto-create trigger, so referencing it would break inserts for users without a row).
-  added_by uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  -- The couple.config person id who added it (e.g. 'personA'); client-supplied, no auth.
+  added_by text,
   created_at timestamptz not null default now()
 );
 
@@ -23,47 +22,33 @@ create unique index if not exists watchlist_items_tmdb_id_key
 
 alter table movies.watchlist_items enable row level security;
 
--- Authenticated users (the couple) read the whole shared list...
-drop policy if exists "watchlist readable by authenticated users" on movies.watchlist_items;
-create policy "watchlist readable by authenticated users"
-  on movies.watchlist_items for select
-  to authenticated
-  using (true);
+-- No auth: the app uses the anon key, so the anon role may read/write the shared list. The anon
+-- key embedded in the couple's private (non-distributed) build is the access boundary.
+drop policy if exists "watchlist readable" on movies.watchlist_items;
+create policy "watchlist readable" on movies.watchlist_items
+  for select to anon using (true);
 
--- ...add items only as themselves. `(select auth.uid())` is evaluated once per query
--- (the Supabase RLS perf idiom); added_by defaults to auth.uid() in the table.
-drop policy if exists "watchlist insert as self" on movies.watchlist_items;
-create policy "watchlist insert as self"
-  on movies.watchlist_items for insert
-  to authenticated
-  with check ((select auth.uid()) = added_by);
+drop policy if exists "watchlist insertable" on movies.watchlist_items;
+create policy "watchlist insertable" on movies.watchlist_items
+  for insert to anon with check (true);
 
--- ...edit any item (the list is shared, e.g. either partner marks watched). The column
--- grant below, not this policy, is what stops a client from rewriting added_by.
-drop policy if exists "watchlist update by authenticated users" on movies.watchlist_items;
-create policy "watchlist update by authenticated users"
-  on movies.watchlist_items for update
-  to authenticated
-  using (true)
-  with check (true);
+-- The list is shared (either person marks watched / removes). UPDATE is column-scoped to
+-- `watched` by the grant below, so a client cannot rewrite added_by after insert.
+drop policy if exists "watchlist updatable" on movies.watchlist_items;
+create policy "watchlist updatable" on movies.watchlist_items
+  for update to anon using (true) with check (true);
 
--- ...and remove any item.
-drop policy if exists "watchlist delete by authenticated users" on movies.watchlist_items;
-create policy "watchlist delete by authenticated users"
-  on movies.watchlist_items for delete
-  to authenticated
-  using (true);
+drop policy if exists "watchlist deletable" on movies.watchlist_items;
+create policy "watchlist deletable" on movies.watchlist_items
+  for delete to anon using (true);
 
--- API access: the app always runs as `authenticated` (behind the auth gate); the RLS
--- policies above do the row-level control. Custom schemas need explicit grants (unlike
--- `public`); `anon` is intentionally omitted - nothing is queried before sign-in.
--- UPDATE is granted only on `watched`: either partner can toggle it, but no client can
--- overwrite added_by (or any other column) via PATCH - the insert policy owns attribution.
-grant usage on schema movies to authenticated;
-grant select, insert, delete on movies.watchlist_items to authenticated;
-grant update (watched) on movies.watchlist_items to authenticated;
+-- Custom schemas are not granted to the API roles by default. Grant the anon role what the app
+-- needs; UPDATE is restricted to the `watched` column (added_by stays as written on insert).
+grant usage on schema movies to anon;
+grant select, insert, delete on movies.watchlist_items to anon;
+grant update (watched) on movies.watchlist_items to anon;
 
--- Realtime: broadcast row changes so both users stay in sync. Guarded for idempotent re-apply.
+-- Realtime: broadcast row changes so both people stay in sync. Guarded for idempotent re-apply.
 do $$
 begin
   if not exists (

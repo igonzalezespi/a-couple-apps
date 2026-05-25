@@ -12,7 +12,9 @@ export const watchlistItemContract = z.object({
   poster_path: z.string().nullable(),
   release_date: z.string().nullable(),
   watched: z.boolean(),
-  added_by: z.uuid(),
+  // The person id (from couple.config) who added it; no auth, so it's a config id, not a UUID.
+  // Nullable to tolerate rows added before the no-auth migration.
+  added_by: z.string().nullable(),
   created_at: z.string()
 });
 

@@ -5,7 +5,7 @@ import { type AppSupabaseClient } from './client';
 
 /**
  * Invalidate the queries affected by a realtime change to `table`. Query keys
- * are expected to be prefixed with the table name (e.g. `['profiles', id]`).
+ * are expected to be prefixed with the table name (e.g. `['watchlist_items', id]`).
  */
 export function invalidateForTable(queryClient: QueryClient, table: string): void {
   void queryClient.invalidateQueries({ queryKey: [table] });

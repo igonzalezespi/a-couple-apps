@@ -1,15 +1,14 @@
 import { expect, test, type Page, type Route } from '@playwright/test';
 
 /**
- * Web smoke test: sign in (email OTP) -> search -> add -> mark watched, against the
- * exported RN-Web build. Every Supabase and TMDB call is intercepted, so the run is
- * hermetic: no secrets, no network, no running backend. The Supabase REST endpoint is
- * backed by an in-memory list so add/list/mark-watched behave like the real table.
+ * Web smoke test: pick who you are -> search -> add -> mark watched, against the exported RN-Web
+ * build. There is no auth; Supabase REST and TMDB are intercepted, so the run is hermetic (no
+ * secrets, no network, no backend). The REST endpoint is backed by an in-memory list so
+ * add/list/mark-watched behave like the real table.
  */
 
-// The build is served from localhost but talks to https://stub.supabase.test and TMDB,
-// so the browser issues CORS preflights; every stubbed response must echo these headers
-// or chromium blocks the request.
+// The build is served from localhost but talks to https://stub.supabase.test and TMDB, so the
+// browser issues CORS preflights; every stubbed response must echo these headers.
 const CORS = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET,POST,PATCH,DELETE,OPTIONS',
@@ -24,11 +23,9 @@ interface Row {
   poster_path: string | null;
   release_date: string | null;
   watched: boolean;
-  added_by: string;
+  added_by: string | null;
   created_at: string;
 }
-
-const STUB_USER_ID = '11111111-1111-4111-8111-111111111111';
 
 // Valid v4-shaped UUID for a stubbed row id; the row contract validates `id` with z.uuid().
 function fakeUuid(n: number): string {
@@ -46,32 +43,6 @@ function jsonResponse(route: Route, body: unknown, status = 200): Promise<void> 
 
 function preflight(route: Route): Promise<void> {
   return route.fulfill({ status: 204, headers: CORS, body: '' });
-}
-
-// A well-formed GoTrue session so supabase-js persists it and emits SIGNED_IN.
-function fakeSession() {
-  const now = Math.floor(Date.now() / 1000);
-  const ts = new Date().toISOString();
-  return {
-    access_token: 'stub-access-token',
-    token_type: 'bearer',
-    expires_in: 3600,
-    expires_at: now + 3600,
-    refresh_token: 'stub-refresh-token',
-    user: {
-      id: STUB_USER_ID,
-      aud: 'authenticated',
-      role: 'authenticated',
-      email: 'tester@example.com',
-      email_confirmed_at: ts,
-      phone: '',
-      app_metadata: { provider: 'email', providers: ['email'] },
-      user_metadata: {},
-      identities: [],
-      created_at: ts,
-      updated_at: ts
-    }
-  };
 }
 
 const TMDB_RESULTS = {
@@ -98,14 +69,6 @@ async function installStubs(page: Page, items: Row[]): Promise<void> {
   // Posters are not asserted; abort to keep the run fully offline.
   await page.route('**/image.tmdb.org/**', (route) => route.abort());
 
-  await page.route('**/auth/v1/**', (route) => {
-    if (route.request().method() === 'OPTIONS') return preflight(route);
-    const url = route.request().url();
-    if (url.includes('/verify') || url.includes('/token'))
-      return jsonResponse(route, fakeSession());
-    return jsonResponse(route, {});
-  });
-
   await page.route('**/rest/v1/watchlist_items**', (route) => {
     const req = route.request();
     const method = req.method();
@@ -121,7 +84,8 @@ async function installStubs(page: Page, items: Row[]): Promise<void> {
         poster_path: it.poster_path ?? null,
         release_date: it.release_date ?? null,
         watched: it.watched ?? false,
-        added_by: STUB_USER_ID,
+        // The client now sends the selected person id; echo it back.
+        added_by: it.added_by ?? null,
         created_at: new Date().toISOString()
       }));
       // Newest first, matching `.order('created_at', { ascending: false })`.
@@ -146,31 +110,30 @@ async function installStubs(page: Page, items: Row[]): Promise<void> {
 }
 
 test.describe('movies watchlist (web smoke)', () => {
-  test('sign in, search, add a movie, mark it watched', async ({ page }) => {
+  test('pick a person, search, add a movie, mark it watched', async ({ page }) => {
     const items: Row[] = [];
     await installStubs(page, items);
 
     await page.goto('/');
 
-    // Auth gate: passwordless email OTP (intercepted).
-    await page.getByLabel('Email').fill('tester@example.com');
-    await page.getByRole('button', { name: 'Send code' }).click();
-    await page.getByLabel('Code').fill('123456');
-    await page.getByRole('button', { name: 'Verify' }).click();
+    // No auth: pick which person you are (couple.config placeholders: Person A / Person B).
+    await page.getByRole('button', { name: 'Person A' }).click();
 
-    // Authenticated home with an empty watchlist.
-    await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible();
-    await expect(page.getByText('Your watchlist is empty.')).toBeVisible();
+    // Home with an empty watchlist + its call to action.
+    await expect(page.getByRole('button', { name: 'Switch person' })).toBeVisible();
+    await expect(
+      page.getByText("Nothing here yet. Add a movie you'd like to watch together.")
+    ).toBeVisible();
 
-    // Search TMDB (intercepted). Submit via Enter to avoid the duplicate "Search" label
-    // (the nav button on home vs. the submit button here).
-    await page.getByRole('button', { name: 'Search' }).click();
+    // The empty-state CTA navigates to search (unambiguous vs. the home "Search" nav button).
+    await page.getByRole('button', { name: 'Search for a movie' }).click();
     await page.getByLabel('Search').fill('matrix');
+    // Submit via Enter to avoid the duplicate "Search" label (heading + submit button).
     await page.getByLabel('Search').press('Enter');
     await expect(page.getByText('The Matrix (1999)')).toBeVisible();
 
-    // Add it; the result flips to a disabled "Added" once the list refetches, which
-    // confirms the insert + cache invalidation round-tripped.
+    // Add it; the result flips to a disabled "Added" once the list refetches, which confirms
+    // the insert + cache invalidation round-tripped.
     await page.getByRole('button', { name: 'Add' }).click();
     await expect(page.getByRole('button', { name: 'Added' })).toBeVisible();
 

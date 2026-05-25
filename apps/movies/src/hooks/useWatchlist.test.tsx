@@ -3,7 +3,14 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { CoreProvider, createQueryClient, type AppSupabaseClient } from '@aca/core';
+import {
+  CoreProvider,
+  createQueryClient,
+  PersonProvider,
+  useCurrentPerson,
+  type AppSupabaseClient,
+  type PersonStorage
+} from '@aca/core';
 
 import {
   useAddToWatchlist,
@@ -12,6 +19,7 @@ import {
   useWatchlist,
   useWatchlistRealtime
 } from '../hooks/useWatchlist';
+import { TEST_PEOPLE } from '../test/fakeClient';
 
 interface PostgrestLike {
   data: unknown;
@@ -43,29 +51,47 @@ function makeWatchlistClient(result: PostgrestLike = { data: [], error: null }) 
   return { client: { schema } as unknown as AppSupabaseClient, schema, from, builder };
 }
 
-function makeWrapper(client: AppSupabaseClient) {
-  const queryClient = createQueryClient();
+const PERSON_ID = 'personA';
+function personStorage(): PersonStorage {
+  let value: string | null = PERSON_ID;
+  return {
+    getItem: () => Promise.resolve(value),
+    setItem: (_k, v) => {
+      value = v;
+      return Promise.resolve();
+    },
+    removeItem: () => {
+      value = null;
+      return Promise.resolve();
+    }
+  };
+}
+
+/** Wrap with the person + core providers (useAddToWatchlist reads the current person). */
+function makeProviders(client: AppSupabaseClient, queryClient: QueryClient) {
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
-      <CoreProvider client={client} queryClient={queryClient}>
-        {children}
-      </CoreProvider>
+      <PersonProvider people={TEST_PEOPLE} storage={personStorage()}>
+        <CoreProvider client={client} queryClient={queryClient}>
+          {children}
+        </CoreProvider>
+      </PersonProvider>
     );
   };
 }
 
+function makeWrapper(client: AppSupabaseClient) {
+  return makeProviders(client, createQueryClient());
+}
+
 /** Like makeWrapper but disables retries so error state settles in a single attempt. */
 function makeWrapperNoRetry(client: AppSupabaseClient) {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } }
-  });
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <CoreProvider client={client} queryClient={queryClient}>
-        {children}
-      </CoreProvider>
-    );
-  };
+  return makeProviders(
+    client,
+    new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } }
+    })
+  );
 }
 
 const ROW = {
@@ -93,22 +119,27 @@ describe('watchlist hooks', () => {
     expect(result.current.data).toEqual([ROW]);
   });
 
-  it('useAddToWatchlist inserts the new item', async () => {
+  it('useAddToWatchlist inserts the new item attributed to the current person', async () => {
     const { client, from, builder } = makeWatchlistClient({ data: null, error: null });
-    const { result } = renderHook(() => useAddToWatchlist(), { wrapper: makeWrapper(client) });
+    const { result } = renderHook(
+      () => ({ add: useAddToWatchlist(), current: useCurrentPerson() }),
+      { wrapper: makeWrapper(client) }
+    );
+    // The selected person loads asynchronously; wait so added_by is populated.
+    await waitFor(() => expect(result.current.current.person?.id).toBe('personA'));
+
     const item = {
       tmdb_id: 603,
       title: 'The Matrix',
       poster_path: '/abc.jpg',
       release_date: '1999-03-31'
     };
-
     await act(async () => {
-      await result.current.mutateAsync(item);
+      await result.current.add.mutateAsync(item);
     });
 
     expect(from).toHaveBeenCalledWith('watchlist_items');
-    expect(builder.insert).toHaveBeenCalledWith(item);
+    expect(builder.insert).toHaveBeenCalledWith({ ...item, added_by: 'personA' });
   });
 
   it('useRemoveFromWatchlist deletes by id', async () => {
@@ -184,11 +215,7 @@ describe('watchlist hooks', () => {
     const { client } = makeWatchlistClient({ data: null, error: null });
     const queryClient = createQueryClient();
     const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
-    const Wrapper = ({ children }: { children: ReactNode }) => (
-      <CoreProvider client={client} queryClient={queryClient}>
-        {children}
-      </CoreProvider>
-    );
+    const Wrapper = makeProviders(client, queryClient);
     const { result } = renderHook(() => useAddToWatchlist(), { wrapper: Wrapper });
 
     await act(async () => {
@@ -207,11 +234,7 @@ describe('watchlist hooks', () => {
     const { client } = makeWatchlistClient({ data: null, error: null });
     const queryClient = createQueryClient();
     const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
-    const Wrapper = ({ children }: { children: ReactNode }) => (
-      <CoreProvider client={client} queryClient={queryClient}>
-        {children}
-      </CoreProvider>
-    );
+    const Wrapper = makeProviders(client, queryClient);
     const { result } = renderHook(() => useRemoveFromWatchlist(), { wrapper: Wrapper });
 
     await act(async () => {
@@ -225,11 +248,7 @@ describe('watchlist hooks', () => {
     const { client } = makeWatchlistClient({ data: null, error: null });
     const queryClient = createQueryClient();
     const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
-    const Wrapper = ({ children }: { children: ReactNode }) => (
-      <CoreProvider client={client} queryClient={queryClient}>
-        {children}
-      </CoreProvider>
-    );
+    const Wrapper = makeProviders(client, queryClient);
     const { result } = renderHook(() => useSetWatched(), { wrapper: Wrapper });
 
     await act(async () => {
@@ -258,11 +277,7 @@ describe('useWatchlistRealtime', () => {
 
     const queryClient = createQueryClient();
     const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
-    const Wrapper = ({ children }: { children: ReactNode }) => (
-      <CoreProvider client={client} queryClient={queryClient}>
-        {children}
-      </CoreProvider>
-    );
+    const Wrapper = makeProviders(client, queryClient);
 
     const { unmount } = renderHook(() => useWatchlistRealtime(), { wrapper: Wrapper });
 

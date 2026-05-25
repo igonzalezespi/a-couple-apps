@@ -16,5 +16,5 @@ Secrets (`SUPABASE_URL`, `SUPABASE_ANON_KEY`) go in `.env` — see `.env.example
 
 ## migrations/
 
-- `0001_shared_schema.sql` — `shared` schema + `profiles` (FK to `auth.users`) + RLS + realtime publication.
-- `0002_movies_schema.sql` — `movies` schema + `watchlist_items` (couple-shared, `watched` flag, `added_by` FK to `auth.users`) + RLS + realtime publication.
+- `0001_shared_schema.sql` — the `shared` schema only (no tables yet; there is no auth, so no `profiles`).
+- `0002_movies_schema.sql` — `movies` schema + `watchlist_items` (couple-shared, `watched` flag, `added_by` person id) + RLS + `anon` grants + realtime publication.

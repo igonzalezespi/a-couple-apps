@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 
-import { useSession } from '@aca/core';
+import { useCurrentPerson } from '@aca/core';
 import { useLocale } from '@aca/i18n';
 import { Button, Card, Image, Text, XStack, YStack } from '@aca/ui';
 
@@ -20,7 +20,7 @@ import { type WatchlistItem } from './lib/watchlist';
 export function Watchlist() {
   const { t } = useLocale();
   const router = useRouter();
-  const { session } = useSession();
+  const { person, people } = useCurrentPerson();
   useWatchlistRealtime();
   const { data, isLoading, isError } = useWatchlist();
   const setWatched = useSetWatched();
@@ -39,15 +39,21 @@ export function Watchlist() {
     );
   }
 
-  const currentUserId = session?.user?.id;
+  const nameById = new Map(people.map((p) => [p.id, p.displayName]));
   const toWatch = data.filter((item) => !item.watched);
   const watched = data.filter((item) => item.watched);
+
+  const attributionFor = (item: WatchlistItem): string => {
+    if (person != null && item.added_by === person.id) return t('addedByYou');
+    const name = item.added_by != null ? nameById.get(item.added_by) : undefined;
+    return name != null ? t('addedByName', { name }) : t('addedByPartner');
+  };
 
   const renderRow = (item: WatchlistItem) => (
     <WatchlistRow
       key={item.id}
       item={item}
-      addedByYou={currentUserId != null && item.added_by === currentUserId}
+      attribution={attributionFor(item)}
       onToggleWatched={() => setWatched.mutate({ id: item.id, watched: !item.watched })}
       onRemove={() => remove.mutate(item.id)}
     />
@@ -77,12 +83,12 @@ export function Watchlist() {
 
 function WatchlistRow({
   item,
-  addedByYou,
+  attribution,
   onToggleWatched,
   onRemove
 }: {
   item: WatchlistItem;
-  addedByYou: boolean;
+  attribution: string;
   onToggleWatched: () => void;
   onRemove: () => void;
 }) {
@@ -103,7 +109,7 @@ function WatchlistRow({
         <YStack flex={1} gap="$2">
           <Text fontWeight="600">{year ? `${item.title} (${year})` : item.title}</Text>
           <Text color="$colorMuted" fontSize="$2">
-            {addedByYou ? t('addedByYou') : t('addedByPartner')}
+            {attribution}
           </Text>
           <XStack gap="$2">
             <Button tone={item.watched ? 'primary' : 'neutral'} onPress={onToggleWatched}>
