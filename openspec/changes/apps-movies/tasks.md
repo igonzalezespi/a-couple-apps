@@ -30,8 +30,8 @@
 
 ## 6. Realtime sync
 
-- [ ] 6.1 Subscribe via `subscribeCoupleChannel` (schema `movies`) on the watchlist screen; invalidate `['watchlist_items']` on change; unsubscribe on unmount
-- [ ] 6.2 Test that a simulated realtime change invalidates the watchlist query
+- [x] 6.1 Subscribe via `subscribeCoupleChannel` (schema `movies`) on the watchlist screen; invalidate `['watchlist_items']` on change; unsubscribe on unmount
+- [x] 6.2 Test that a simulated realtime change invalidates the watchlist query
 
 ## 7. i18n + states
 
