@@ -41,8 +41,8 @@
 
 ## 8. End-to-end
 
-- [ ] 8.1 Playwright web smoke (`e2e/movies.spec.ts`): sign-in (stub) → search → add → mark watched, against the exported RN-Web build
-- [ ] 8.2 Maestro flow (`.maestro/movies-watchlist.yaml`) for the same journey (runs on a simulator; documented). Acceptance: `pnpm e2e` web smoke green; Maestro flow runnable locally
+- [x] 8.1 Playwright web smoke (`e2e/movies.spec.ts`): sign-in (stub) → search → add → mark watched, against the exported RN-Web build
+- [x] 8.2 Maestro flow (`.maestro/movies-watchlist.yaml`) for the same journey (runs on a simulator; documented). Acceptance: `pnpm e2e` web smoke green; Maestro flow runnable locally
 
 ## 9. Validation & verification
 
