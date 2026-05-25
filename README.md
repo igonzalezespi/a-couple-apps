@@ -94,7 +94,9 @@ client-safe (RLS enforces access); never put the `service_role` key in any clien
    add `shared` and `movies` (PostgREST only exposes `public` by default; the app calls
    `.schema('movies')`).
 4. **Enable email OTP.** Dashboard -> Authentication -> Providers -> **Email**. New addresses
-   auto-create on first sign-in.
+   auto-create on first sign-in. The built-in email sender is heavily rate-limited (a few
+   per hour, for testing only), so configure **custom SMTP** (e.g. Resend's free tier) for
+   real use -- otherwise you will hit `email rate limit exceeded` after a couple of sign-ins.
 5. **Fill `.env`** with your project URL + anon key and your TMDB key (step 2 of Quick start).
 6. **Fill `couple.config.ts`** with your two people, default language, and optional theme.
 
