@@ -32,6 +32,13 @@ export function subscribeCoupleChannel(
     .on('postgres_changes', { event: '*', schema }, (payload) => {
       invalidateForTable(queryClient, payload.table);
     })
-    .subscribe();
+    .subscribe((status, err) => {
+      // The app still works without realtime (mutations invalidate the cache directly),
+      // but a failed channel means partners stop seeing each other's changes live.
+      // Surface it instead of failing silently.
+      if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+        console.error(`[realtime] channel ${channel.topic} ${status}`, err);
+      }
+    });
   return channel;
 }
