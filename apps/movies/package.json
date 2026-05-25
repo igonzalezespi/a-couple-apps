@@ -24,11 +24,13 @@
   "devDependencies": {
     "@aca/eslint-config": "workspace:*",
     "@aca/typescript-config": "workspace:*",
+    "@playwright/test": "^1.58.2",
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.2.14",
     "@vitejs/plugin-react": "^6.0.1",
     "eslint-config-expo": "^56.0.4",
     "jsdom": "^29.0.1",
+    "serve": "^14.2.6",
     "vitest": "^4.1.2"
   },
   "main": "expo-router/entry",
@@ -36,6 +38,7 @@
   "scripts": {
     "build": "expo export -p web",
     "dev": "expo start",
+    "e2e": "playwright test",
     "lint": "eslint .",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

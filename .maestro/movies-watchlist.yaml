@@ -1,0 +1,44 @@
+# Movies watchlist - native e2e (Maestro).
+#
+# Mirrors the Playwright web smoke (apps/movies/e2e/movies.spec.ts): sign in ->
+# search -> add -> mark watched. Runs on the maintainer's simulator/emulator, not
+# in CI (see openspec/changes/apps-movies/design.md Non-Goals). See .maestro/README.md
+# for prerequisites (appId, a Supabase test OTP), then: maestro test .maestro/movies-watchlist.yaml
+#
+# appId must match apps/movies/app.config.ts (ios.bundleIdentifier / android.package).
+# Those native ids are not set yet; update this when they are.
+appId: com.acouple.movies
+env:
+  # A Supabase "test" email + fixed OTP (Auth > configured test users); never a real address.
+  TEST_EMAIL: e2e@example.com
+  TEST_OTP: '123456'
+---
+- launchApp:
+    clearState: true # start signed out
+
+# Auth gate: passwordless email OTP.
+- assertVisible: 'Sign in'
+- tapOn: 'Email'
+- inputText: ${TEST_EMAIL}
+- tapOn: 'Send code'
+- tapOn: 'Code'
+- inputText: ${TEST_OTP}
+- tapOn: 'Verify'
+
+# Authenticated home.
+- assertVisible: 'Sign out'
+
+# Search and add.
+- tapOn: 'Search'
+- tapOn: 'Search movies' # the search field (placeholder)
+- inputText: 'matrix'
+- pressKey: Enter
+- assertVisible: 'The Matrix (1999)'
+- tapOn: 'Add'
+- assertVisible: 'Added'
+
+# Back on the watchlist, mark it watched.
+- tapOn: 'Back'
+- assertVisible: 'The Matrix (1999)'
+- tapOn: 'Mark watched'
+- assertVisible: 'Watched'
