@@ -13,7 +13,8 @@ vi.mock('expo-router', () => ({
 vi.mock('./hooks/useWatchlist', () => ({
   useWatchlist: () => ({ data: [], isLoading: false, isError: false }),
   useSetWatched: () => ({ mutate: vi.fn() }),
-  useRemoveFromWatchlist: () => ({ mutate: vi.fn() })
+  useRemoveFromWatchlist: () => ({ mutate: vi.fn() }),
+  useWatchlistRealtime: () => {}
 }));
 
 describe('HomeScreen', () => {

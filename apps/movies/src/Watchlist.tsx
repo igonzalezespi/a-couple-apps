@@ -1,13 +1,19 @@
 import { useLocale } from '@aca/i18n';
 import { Button, Card, Image, Text, XStack, YStack } from '@aca/ui';
 
-import { useRemoveFromWatchlist, useSetWatched, useWatchlist } from './hooks/useWatchlist';
+import {
+  useRemoveFromWatchlist,
+  useSetWatched,
+  useWatchlist,
+  useWatchlistRealtime
+} from './hooks/useWatchlist';
 import { posterUrl } from './lib/tmdb';
 import { type WatchlistItem } from './lib/watchlist';
 
 /** The shared watchlist: poster, title, watched toggle, remove. Realtime sync lands next slice. */
 export function Watchlist() {
   const { t } = useLocale();
+  useWatchlistRealtime();
   const { data, isLoading, isError } = useWatchlist();
   const setWatched = useSetWatched();
   const remove = useRemoveFromWatchlist();

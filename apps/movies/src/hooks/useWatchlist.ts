@@ -1,4 +1,12 @@
-import { useMutation, useQuery, useQueryClient, useSupabase } from '@aca/core';
+import { useEffect } from 'react';
+
+import {
+  subscribeCoupleChannel,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSupabase
+} from '@aca/core';
 
 import { watchlistItemContract, type NewWatchlistItem, type WatchlistItem } from '../lib/watchlist';
 
@@ -7,6 +15,9 @@ const TABLE = 'watchlist_items';
 // Prefixed with the table name so realtime change events invalidate it (see
 // `invalidateForTable` in @aca/core).
 const WATCHLIST_QUERY_KEY = [TABLE] as const;
+// One self-hosted Supabase project per couple, so there is no couple id; this is just a
+// stable channel label. Postgres-change events are delivered per subscription regardless.
+const WATCHLIST_CHANNEL_ID = 'movies-watchlist';
 
 /** The shared watchlist, newest first. */
 export function useWatchlist() {
@@ -62,4 +73,24 @@ export function useSetWatched() {
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
   });
+}
+
+/**
+ * Keep the watchlist in sync across both partners: subscribe to realtime changes in the
+ * `movies` schema and invalidate the `['watchlist_items']` query on any change.
+ * Unsubscribes on unmount.
+ */
+export function useWatchlistRealtime(): void {
+  const client = useSupabase();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const channel = subscribeCoupleChannel(client, {
+      coupleId: WATCHLIST_CHANNEL_ID,
+      queryClient,
+      schema: SCHEMA
+    });
+    return () => {
+      void client.removeChannel(channel);
+    };
+  }, [client, queryClient]);
 }
