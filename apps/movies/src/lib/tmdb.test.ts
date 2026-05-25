@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { searchMovies } from './tmdb';
+import { posterUrl, searchMovies } from './tmdb';
 
 const SAMPLE = {
   results: [
@@ -97,5 +97,15 @@ describe('searchMovies', () => {
     await expect(searchMovies({ query: 'x', language: 'en' })).rejects.toThrow(
       'EXPO_PUBLIC_TMDB_API_KEY'
     );
+  });
+});
+
+describe('posterUrl', () => {
+  it('returns a w185 URL for a given poster path', () => {
+    expect(posterUrl('/abc.jpg')).toBe('https://image.tmdb.org/t/p/w185/abc.jpg');
+  });
+
+  it('returns null when poster_path is null', () => {
+    expect(posterUrl(null)).toBeNull();
   });
 });

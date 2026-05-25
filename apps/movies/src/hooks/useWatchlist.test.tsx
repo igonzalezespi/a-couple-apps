@@ -1,3 +1,4 @@
+import { QueryClient } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -44,6 +45,20 @@ function makeWatchlistClient(result: PostgrestLike = { data: [], error: null }) 
 
 function makeWrapper(client: AppSupabaseClient) {
   const queryClient = createQueryClient();
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return (
+      <CoreProvider client={client} queryClient={queryClient}>
+        {children}
+      </CoreProvider>
+    );
+  };
+}
+
+/** Like makeWrapper but disables retries so error state settles in a single attempt. */
+function makeWrapperNoRetry(client: AppSupabaseClient) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } }
+  });
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <CoreProvider client={client} queryClient={queryClient}>
@@ -118,6 +133,110 @@ describe('watchlist hooks', () => {
 
     expect(builder.update).toHaveBeenCalledWith({ watched: true });
     expect(builder.eq).toHaveBeenCalledWith('id', 'the-id');
+  });
+
+  it('useWatchlist is in error state when the query returns an error', async () => {
+    const { client } = makeWatchlistClient({ data: null, error: { message: 'db error' } });
+    const { result } = renderHook(() => useWatchlist(), { wrapper: makeWrapperNoRetry(client) });
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+
+  it('useAddToWatchlist is in error state when insert returns an error', async () => {
+    const { client } = makeWatchlistClient({ data: null, error: { message: 'insert failed' } });
+    const { result } = renderHook(() => useAddToWatchlist(), {
+      wrapper: makeWrapperNoRetry(client)
+    });
+
+    await act(async () => {
+      await result.current
+        .mutateAsync({ tmdb_id: 603, title: 'The Matrix', poster_path: null, release_date: null })
+        .catch(() => {});
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+
+  it('useRemoveFromWatchlist is in error state when delete returns an error', async () => {
+    const { client } = makeWatchlistClient({ data: null, error: { message: 'delete failed' } });
+    const { result } = renderHook(() => useRemoveFromWatchlist(), {
+      wrapper: makeWrapperNoRetry(client)
+    });
+
+    await act(async () => {
+      await result.current.mutateAsync('the-id').catch(() => {});
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+
+  it('useSetWatched is in error state when update returns an error', async () => {
+    const { client } = makeWatchlistClient({ data: null, error: { message: 'update failed' } });
+    const { result } = renderHook(() => useSetWatched(), { wrapper: makeWrapperNoRetry(client) });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id: 'the-id', watched: true }).catch(() => {});
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+
+  it('useAddToWatchlist calls invalidateQueries with watchlist_items key on success', async () => {
+    const { client } = makeWatchlistClient({ data: null, error: null });
+    const queryClient = createQueryClient();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+      <CoreProvider client={client} queryClient={queryClient}>
+        {children}
+      </CoreProvider>
+    );
+    const { result } = renderHook(() => useAddToWatchlist(), { wrapper: Wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        tmdb_id: 603,
+        title: 'The Matrix',
+        poster_path: null,
+        release_date: null
+      });
+    });
+
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['watchlist_items'] });
+  });
+
+  it('useRemoveFromWatchlist calls invalidateQueries with watchlist_items key on success', async () => {
+    const { client } = makeWatchlistClient({ data: null, error: null });
+    const queryClient = createQueryClient();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+      <CoreProvider client={client} queryClient={queryClient}>
+        {children}
+      </CoreProvider>
+    );
+    const { result } = renderHook(() => useRemoveFromWatchlist(), { wrapper: Wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync('the-id');
+    });
+
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['watchlist_items'] });
+  });
+
+  it('useSetWatched calls invalidateQueries with watchlist_items key on success', async () => {
+    const { client } = makeWatchlistClient({ data: null, error: null });
+    const queryClient = createQueryClient();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+      <CoreProvider client={client} queryClient={queryClient}>
+        {children}
+      </CoreProvider>
+    );
+    const { result } = renderHook(() => useSetWatched(), { wrapper: Wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id: 'the-id', watched: true });
+    });
+
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['watchlist_items'] });
   });
 });
 
