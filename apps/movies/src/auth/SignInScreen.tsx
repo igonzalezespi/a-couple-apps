@@ -20,31 +20,49 @@ export function SignInScreen() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Map auth failures to a friendly localized message rather than leaking raw Supabase
+  // strings (which are user-enumeration signals). 429 is a rate-limit throttle, safe to name.
+  function authErrorMessage(status: number | undefined): string {
+    return status === 429 ? t('tooManyRequests') : t('authError');
+  }
+
   async function sendCode() {
     setPending(true);
     setError(null);
-    const { error: otpError } = await client.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: true }
-    });
-    setPending(false);
-    if (otpError) {
-      setError(otpError.message);
-      return;
+    // try/finally so a thrown network error (offline/CORS/timeout) cannot leave `pending`
+    // stuck true, which would disable the button until reload.
+    try {
+      const { error: otpError } = await client.auth.signInWithOtp({
+        email,
+        options: { shouldCreateUser: true }
+      });
+      if (otpError) {
+        setError(authErrorMessage(otpError.status));
+        return;
+      }
+      setStep('code');
+    } catch {
+      setError(t('authError'));
+    } finally {
+      setPending(false);
     }
-    setStep('code');
   }
 
   async function verify() {
     setPending(true);
     setError(null);
-    const { error: verifyError } = await client.auth.verifyOtp({
-      email,
-      token: code,
-      type: 'email'
-    });
-    setPending(false);
-    if (verifyError) setError(verifyError.message);
+    try {
+      const { error: verifyError } = await client.auth.verifyOtp({
+        email,
+        token: code,
+        type: 'email'
+      });
+      if (verifyError) setError(authErrorMessage(verifyError.status));
+    } catch {
+      setError(t('authError'));
+    } finally {
+      setPending(false);
+    }
   }
 
   return (

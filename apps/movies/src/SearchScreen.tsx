@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useQuery } from '@aca/core';
 import { useLocale } from '@aca/i18n';
@@ -39,7 +39,10 @@ export function SearchScreen() {
 
   // Movies already on the shared list: render them as added (disabled) rather than
   // letting a second add hit the unique index and fail.
-  const onWatchlist = new Set((watchlist ?? []).map((item) => item.tmdb_id));
+  const onWatchlist = useMemo(
+    () => new Set((watchlist ?? []).map((item) => item.tmdb_id)),
+    [watchlist]
+  );
   const addError = add.isError
     ? isUniqueViolation(add.error)
       ? t('alreadyOnWatchlist')

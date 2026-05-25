@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { useColorScheme } from 'react-native';
 
 import { getSharedConfig } from '@aca/config';
 import { CoreProvider, createQueryClient } from '@aca/core';
@@ -18,8 +19,11 @@ const i18n = createI18n(resolveLanguage({ configDefault: shared.defaultLanguage 
 const queryClient = createQueryClient();
 
 export default function RootLayout() {
+  // Honor the OS appearance (app.config sets userInterfaceStyle: 'automatic'); the token
+  // set ships a full dark theme. Falls back to light when the scheme is null/unknown.
+  const colorScheme = useColorScheme();
   return (
-    <UIProvider config={uiConfig} defaultTheme="light">
+    <UIProvider config={uiConfig} defaultTheme={colorScheme === 'dark' ? 'dark' : 'light'}>
       <I18nProvider i18n={i18n}>
         <CoreProvider client={supabase} queryClient={queryClient}>
           <SessionGate>
