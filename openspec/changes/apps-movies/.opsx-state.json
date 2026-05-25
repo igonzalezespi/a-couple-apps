@@ -12,7 +12,8 @@
   "verifyIterations": 0,
   "lastVerifyReportPath": null,
   "archivedAt": null,
-  "prUrl": null,
-  "prNumber": null,
-  "deferredIssues": []
+  "prUrl": "https://github.com/igonzalezespi/a-couple-apps/pull/1",
+  "prNumber": 1,
+  "deferredIssues": [],
+  "manualActionIssues": []
 }
