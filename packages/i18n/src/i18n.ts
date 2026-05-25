@@ -16,7 +16,7 @@ export const resources = {
 /**
  * Create an isolated i18next instance configured for this app's locales.
  * Call once at app startup (module scope or a root `useMemo`) and pass the
- * instance to `<I18nProvider>` — do not recreate it on every render.
+ * instance to `<I18nProvider>`; do not recreate it on every render.
  */
 export function createI18n(language: Language): I18nInstance {
   const instance = i18next.createInstance();

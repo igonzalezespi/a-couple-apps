@@ -12,7 +12,7 @@ const SAMPLE = {
       poster_path: '/abc.jpg',
       vote_average: 8.2
     },
-    // Sparse row (only id + title) — everything else must fall back to safe defaults.
+    // Sparse row (only id + title): everything else must fall back to safe defaults.
     { id: 604, title: 'The Matrix Reloaded' }
   ]
 };

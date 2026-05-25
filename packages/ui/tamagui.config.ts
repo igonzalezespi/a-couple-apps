@@ -38,7 +38,7 @@ export function createUIConfig(overrides?: ThemeOverrides) {
   });
 }
 
-// The default (no-override) config — also read by the Tamagui Babel plugin.
+// The default (no-override) config; also read by the Tamagui Babel plugin.
 export const config = createUIConfig();
 
 export type Conf = typeof config;

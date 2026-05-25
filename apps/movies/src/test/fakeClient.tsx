@@ -9,7 +9,7 @@ import { UIProvider } from '@aca/ui';
 type AuthHandler = (event: string, session: unknown) => void;
 
 /**
- * A minimal in-memory fake of the Supabase client for auth/gate tests — no network.
+ * A minimal in-memory fake of the Supabase client for auth/gate tests; no network.
  * `emit` drives `onAuthStateChange` (e.g. sign-out); the auth methods are spies so
  * tests can assert calls.
  */

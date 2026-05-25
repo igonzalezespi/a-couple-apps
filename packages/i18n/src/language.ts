@@ -22,7 +22,7 @@ export interface ResolveLanguageOptions {
 
 /**
  * Resolve the effective language. Precedence:
- * explicit user setting → couple.config default → device locale → `en`.
+ * explicit user setting, then couple.config default, then device locale, then `en`.
  */
 export function resolveLanguage(options: ResolveLanguageOptions = {}): Language {
   const { user, configDefault, deviceLocale } = options;
