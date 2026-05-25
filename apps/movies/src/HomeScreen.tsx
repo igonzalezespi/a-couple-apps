@@ -33,7 +33,7 @@ export function HomeScreen() {
       <Watchlist />
       <Button onPress={() => void setLanguage(language === 'en' ? 'es' : 'en')}>
         <Text color="$onPrimary">
-          {t('language')}: {language}
+          {t('language')}: {t(language === 'en' ? 'english' : 'spanish')}
         </Text>
       </Button>
       <Button tone="neutral" onPress={() => void signOut(client)}>

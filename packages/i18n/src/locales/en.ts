@@ -29,7 +29,10 @@ export const en = {
   watchlist: 'Watchlist',
   watched: 'Watched',
   markWatched: 'Mark watched',
-  watchlistEmpty: 'Your watchlist is empty.'
+  watchlistEmpty: 'Your watchlist is empty.',
+  added: 'Added',
+  alreadyOnWatchlist: 'Already on your watchlist.',
+  poster: '{{title}} poster'
 } as const;
 
 /** The translation keys every locale must provide. */
