@@ -18,7 +18,7 @@
       "dependsOn": ["^build"]
     },
     "e2e": {
-      "dependsOn": ["build"]
+      "cache": false
     },
     "clean": {
       "cache": false
