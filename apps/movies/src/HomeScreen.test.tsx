@@ -18,24 +18,24 @@ vi.mock('./hooks/useWatchlist', () => ({
 }));
 
 describe('HomeScreen', () => {
-  it('renders localized strings + a sign-out action from the shared packages', () => {
-    renderWithProviders(<HomeScreen />, makeFakeClient({ user: { id: 'u1' } }).client);
+  it('renders localized strings + a switch-person action from the shared packages', () => {
+    renderWithProviders(<HomeScreen />, makeFakeClient().client);
 
     expect(screen.getByText('A Couple Apps')).toBeTruthy();
     expect(screen.getByText('Movies')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Sign out' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Switch person' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Search' })).toBeTruthy();
   });
 
   it('renders Spanish strings when the language is es', () => {
-    renderWithProviders(<HomeScreen />, makeFakeClient({ user: { id: 'u1' } }).client, 'es');
+    renderWithProviders(<HomeScreen />, makeFakeClient().client, 'es');
 
     expect(screen.getByText('Películas')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Cerrar sesión' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Cambiar de persona' })).toBeTruthy();
   });
 
   it('switches the visible strings when the language is toggled', async () => {
-    renderWithProviders(<HomeScreen />, makeFakeClient({ user: { id: 'u1' } }).client);
+    renderWithProviders(<HomeScreen />, makeFakeClient().client);
 
     expect(screen.getByText('Movies')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: /Language:/ }));

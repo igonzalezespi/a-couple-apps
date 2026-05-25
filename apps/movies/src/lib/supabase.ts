@@ -1,6 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
-
 import { parseSupabaseEnv } from '@aca/config';
 import { createSupabaseClient } from '@aca/core';
 
@@ -14,10 +11,7 @@ const env = parseSupabaseEnv({
 });
 
 /**
- * The app's single Supabase client (created once). Native persists the session in
- * AsyncStorage; web uses localStorage (Supabase's default), so it needs no override.
+ * The app's single Supabase client (created once). There is no auth/session: the app talks to
+ * the couple's own project with the anon key, and identity is the locally-selected person.
  */
-export const supabase = createSupabaseClient(
-  env,
-  Platform.OS === 'web' ? undefined : { auth: { storage: AsyncStorage } }
-);
+export const supabase = createSupabaseClient(env);

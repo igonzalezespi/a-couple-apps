@@ -112,21 +112,21 @@ Current status (2026-05): the foundation + the movies app are implemented and **
 
 ---
 
-## Phase 5 — Data & auth layer (`packages/core`)
+## Phase 5 — Data layer (`packages/core`)
 
-**Goal:** Supabase client, auth, and realtime sync — the only data boundary.
+**Goal:** Supabase client, person selection, and realtime sync — the only data boundary.
 
 **Tasks**
-- Supabase client wired to env via `@aca/config`; auth hooks; `QueryClient` provider.
+- Supabase client wired to env via `@aca/config`; person-selection provider; `QueryClient` provider.
 - zod contracts in `core/src/contracts.ts`; realtime helper feeding the query cache.
-- `supabase/migrations/` — one project; `shared` Postgres schema + auth/realtime plumbing only (per-app schemas land with their apps).
+- `supabase/migrations/` — one project; `shared` Postgres schema + realtime plumbing only (per-app schemas land with their apps).
 
 **Acceptance criteria**
-- Sign-in exposes a session via `@aca/core`; sign-out clears it.
+- Selecting a person exposes it via `@aca/core`; switching person clears the selection.
 - A change by user A invalidates/updates user B's cache and UI without manual refresh.
 - Apps importing `@supabase/supabase-js` directly fail the lint boundary.
 
-**Packages touched:** `data-and-auth` (`packages/core`), `secrets-and-env`
+**Packages touched:** `data-layer` (`packages/core`), `secrets-and-env`
 
 ---
 

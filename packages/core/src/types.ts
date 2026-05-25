@@ -1,11 +1,10 @@
-import { type Profile } from './contracts';
-
 type EmptyRecord = Record<string, never>;
 
 /**
- * Minimal placeholder of the Supabase database shape for the `shared` schema.
- * Regenerate from the real project with `supabase gen types typescript` once it
- * exists; per-app schemas (`movies`, `plans`) are added by their app changes.
+ * Minimal placeholder of the Supabase database shape. `public` and `shared` carry no tables
+ * yet (there is no auth -- identity is a local person choice, see couple.config -- so no
+ * `profiles`); per-app schemas (`movies`, `plans`) are added by their app changes. Regenerate
+ * from the real project with `supabase gen types typescript` once it grows.
  */
 export type Database = {
   public: {
@@ -16,14 +15,7 @@ export type Database = {
     CompositeTypes: EmptyRecord;
   };
   shared: {
-    Tables: {
-      profiles: {
-        Row: Profile;
-        Insert: Pick<Profile, 'id' | 'display_name'> & Partial<Profile>;
-        Update: Partial<Profile>;
-        Relationships: [];
-      };
-    };
+    Tables: EmptyRecord;
     Views: EmptyRecord;
     Functions: EmptyRecord;
     Enums: EmptyRecord;
@@ -39,7 +31,7 @@ export type Database = {
           poster_path: string | null;
           release_date: string | null;
           watched: boolean;
-          added_by: string;
+          added_by: string | null;
           created_at: string;
         };
         Insert: {
@@ -49,7 +41,7 @@ export type Database = {
           poster_path?: string | null;
           release_date?: string | null;
           watched?: boolean;
-          added_by?: string;
+          added_by?: string | null;
           created_at?: string;
         };
         Update: {
@@ -59,7 +51,7 @@ export type Database = {
           poster_path?: string | null;
           release_date?: string | null;
           watched?: boolean;
-          added_by?: string;
+          added_by?: string | null;
           created_at?: string;
         };
         Relationships: [];

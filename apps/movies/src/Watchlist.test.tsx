@@ -29,7 +29,7 @@ const ITEMS = [
     poster_path: '/m.jpg',
     release_date: '1999-03-31',
     watched: false,
-    added_by: 'u',
+    added_by: 'personA',
     created_at: '2024-01-02T00:00:00Z'
   },
   {
@@ -39,7 +39,7 @@ const ITEMS = [
     poster_path: null,
     release_date: '2014-10-24',
     watched: true,
-    added_by: 'u',
+    added_by: 'personA',
     created_at: '2024-01-01T00:00:00Z'
   }
 ];
@@ -96,11 +96,18 @@ describe('Watchlist', () => {
     expect(screen.getByText('To watch')).toBeTruthy();
   });
 
-  it('attributes an item to you when your session added it', async () => {
-    renderWithProviders(<Watchlist />, makeFakeClient({ user: { id: 'u' } }).client);
+  it('attributes items added by the current person to "you"', async () => {
+    renderWithProviders(<Watchlist />, makeFakeClient().client); // current person = personA
 
-    // useSession resolves the session asynchronously, so wait for the attribution.
+    // The selected person loads asynchronously, so wait for the attribution.
     expect((await screen.findAllByText('Added by you')).length).toBeGreaterThan(0);
+  });
+
+  it("attributes the partner's items to their name", async () => {
+    // View as personB (Sam); the items were added by personA (Alex).
+    renderWithProviders(<Watchlist />, makeFakeClient().client, 'en', undefined, 'personB');
+
+    expect((await screen.findAllByText('Added by Alex')).length).toBeGreaterThan(0);
   });
 
   it('shows the loading state when data is still being fetched', () => {

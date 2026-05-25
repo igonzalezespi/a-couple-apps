@@ -1,35 +1,25 @@
 # Movies watchlist - native e2e (Maestro).
 #
-# Mirrors the Playwright web smoke (apps/movies/e2e/movies.spec.ts): sign in ->
-# search -> add -> mark watched. Runs on the maintainer's simulator/emulator, not
-# in CI (see openspec/changes/apps-movies/design.md Non-Goals). See .maestro/README.md
-# for prerequisites (appId, a Supabase test OTP), then: maestro test .maestro/movies-watchlist.yaml
+# Mirrors the Playwright web smoke (apps/movies/e2e/movies.spec.ts): pick a person -> search ->
+# add -> mark watched. There is no auth -- identity is a local person choice. Runs on a
+# simulator/emulator (and the label-gated Android CI job). See .maestro/README.md, then:
+#   maestro test .maestro/movies-watchlist.yaml
 #
-# appId must match apps/movies/app.config.ts (ios.bundleIdentifier / android.package).
-# Those native ids are not set yet; update this when they are.
+# appId must match apps/movies/app.config.ts (android.package / ios.bundleIdentifier).
 appId: com.acouple.movies
-env:
-  # A Supabase "test" email + fixed OTP (Auth > configured test users); never a real address.
-  TEST_EMAIL: e2e@example.com
-  TEST_OTP: '123456'
 ---
 - launchApp:
-    clearState: true # start signed out
+    clearState: true # start at the person picker
 
-# Auth gate: passwordless email OTP.
-- assertVisible: 'Sign in'
-- tapOn: 'Email'
-- inputText: ${TEST_EMAIL}
-- tapOn: 'Send code'
-- tapOn: 'Code'
-- inputText: ${TEST_OTP}
-- tapOn: 'Verify'
+# No auth: pick which member of the couple you are (couple.config placeholders).
+- assertVisible: 'Who is using this?'
+- tapOn: 'Person A'
 
-# Authenticated home.
-- assertVisible: 'Sign out'
+# Home.
+- assertVisible: 'Switch person'
 
-# Search and add.
-- tapOn: 'Search'
+# Search and add (the empty-state call to action opens search).
+- tapOn: 'Search for a movie'
 - tapOn: 'Search movies' # the search field (placeholder)
 - inputText: 'matrix'
 - pressKey: Enter
