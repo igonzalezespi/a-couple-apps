@@ -29,12 +29,16 @@ export const en = {
   watchlist: 'Watchlist',
   watched: 'Watched',
   markWatched: 'Mark watched',
-  watchlistEmpty: 'Your watchlist is empty.',
+  watchlistEmpty: "Nothing here yet. Add a movie you'd like to watch together.",
   added: 'Added',
   alreadyOnWatchlist: 'Already on your watchlist.',
   poster: '{{title}} poster',
   authError: 'Could not sign in. Please try again.',
-  tooManyRequests: 'Too many attempts. Wait a minute and try again.'
+  tooManyRequests: 'Too many attempts. Wait a minute and try again.',
+  toWatch: 'To watch',
+  addedByYou: 'Added by you',
+  addedByPartner: 'Added by your partner',
+  addFirstMovie: 'Search for a movie'
 } as const;
 
 /** The translation keys every locale must provide. */

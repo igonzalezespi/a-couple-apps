@@ -4,6 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeFakeClient, renderWithProviders } from './test/fakeClient';
 import { Watchlist } from './Watchlist';
 
+vi.mock('expo-router', () => ({
+  useRouter: () => ({ push: vi.fn(), back: vi.fn() })
+}));
+
 const h = vi.hoisted(() => ({
   result: { data: [] as unknown[] | undefined, isLoading: false, isError: false },
   setWatched: vi.fn(),
@@ -76,11 +80,27 @@ describe('Watchlist', () => {
     expect(h.remove).toHaveBeenCalledWith('id-0');
   });
 
-  it('shows an empty state when there are no items', () => {
+  it('shows an empty state with a call to action when there are no items', () => {
     h.result = { data: [], isLoading: false, isError: false };
     renderWatchlist();
 
-    expect(screen.getByText('Your watchlist is empty.')).toBeTruthy();
+    expect(
+      screen.getByText("Nothing here yet. Add a movie you'd like to watch together.")
+    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Search for a movie' })).toBeTruthy();
+  });
+
+  it('splits items into a to-watch section', () => {
+    renderWatchlist();
+
+    expect(screen.getByText('To watch')).toBeTruthy();
+  });
+
+  it('attributes an item to you when your session added it', async () => {
+    renderWithProviders(<Watchlist />, makeFakeClient({ user: { id: 'u' } }).client);
+
+    // useSession resolves the session asynchronously, so wait for the attribution.
+    expect((await screen.findAllByText('Added by you')).length).toBeGreaterThan(0);
   });
 
   it('shows the loading state when data is still being fetched', () => {
