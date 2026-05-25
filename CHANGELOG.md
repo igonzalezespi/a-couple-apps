@@ -26,7 +26,8 @@ All notable changes to this project are documented here. The format is based on
 - Tests: Vitest + Testing Library unit/component suites, a hermetic Playwright web e2e smoke,
   and a Maestro native flow.
 - CI: GitHub Actions quality-gates (lint, typecheck, test, build, web e2e, gitleaks) behind an
-  aggregate `ci-gate`, plus a label-gated native e2e scaffold.
+  aggregate `ci-gate`, plus a label-gated native e2e scaffold (written; activation pending a
+  `workflow`-scope push of `.github/workflows/`).
 - Docs: README, CONTRIBUTING, ARCHITECTURE, ROADMAP, and ADR-0001 (foundation stack).
 
 ### Notes
