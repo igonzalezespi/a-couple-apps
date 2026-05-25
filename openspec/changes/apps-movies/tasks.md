@@ -35,9 +35,9 @@
 
 ## 7. i18n + states
 
-- [ ] 7.1 Route all user-facing strings through `@aca/i18n` (add movie keys to en/es); add a language switch
-- [ ] 7.2 Loading / empty / error states for search + watchlist
-- [ ] 7.3 Test a localized render + the language switch updates strings
+- [x] 7.1 Route all user-facing strings through `@aca/i18n` (add movie keys to en/es); add a language switch
+- [x] 7.2 Loading / empty / error states for search + watchlist
+- [x] 7.3 Test a localized render + the language switch updates strings
 
 ## 8. End-to-end
 

@@ -2,6 +2,7 @@ import { render, type RenderResult } from '@testing-library/react';
 import { type ReactElement } from 'react';
 import { vi } from 'vitest';
 
+import { type Language } from '@aca/config';
 import { CoreProvider, createQueryClient, type AppSupabaseClient } from '@aca/core';
 import { createI18n, I18nProvider } from '@aca/i18n';
 import { UIProvider } from '@aca/ui';
@@ -38,10 +39,14 @@ export function makeFakeClient(initialSession: unknown = null) {
 }
 
 /** Render `ui` inside the app's real providers (UI + i18n + core), backed by `client`. */
-export function renderWithProviders(ui: ReactElement, client: AppSupabaseClient): RenderResult {
+export function renderWithProviders(
+  ui: ReactElement,
+  client: AppSupabaseClient,
+  language: Language = 'en'
+): RenderResult {
   return render(
     <UIProvider>
-      <I18nProvider i18n={createI18n('en')}>
+      <I18nProvider i18n={createI18n(language)}>
         <CoreProvider client={client} queryClient={createQueryClient()}>
           {ui}
         </CoreProvider>

@@ -51,7 +51,14 @@ function WatchlistRow({
   return (
     <Card>
       <XStack gap="$3">
-        {poster ? <Image source={{ uri: poster }} width={46} height={69} /> : null}
+        {poster ? (
+          <Image
+            source={{ uri: poster }}
+            width={46}
+            height={69}
+            accessibilityLabel={t('poster', { title: item.title })}
+          />
+        ) : null}
         <YStack flex={1} gap="$2">
           <Text fontWeight="600">{year ? `${item.title} (${year})` : item.title}</Text>
           <XStack gap="$2">
