@@ -7,8 +7,12 @@ coverage
 
 # Ported / authored-as-is content — not prettier's domain
 .claude
+.agents
 scripts/opsx
 openspec
 
 # Long-form prose (avoid reflow churn)
 *.md
+
+# Expo-generated (also gitignored; regenerated on build)
+expo-env.d.ts

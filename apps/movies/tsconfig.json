@@ -3,6 +3,15 @@
   "compilerOptions": {
     "jsx": "react-jsx"
   },
-  "include": ["app", "src", "e2e", "app.config.ts", "playwright.config.ts", "vitest.config.ts"],
+  "include": [
+    "app",
+    "src",
+    "e2e",
+    "app.config.ts",
+    "playwright.config.ts",
+    "vitest.config.ts",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
   "exclude": ["node_modules", "dist", ".expo"]
 }
