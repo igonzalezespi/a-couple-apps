@@ -11,8 +11,9 @@ See also: `ROADMAP.md` (phased plan), `openspec/` (specs + change proposals),
 
 - **Open-source code, private per-couple instance.** The code is reusable (MIT); a running
   app belongs to one couple and talks to that couple's own Supabase project. There is no
-  shared multi-tenant backend. "The couple" is every authenticated user of one instance, so
-  Row Level Security scopes by `authenticated` with no tenant column.
+  shared multi-tenant backend, and no login: a build is private to one couple, so the app
+  asks which of the two people you are (saved on-device). Row Level Security targets the
+  `anon` role -- the couple's own keys are the boundary -- with no tenant column.
 - **One design system, identical everywhere.** All styling comes from `@aca/ui` (Tamagui
   tokens/themes). Apps never hard-code colors or spacing, so iOS, Android, and web match.
 - **One data boundary.** Only `packages/core` imports `@supabase/supabase-js`. Apps use
@@ -28,7 +29,7 @@ apps/
   (plans/)           Phase 7: shared plans/events (same pattern)
 packages/
   ui/                Tamagui design system: tokens, themes, primitives. Presentation only.
-  core/              The data boundary: Supabase client, auth, realtime, TanStack Query,
+  core/              The data boundary: Supabase client, person selection, realtime, TanStack Query,
                      shared zod contracts. The only importer of @supabase/supabase-js.
   config/            zod schema + loader for couple.config.ts; env parsing + SENSITIVE_ENV_VARS.
   i18n/              en/es translations, language switching, resolveExternalLang() for TMDB.
@@ -54,21 +55,24 @@ realtime: Postgres change -> supabase_realtime publication -> @aca/core channel
 
 - **Server cache:** TanStack Query (keys prefixed by table name so realtime can invalidate).
 - **Local UI state:** Zustand (per app, as needed).
-- **Auth:** passwordless email OTP via Supabase; `@aca/core` `useSession` gates the app.
+- **Identity:** no accounts. `@aca/core` `PersonProvider` stores which of the couple's two
+  people you are (on-device); the app gates on that selection, not a session.
 - **External data language:** the configured app language drives TMDB requests via
   `resolveExternalLang` (en -> en-US, es -> es-ES).
 
 ## Backend (Supabase, one project per couple)
 
-- `shared` schema (cross-app, e.g. `profiles`) + per-app schemas (`movies`, later `plans`).
-- RLS: authenticated users (the couple) read/write the shared data; inserts are attributed
-  to `auth.uid()`; the shared watchlist is editable by either partner (UPDATE granted only on
-  the `watched` column so attribution cannot be overwritten).
+- `shared` schema (cross-app data; no tables yet under the no-auth model) + per-app schemas
+  (`movies`, later `plans`).
+- RLS: the `anon` role read/writes the shared data (the couple's own keys are the boundary);
+  inserts are attributed to the selected person id; the shared watchlist is editable by either
+  partner (UPDATE granted only on the `watched` column so attribution cannot be overwritten).
 - Realtime: tables are added to the `supabase_realtime` publication so both partners stay in
   sync without a manual refresh.
-- Custom schemas are explicitly granted to `authenticated` and exposed in the Data API
+- Custom schemas are explicitly granted to `anon` and exposed in the Data API
   (PostgREST exposes only `public` by default).
-- Optional `shared.allowed_emails` allowlist (fail-open until populated) restricts sign-ups.
+- There is no sign-up surface to restrict: the boundary is the private build that ships the
+  couple's anon key, not per-user accounts.
 
 ## Testing
 

@@ -16,13 +16,13 @@ All notable changes to this project are documented here. The format is based on
   `SENSITIVE_ENV_VARS`; neutral placeholders shipped upstream.
 - `@aca/i18n`: en/es translations, runtime language switching, and `resolveExternalLang`
   (drives the TMDB request locale).
-- `@aca/core`: the single data boundary - Supabase client, email-OTP auth, realtime sync,
-  TanStack Query, and shared zod contracts.
-- `apps/movies`: shared movie watchlist - email-OTP auth gate, TMDB search in the configured
+- `@aca/core`: the single data boundary - Supabase client, on-device person selection,
+  realtime sync, TanStack Query, and shared zod contracts.
+- `apps/movies`: shared movie watchlist - no-login person selection, TMDB search in the configured
   language, add / remove / mark-watched, realtime sync between partners, full en/es i18n with
   loading/empty/error states, and accessibility labels.
-- Supabase schema: `shared` + `movies` schemas with RLS, role grants, realtime publication,
-  and an optional fail-open email allowlist to lock sign-ups to the couple.
+- Supabase schema: `shared` + `movies` schemas with RLS and `anon` role grants (no auth; the
+  private build's anon key is the boundary) and the realtime publication.
 - Tests: Vitest + Testing Library unit/component suites, a hermetic Playwright web e2e smoke,
   and a Maestro native flow.
 - CI: GitHub Actions quality-gates (lint, typecheck, test, build, web e2e, gitleaks) behind an

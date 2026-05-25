@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import {
   subscribeCoupleChannel,
+  useCurrentPerson,
   useMutation,
   useQuery,
   useQueryClient,
@@ -36,13 +37,17 @@ export function useWatchlist() {
   });
 }
 
-/** Add a movie. `added_by` defaults to the current user in Postgres. */
+/** Add a movie, attributed to the current person (no auth; identity is the selected person). */
 export function useAddToWatchlist() {
   const client = useSupabase();
+  const { person } = useCurrentPerson();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (item: NewWatchlistItem): Promise<void> => {
-      const { error } = await client.schema(SCHEMA).from(TABLE).insert(item);
+      const { error } = await client
+        .schema(SCHEMA)
+        .from(TABLE)
+        .insert({ ...item, ...(person ? { added_by: person.id } : {}) });
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })

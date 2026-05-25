@@ -5,10 +5,16 @@ export {
   type CreateSupabaseClientOptions
 } from './client';
 export { type Database } from './types';
-export { profileContract, type Profile } from './contracts';
 export { createQueryClient } from './query';
 export { CoreProvider, useSupabase, type CoreProviderProps } from './provider';
-export { useSession, signOut, type SessionState } from './auth';
+export {
+  PersonProvider,
+  useCurrentPerson,
+  type Person,
+  type PersonStorage,
+  type CurrentPersonState,
+  type PersonProviderProps
+} from './person';
 export { invalidateForTable, subscribeCoupleChannel, type CoupleChannelOptions } from './realtime';
 
 // Re-export TanStack Query so apps share one instance/types via @aca/core.

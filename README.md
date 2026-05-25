@@ -11,8 +11,10 @@ This repository is open source, but it is **not** a hosted, multi-tenant service
 - The **code** is public and reusable (MIT, see [License](#license)).
 - A running **app** belongs to exactly one couple and talks to **that couple's own**
   Supabase project. There is no shared backend, no public sign-up, no "everyone" database.
-- "The couple" is simply every authenticated user of one instance -- so Row Level Security
-  scopes data by `authenticated`, with no `couples` table and no tenant column.
+- There is **no login**. A build is private to one couple, so on first launch the app just
+  asks **which of the two people you are** (saved on-device) and attributes what you add to
+  them. The couple's own Supabase keys are the boundary; Row Level Security targets `anon`,
+  with no `couples` table and no tenant column.
 
 Want it for yourself? **Fork it, create your own Supabase project, and build it.** See
 [Self-hosting your own instance](#self-hosting-your-own-instance). Personal data (names,
@@ -44,7 +46,7 @@ apps/
   movies/            Expo app: shared movie watchlist
 packages/
   ui/                Tamagui tokens, themes, primitives (all styling lives here)
-  core/              the only data boundary: Supabase client, auth, realtime, query, zod contracts
+  core/              the only data boundary: Supabase client, person selection, realtime, query, zod contracts
   config/            zod schema + loader for couple.config.ts; env parsing
   i18n/              en/es translations, language switching, resolveExternalLang()
   eslint-config/     shared flat ESLint config
@@ -93,12 +95,10 @@ client-safe (RLS enforces access); never put the `service_role` key in any clien
 3. **Expose the custom schemas.** Dashboard -> Project Settings -> API -> **Exposed schemas**:
    add `shared` and `movies` (PostgREST only exposes `public` by default; the app calls
    `.schema('movies')`).
-4. **Enable email OTP.** Dashboard -> Authentication -> Providers -> **Email**. New addresses
-   auto-create on first sign-in. The built-in email sender is heavily rate-limited (a few
-   per hour, for testing only), so configure **custom SMTP** (e.g. Resend's free tier) for
-   real use -- otherwise you will hit `email rate limit exceeded` after a couple of sign-ins.
-5. **Fill `.env`** with your project URL + anon key and your TMDB key (step 2 of Quick start).
-6. **Fill `couple.config.ts`** with your two people, default language, and optional theme.
+4. **Fill `.env`** with your project URL + anon key and your TMDB key (step 2 of Quick start).
+5. **Fill `couple.config.ts`** with your two people, default language, and optional theme.
+   There is **no login** -- the app asks which of the two you are on first launch, so the
+   names you set here are exactly what each of you picks. No emails, no auth, no SMTP to set up.
 
 Keep your filled `couple.config.ts` and `.env` local to your instance -- do not push real
 personal data or keys to a public fork.
