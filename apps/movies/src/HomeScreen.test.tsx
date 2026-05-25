@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { HomeScreen } from './HomeScreen';
@@ -25,5 +25,22 @@ describe('HomeScreen', () => {
     expect(screen.getByText('Movies')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Sign out' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Search' })).toBeTruthy();
+  });
+
+  it('renders Spanish strings when the language is es', () => {
+    renderWithProviders(<HomeScreen />, makeFakeClient({ user: { id: 'u1' } }).client, 'es');
+
+    expect(screen.getByText('Películas')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Cerrar sesión' })).toBeTruthy();
+  });
+
+  it('switches the visible strings when the language is toggled', async () => {
+    renderWithProviders(<HomeScreen />, makeFakeClient({ user: { id: 'u1' } }).client);
+
+    expect(screen.getByText('Movies')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /Language:/ }));
+
+    expect(await screen.findByText('Películas')).toBeTruthy();
+    expect(screen.queryByText('Movies')).toBeNull();
   });
 });

@@ -32,5 +32,8 @@ export const es: Record<TranslationKey, string> = {
   watchlist: 'Lista',
   watched: 'Vista',
   markWatched: 'Marcar vista',
-  watchlistEmpty: 'Tu lista está vacía.'
+  watchlistEmpty: 'Tu lista está vacía.',
+  added: 'En la lista',
+  alreadyOnWatchlist: 'Ya está en tu lista.',
+  poster: 'Póster de {{title}}'
 };
