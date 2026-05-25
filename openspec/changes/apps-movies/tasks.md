@@ -13,9 +13,9 @@
 
 ## 3. TMDB search
 
-- [ ] 3.1 `apps/movies/src/lib/tmdb.ts` — `fetch`-based search using `resolveExternalLang(language)` for `language=`
-- [ ] 3.2 Search screen: query input → results list (`@aca/ui` + TanStack Query via `@aca/core`)
-- [ ] 3.3 Test `tmdb.ts` with a mocked `fetch`: search passes the configured language; maps the response to a typed result
+- [x] 3.1 `apps/movies/src/lib/tmdb.ts` — `fetch`-based search using `resolveExternalLang(language)` for `language=`
+- [x] 3.2 Search screen: query input → results list (`@aca/ui` + TanStack Query via `@aca/core`)
+- [x] 3.3 Test `tmdb.ts` with a mocked `fetch`: search passes the configured language; maps the response to a typed result
 
 ## 4. Movies schema + watchlist data
 
