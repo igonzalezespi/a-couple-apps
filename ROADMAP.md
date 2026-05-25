@@ -218,6 +218,35 @@ Status legend: ⬜ not started · 🟡 in progress · ✅ done
 
 ---
 
+## Phase 11 - Over-the-air auto-update (no-touch updates)
+
+**Goal:** The app updates itself on launch -- no app-store download or manual step for
+either partner. Open the app, it fetches the latest and runs it.
+
+**Investigation / tasks**
+- Use `expo-updates` (OTA JS + asset bundle updates). On native, check on launch
+  (`Updates.checkForUpdateAsync` / `fetchUpdateAsync`) then reload to apply (auto, or after
+  a brief "updating" splash). Web is always-latest on each deploy.
+- Self-hosted publishing: `expo-updates` speaks the Expo Updates protocol and can point at a
+  **custom update server**, so updates can be hosted wherever the maintainer chooses (an
+  open-source updates server or static host), not only EAS Update. Pick EAS Update vs.
+  self-hosted and document the publish step.
+- Configure `runtimeVersion` + the update URL/channel; handle the launch-check UX and the
+  offline/failure fallback (run the cached bundle).
+- **Boundary:** OTA ships only JS/asset changes. Native changes (new native modules, an Expo
+  SDK bump) still need a fresh native build (EAS Build or a sideloaded APK/IPA); the matching
+  `runtimeVersion` gates which builds an update applies to.
+
+**Acceptance criteria**
+- With a newer update published, launching the installed app fetches and applies it with no
+  user action; an offline launch still runs the last good bundle.
+- Native-level changes are documented as requiring a rebuild, and the publish flow is written
+  down so the maintainer can ship updates unattended for the other partner.
+
+**Packages touched:** `apps/movies` (+ `apps/plans`), release tooling
+
+---
+
 ## Dependency order (at a glance)
 
 ```
