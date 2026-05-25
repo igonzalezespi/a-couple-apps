@@ -1,3 +1,5 @@
+import { useRouter } from 'expo-router';
+
 import { getSharedConfig } from '@aca/config';
 import { signOut, useSupabase } from '@aca/core';
 import { useLocale } from '@aca/i18n';
@@ -11,6 +13,7 @@ const [personA, personB] = getSharedConfig(coupleConfig).people;
 export function HomeScreen() {
   const { t, language, setLanguage } = useLocale();
   const client = useSupabase();
+  const router = useRouter();
   return (
     <Screen>
       <Text fontSize="$7" fontWeight="700">
@@ -22,6 +25,9 @@ export function HomeScreen() {
           {personA.displayName} &amp; {personB.displayName}
         </Text>
       </Card>
+      <Button onPress={() => router.push('/search')}>
+        <Text color="$onPrimary">{t('search')}</Text>
+      </Button>
       <Button onPress={() => void setLanguage(language === 'en' ? 'es' : 'en')}>
         <Text color="$onPrimary">
           {t('language')}: {language}

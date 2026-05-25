@@ -20,7 +20,12 @@ export const en = {
   verify: 'Verify',
   back: 'Back',
   signOut: 'Sign out',
-  loading: 'Loading…'
+  loading: 'Loading…',
+  search: 'Search',
+  searchPlaceholder: 'Search movies',
+  searchPrompt: 'Search for a movie.',
+  noResults: 'No results.',
+  searchError: 'Something went wrong. Try again.'
 } as const;
 
 /** The translation keys every locale must provide. */
