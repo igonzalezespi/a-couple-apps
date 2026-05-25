@@ -35,5 +35,7 @@ export const es: Record<TranslationKey, string> = {
   watchlistEmpty: 'Tu lista está vacía.',
   added: 'En la lista',
   alreadyOnWatchlist: 'Ya está en tu lista.',
-  poster: 'Póster de {{title}}'
+  poster: 'Póster de {{title}}',
+  authError: 'No se pudo iniciar sesión. Inténtalo de nuevo.',
+  tooManyRequests: 'Demasiados intentos. Espera un minuto e inténtalo de nuevo.'
 };
