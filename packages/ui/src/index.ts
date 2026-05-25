@@ -10,6 +10,8 @@ export {
   Button,
   type ButtonProps,
   Card,
+  Image,
+  type ImageProps,
   Input,
   type InputProps,
   Screen,

@@ -86,3 +86,10 @@ export async function searchMovies({
   const body = (await response.json()) as RawSearchResponse;
   return (body.results ?? []).map(toMovieResult);
 }
+
+const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
+
+/** Build a TMDB poster URL from a `poster_path` (e.g. `/x.jpg`), or null when there is none. */
+export function posterUrl(path: string | null, size: string = 'w185'): string | null {
+  return path ? `${TMDB_IMAGE_BASE_URL}/${size}${path}` : null;
+}

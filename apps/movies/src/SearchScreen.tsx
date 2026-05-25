@@ -3,17 +3,17 @@ import { useState } from 'react';
 
 import { useQuery } from '@aca/core';
 import { useLocale } from '@aca/i18n';
-import { Button, Card, Input, Screen, Text, YStack } from '@aca/ui';
+import { Button, Card, Image, Input, Screen, Text, XStack, YStack } from '@aca/ui';
 
-import { searchMovies, type MovieResult } from './lib/tmdb';
+import { useAddToWatchlist } from './hooks/useWatchlist';
+import { posterUrl, searchMovies, type MovieResult } from './lib/tmdb';
+import { type NewWatchlistItem } from './lib/watchlist';
 
-/**
- * Search TMDB and list results in the configured language. Adding a result to the
- * shared watchlist arrives in a later slice; this screen is search + display only.
- */
+/** Search TMDB in the configured language; add a result to the shared watchlist. */
 export function SearchScreen() {
   const router = useRouter();
   const { t, language } = useLocale();
+  const add = useAddToWatchlist();
   const [term, setTerm] = useState('');
   const [query, setQuery] = useState('');
 
@@ -45,21 +45,38 @@ export function SearchScreen() {
       <Button disabled={term.trim().length === 0} onPress={submit}>
         <Text color="$onPrimary">{t('search')}</Text>
       </Button>
-      <Results query={query} isLoading={isLoading} isError={isError} results={data} />
+      <Results
+        query={query}
+        isLoading={isLoading}
+        isError={isError}
+        results={data}
+        onAdd={(movie) => add.mutate(toNewItem(movie))}
+      />
     </Screen>
   );
+}
+
+function toNewItem(movie: MovieResult): NewWatchlistItem {
+  return {
+    tmdb_id: movie.id,
+    title: movie.title,
+    poster_path: movie.posterPath,
+    release_date: movie.releaseDate || null
+  };
 }
 
 function Results({
   query,
   isLoading,
   isError,
-  results
+  results,
+  onAdd
 }: {
   query: string;
   isLoading: boolean;
   isError: boolean;
   results: MovieResult[] | undefined;
+  onAdd: (movie: MovieResult) => void;
 }) {
   const { t } = useLocale();
   if (query.length === 0) return <Text color="$colorMuted">{t('searchPrompt')}</Text>;
@@ -69,25 +86,35 @@ function Results({
   return (
     <YStack gap="$2">
       {results.map((movie) => (
-        <MovieRow key={movie.id} movie={movie} />
+        <MovieRow key={movie.id} movie={movie} onAdd={onAdd} />
       ))}
     </YStack>
   );
 }
 
-function MovieRow({ movie }: { movie: MovieResult }) {
+function MovieRow({ movie, onAdd }: { movie: MovieResult; onAdd: (movie: MovieResult) => void }) {
+  const { t } = useLocale();
   const year = movie.releaseDate ? movie.releaseDate.slice(0, 4) : null;
+  const poster = posterUrl(movie.posterPath);
   return (
     <Card>
-      <Text fontWeight="600">{year ? `${movie.title} (${year})` : movie.title}</Text>
-      {movie.voteAverage > 0 ? (
-        <Text color="$colorMuted">{`${movie.voteAverage.toFixed(1)}/10`}</Text>
-      ) : null}
-      {movie.overview ? (
-        <Text color="$colorMuted" numberOfLines={3}>
-          {movie.overview}
-        </Text>
-      ) : null}
+      <XStack gap="$3">
+        {poster ? <Image source={{ uri: poster }} width={46} height={69} /> : null}
+        <YStack flex={1} gap="$2">
+          <Text fontWeight="600">{year ? `${movie.title} (${year})` : movie.title}</Text>
+          {movie.voteAverage > 0 ? (
+            <Text color="$colorMuted">{`${movie.voteAverage.toFixed(1)}/10`}</Text>
+          ) : null}
+          {movie.overview ? (
+            <Text color="$colorMuted" numberOfLines={3}>
+              {movie.overview}
+            </Text>
+          ) : null}
+          <Button onPress={() => onAdd(movie)}>
+            <Text color="$onPrimary">{t('add')}</Text>
+          </Button>
+        </YStack>
+      </XStack>
     </Card>
   );
 }

@@ -28,5 +28,9 @@ export const es: Record<TranslationKey, string> = {
   searchPlaceholder: 'Buscar películas',
   searchPrompt: 'Busca una película.',
   noResults: 'Sin resultados.',
-  searchError: 'Algo salió mal. Inténtalo de nuevo.'
+  searchError: 'Algo salió mal. Inténtalo de nuevo.',
+  watchlist: 'Lista',
+  watched: 'Vista',
+  markWatched: 'Marcar vista',
+  watchlistEmpty: 'Tu lista está vacía.'
 };

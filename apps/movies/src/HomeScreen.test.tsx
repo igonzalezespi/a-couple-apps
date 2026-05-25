@@ -8,6 +8,14 @@ vi.mock('expo-router', () => ({
   useRouter: () => ({ push: vi.fn(), back: vi.fn() })
 }));
 
+// HomeScreen now embeds <Watchlist/>; stub its data hooks so this test stays focused on
+// the home chrome (the watchlist itself is covered in Watchlist.test.tsx).
+vi.mock('./hooks/useWatchlist', () => ({
+  useWatchlist: () => ({ data: [], isLoading: false, isError: false }),
+  useSetWatched: () => ({ mutate: vi.fn() }),
+  useRemoveFromWatchlist: () => ({ mutate: vi.fn() })
+}));
+
 describe('HomeScreen', () => {
   it('renders localized strings + a sign-out action from the shared packages', () => {
     renderWithProviders(<HomeScreen />, makeFakeClient({ user: { id: 'u1' } }).client);
