@@ -47,7 +47,7 @@
 ## 9. Validation & verification
 
 - [x] 9.1 `pnpm preflight` green; `pnpm --filter movies test` green; `expo export -p web` builds
-- [ ] 9.2 `supabase db push` applies `0002_movies_schema.sql`; `movies` exposed in the API schemas
+- [x] 9.2 `supabase db push` applies `0002_movies_schema.sql`; `movies` exposed in the API schemas
 - [ ] 9.3 Manual device verification of the watchlist + realtime between two sessions (maintainer)
 
 ## Out of Scope
