@@ -19,9 +19,9 @@
 
 ## 4. Movies schema + watchlist data
 
-- [ ] 4.1 `supabase/migrations/0002_movies_schema.sql` — `movies.watchlist_items` (couple-scoped, watched flag) + RLS + realtime publication
-- [ ] 4.2 `@aca/core`-based hooks in the app: list/add/remove/mark-watched watchlist items (zod contract for the row)
-- [ ] 4.3 Test the hooks with a mocked Supabase client (add/remove/mark-watched call the right queries)
+- [x] 4.1 `supabase/migrations/0002_movies_schema.sql` — `movies.watchlist_items` (couple-scoped, watched flag) + RLS + realtime publication
+- [x] 4.2 `@aca/core`-based hooks in the app: list/add/remove/mark-watched watchlist items (zod contract for the row)
+- [x] 4.3 Test the hooks with a mocked Supabase client (add/remove/mark-watched call the right queries)
 
 ## 5. Watchlist UI
 

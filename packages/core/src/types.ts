@@ -29,4 +29,45 @@ export type Database = {
     Enums: EmptyRecord;
     CompositeTypes: EmptyRecord;
   };
+  movies: {
+    Tables: {
+      watchlist_items: {
+        Row: {
+          id: string;
+          tmdb_id: number;
+          title: string;
+          poster_path: string | null;
+          release_date: string | null;
+          watched: boolean;
+          added_by: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          tmdb_id: number;
+          title: string;
+          poster_path?: string | null;
+          release_date?: string | null;
+          watched?: boolean;
+          added_by?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          tmdb_id?: number;
+          title?: string;
+          poster_path?: string | null;
+          release_date?: string | null;
+          watched?: boolean;
+          added_by?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+    };
+    Views: EmptyRecord;
+    Functions: EmptyRecord;
+    Enums: EmptyRecord;
+    CompositeTypes: EmptyRecord;
+  };
 };
