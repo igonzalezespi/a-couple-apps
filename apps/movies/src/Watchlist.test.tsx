@@ -5,7 +5,7 @@ import { makeFakeClient, renderWithProviders } from './test/fakeClient';
 import { Watchlist } from './Watchlist';
 
 const h = vi.hoisted(() => ({
-  result: { data: [] as unknown[], isLoading: false, isError: false },
+  result: { data: [] as unknown[] | undefined, isLoading: false, isError: false },
   setWatched: vi.fn(),
   remove: vi.fn()
 }));
@@ -81,5 +81,19 @@ describe('Watchlist', () => {
     renderWatchlist();
 
     expect(screen.getByText('Your watchlist is empty.')).toBeTruthy();
+  });
+
+  it('shows the loading state when data is still being fetched', () => {
+    h.result = { data: undefined, isLoading: true, isError: false };
+    renderWatchlist();
+
+    expect(screen.getByText('Loading...')).toBeTruthy();
+  });
+
+  it('shows an error state when the watchlist query fails', () => {
+    h.result = { data: undefined, isLoading: false, isError: true };
+    renderWatchlist();
+
+    expect(screen.getByText('Something went wrong. Try again.')).toBeTruthy();
   });
 });
