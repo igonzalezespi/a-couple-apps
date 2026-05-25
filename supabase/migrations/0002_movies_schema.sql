@@ -48,5 +48,11 @@ create policy "watchlist delete by authenticated users"
   to authenticated
   using (true);
 
+-- API access: the app always runs as `authenticated` (behind the auth gate); the RLS
+-- policies above do the row-level control. Custom schemas need explicit grants (unlike
+-- `public`); `anon` is intentionally omitted - nothing is queried before sign-in.
+grant usage on schema movies to authenticated;
+grant select, insert, update, delete on movies.watchlist_items to authenticated;
+
 -- Realtime: broadcast row changes so both users stay in sync.
 alter publication supabase_realtime add table movies.watchlist_items;

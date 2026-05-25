@@ -24,5 +24,11 @@ create policy "users manage their own profile"
   using (auth.uid() = id)
   with check (auth.uid() = id);
 
+-- API access: the app always runs as `authenticated` (behind the auth gate), and the
+-- RLS policies above do the row-level control. Custom schemas need explicit grants
+-- (unlike `public`, which Supabase grants by default); `anon` is intentionally omitted.
+grant usage on schema shared to authenticated;
+grant select, insert, update, delete on shared.profiles to authenticated;
+
 -- Realtime: broadcast row changes so both users stay in sync.
 alter publication supabase_realtime add table shared.profiles;
