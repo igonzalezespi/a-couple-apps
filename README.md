@@ -72,9 +72,9 @@ pnpm install
 # 1. Configure your couple
 cp couple.config.example.ts couple.config.ts   # then edit names / language / theme
 
-# 2. Configure secrets (see .env.example)
-cp .env.example .env                            # fill SUPABASE_URL, SUPABASE_ANON_KEY, TMDB_API_KEY
-cp .env apps/movies/.env                         # Expo reads EXPO_PUBLIC_* from the app dir
+# 2. Configure secrets (.env.example documents both sets of vars)
+cp .env.example apps/movies/.env                 # the app reads EXPO_PUBLIC_* from here -- fill those in
+cp .env.example .env                             # optional root copy for tooling/scripts
 
 # 3. Run
 pnpm --filter movies web                         # web dev server
