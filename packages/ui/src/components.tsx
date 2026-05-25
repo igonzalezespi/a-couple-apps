@@ -1,5 +1,5 @@
 import { Text as CoreText, styled, useTheme, View, type GetProps } from '@tamagui/core';
-import { Image as RNImage, TextInput } from 'react-native';
+import { Platform, Image as RNImage, TextInput } from 'react-native';
 
 /** Vertical flex container. */
 export const YStack = styled(View, {
@@ -78,16 +78,16 @@ export type ButtonProps = GetProps<typeof ButtonFrame>;
  * `<Text>` child for the label; pass `onPress` at the call site.
  */
 export function Button(props: ButtonProps) {
-  // Announce disabled state to assistive tech (RN-Web maps accessibilityState.disabled
-  // to aria-disabled; native exposes it via the accessibility tree). Placed before the
-  // spread so a call site can still override it.
-  return (
-    <ButtonFrame
-      role="button"
-      accessibilityState={{ disabled: Boolean(props.disabled) }}
-      {...props}
-    />
-  );
+  // Announce disabled state to assistive tech. On web pass aria-disabled directly (under
+  // @tamagui/core, accessibilityState is not normalized and would leak as an unknown DOM
+  // prop); on native use accessibilityState. Placed before the spread so a call site can
+  // still override it.
+  const disabledA11y = props.disabled
+    ? Platform.OS === 'web'
+      ? { 'aria-disabled': true }
+      : { accessibilityState: { disabled: true } }
+    : undefined;
+  return <ButtonFrame role="button" {...disabledA11y} {...props} />;
 }
 
 const InputFrame = styled(TextInput, {
