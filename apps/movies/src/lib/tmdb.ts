@@ -53,7 +53,7 @@ function toMovieResult(raw: RawMovie): MovieResult {
 // string by hand rather than rely on `searchParams`; portable across web and native.
 function toQueryString(params: Record<string, string>): string {
   return Object.entries(params)
-    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     .join('&');
 }
 
