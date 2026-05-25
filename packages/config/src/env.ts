@@ -58,7 +58,7 @@ export function parseSupabaseEnv(source: Record<string, string | undefined>): Su
   return result.data;
 }
 
-/** Mask a value when its env var name is sensitive — for safe logging. */
+/** Mask a value when its env var name is sensitive; for safe logging. */
 export function redact(name: string, value: string | undefined): string {
   if (value === undefined) return '(unset)';
   return (SENSITIVE_ENV_VARS as readonly string[]).includes(name) ? '***' : value;

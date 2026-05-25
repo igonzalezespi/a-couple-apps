@@ -23,7 +23,7 @@ export const es: Record<TranslationKey, string> = {
   verify: 'Verificar',
   back: 'Atrás',
   signOut: 'Cerrar sesión',
-  loading: 'Cargando…',
+  loading: 'Cargando...',
   search: 'Buscar',
   searchPlaceholder: 'Buscar películas',
   searchPrompt: 'Busca una película.',

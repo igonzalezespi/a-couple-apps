@@ -8,7 +8,7 @@ export function Preview() {
   return (
     <Screen>
       <Text fontSize="$7" fontWeight="700">
-        A Couple Apps — UI
+        A Couple Apps - UI
       </Text>
 
       <Card>

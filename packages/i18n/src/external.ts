@@ -1,6 +1,6 @@
 import { type Language } from '@aca/config';
 
-/** App language → external-data provider locale (e.g. TMDB `language=es-ES`). */
+/** App language to external-data provider locale (e.g. TMDB `language=es-ES`). */
 const EXTERNAL_LANGUAGE: Record<Language, string> = {
   en: 'en-US',
   es: 'es-ES'
