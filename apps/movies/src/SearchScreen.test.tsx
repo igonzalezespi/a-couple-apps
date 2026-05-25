@@ -1,8 +1,14 @@
+import { QueryClient } from '@tanstack/react-query';
 import { fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SearchScreen } from './SearchScreen';
 import { makeFakeClient, renderWithProviders } from './test/fakeClient';
+
+/** QueryClient with retries disabled — lets query error state settle in a single attempt. */
+function noRetryClient() {
+  return new QueryClient({ defaultOptions: { queries: { retry: false } } });
+}
 
 vi.mock('expo-router', () => ({
   useRouter: () => ({ push: vi.fn(), back: vi.fn() })
@@ -116,5 +122,79 @@ describe('SearchScreen', () => {
     renderWithProviders(<SearchScreen />, makeFakeClient().client);
 
     expect(screen.getByText('Already on your watchlist.')).toBeTruthy();
+  });
+
+  it('shows the loading indicator while the search query is in flight', async () => {
+    vi.stubEnv('EXPO_PUBLIC_TMDB_API_KEY', 'test-key');
+    // Never resolves: query stays in-flight so isLoading stays true.
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise(() => {}))
+    );
+
+    renderWithProviders(<SearchScreen />, makeFakeClient().client);
+
+    fireEvent.change(screen.getByPlaceholderText('Search movies'), {
+      target: { value: 'matrix' }
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+
+    expect(await screen.findByText('Loading...')).toBeTruthy();
+  });
+
+  it('shows no-results text when the search returns an empty list', async () => {
+    vi.stubEnv('EXPO_PUBLIC_TMDB_API_KEY', 'test-key');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () => Promise.resolve({ results: [] })
+        } as unknown as Response)
+      )
+    );
+
+    renderWithProviders(<SearchScreen />, makeFakeClient().client);
+
+    fireEvent.change(screen.getByPlaceholderText('Search movies'), {
+      target: { value: 'xyzxyzxyz' }
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+
+    expect(await screen.findByText('No results.')).toBeTruthy();
+  });
+
+  it('shows the error state when the search query fails', async () => {
+    vi.stubEnv('EXPO_PUBLIC_TMDB_API_KEY', 'test-key');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({})
+        } as unknown as Response)
+      )
+    );
+
+    // Disable retries so the error state settles without the backoff delay.
+    renderWithProviders(<SearchScreen />, makeFakeClient().client, 'en', noRetryClient());
+
+    fireEvent.change(screen.getByPlaceholderText('Search movies'), {
+      target: { value: 'matrix' }
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+
+    expect(await screen.findByText('Something went wrong. Try again.')).toBeTruthy();
+  });
+
+  it('shows the generic error for a non-23505 add failure', () => {
+    h.addState = { isError: true, error: { code: '00000' } };
+
+    renderWithProviders(<SearchScreen />, makeFakeClient().client);
+
+    expect(screen.getByText('Something went wrong. Try again.')).toBeTruthy();
+    expect(screen.queryByText('Already on your watchlist.')).toBeNull();
   });
 });

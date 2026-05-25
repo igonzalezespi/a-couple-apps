@@ -16,8 +16,13 @@ type AuthHandler = (event: string, session: unknown) => void;
  */
 export function makeFakeClient(initialSession: unknown = null) {
   let handler: AuthHandler | undefined;
-  const signInWithOtp = vi.fn(() => Promise.resolve({ data: {}, error: null }));
-  const verifyOtp = vi.fn(() => Promise.resolve({ data: {}, error: null }));
+  // error is nullable and carries an optional status so tests can simulate auth
+  // failures (e.g. a 429 rate limit) via mockResolvedValue.
+  type AuthFnResult = { data: object; error: { status?: number; message: string } | null };
+  const signInWithOtp = vi.fn(
+    (): Promise<AuthFnResult> => Promise.resolve({ data: {}, error: null })
+  );
+  const verifyOtp = vi.fn((): Promise<AuthFnResult> => Promise.resolve({ data: {}, error: null }));
   const signOut = vi.fn(() => Promise.resolve({ error: null }));
   const auth = {
     getSession: () => Promise.resolve({ data: { session: initialSession }, error: null }),
@@ -42,12 +47,13 @@ export function makeFakeClient(initialSession: unknown = null) {
 export function renderWithProviders(
   ui: ReactElement,
   client: AppSupabaseClient,
-  language: Language = 'en'
+  language: Language = 'en',
+  queryClient = createQueryClient()
 ): RenderResult {
   return render(
     <UIProvider>
       <I18nProvider i18n={createI18n(language)}>
-        <CoreProvider client={client} queryClient={createQueryClient()}>
+        <CoreProvider client={client} queryClient={queryClient}>
           {ui}
         </CoreProvider>
       </I18nProvider>
