@@ -24,6 +24,10 @@ All notable changes to this project are documented here. The format is based on
 - Tonight's pick: a single shared, realtime "Tonight's pick" over the watchlist - either partner
   nominates one unwatched movie; it floats to the top with a distinct treatment, shows who chose
   it, and auto-clears (DB trigger) when that movie is marked watched or removed.
+- Couple personalization: each person can have a favorite accent color (red/purple) that re-skins
+  the app to whoever is using it; the current person is shown on every screen; and `couple.config.ts`
+  is now per-instance + gitignored (only the placeholder `couple.config.example.ts` ships), so real
+  names + colors stay private.
 - Supabase schema: `shared` + `movies` schemas with RLS and `anon` role grants (no auth; the
   private build's anon key is the boundary) and the realtime publication.
 - Tests: Vitest + Testing Library unit/component suites, a hermetic Playwright web e2e smoke,

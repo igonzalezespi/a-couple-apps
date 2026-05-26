@@ -1,6 +1,6 @@
 import { createFont, createTamagui, createTokens } from '@tamagui/core';
 
-import { createCoupleTheme, type ThemeOverrides } from './src/theme';
+import { buildThemes, type ThemeOverrides } from './src/theme';
 
 // Tokens drive spacing, sizing, radii and the raw palette ($space, $size, ...).
 const tokens = createTokens({
@@ -32,7 +32,7 @@ const bodyFont = createFont({
 export function createUIConfig(overrides?: ThemeOverrides) {
   return createTamagui({
     tokens,
-    themes: createCoupleTheme(overrides),
+    themes: buildThemes(overrides),
     fonts: { body: bodyFont, heading: bodyFont },
     defaultFont: 'body'
   });

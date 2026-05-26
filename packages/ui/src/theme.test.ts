@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { baseThemes, createCoupleTheme } from './theme';
+import { ACCENT_PALETTES, accentOverrides, baseThemes, createCoupleTheme } from './theme';
 
 describe('createCoupleTheme', () => {
   it('returns the base palette when no overrides are given', () => {
@@ -27,5 +27,32 @@ describe('createCoupleTheme', () => {
     createCoupleTheme({ primary: '#FF0055' });
     const theme = createCoupleTheme();
     expect(theme.light.primary).toBe(baseThemes.light.primary);
+  });
+
+  it('applies an onPrimary override to both light and dark', () => {
+    const theme = createCoupleTheme({ onPrimary: '#FFFFFF' });
+    expect(theme.light.onPrimary).toBe('#FFFFFF');
+    expect(theme.dark.onPrimary).toBe('#FFFFFF');
+  });
+});
+
+describe('accent palettes', () => {
+  it('accentOverrides returns the palette primary + onPrimary for a known color', () => {
+    expect(accentOverrides('red')).toEqual({
+      primary: ACCENT_PALETTES.red.primary,
+      onPrimary: ACCENT_PALETTES.red.onPrimary
+    });
+    expect(accentOverrides('purple').primary).toBe(ACCENT_PALETTES.purple.primary);
+  });
+
+  it('accentOverrides is empty when no color is given', () => {
+    expect(accentOverrides()).toEqual({});
+  });
+
+  it('createCoupleTheme applies an accent as primary + onPrimary on both schemes', () => {
+    const theme = createCoupleTheme(accentOverrides('purple'));
+    expect(theme.light.primary).toBe(ACCENT_PALETTES.purple.primary);
+    expect(theme.dark.primary).toBe(ACCENT_PALETTES.purple.primary);
+    expect(theme.light.onPrimary).toBe(ACCENT_PALETTES.purple.onPrimary);
   });
 });
