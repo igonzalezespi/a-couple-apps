@@ -1,0 +1,111 @@
+name: Quality gates
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    name: format:check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/setup-repo
+      - run: pnpm format:check
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/setup-repo
+      - run: pnpm lint
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/setup-repo
+      - run: pnpm typecheck
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/setup-repo
+      - run: pnpm test
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    # Stub public env so the export is well-formed; the app reads real values at runtime
+    # from each instance's own .env. No secrets needed to verify the bundle builds.
+    env:
+      EXPO_NO_DOTENV: '1'
+      EXPO_PUBLIC_SUPABASE_URL: https://stub.supabase.test
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: stub-anon-key
+      EXPO_PUBLIC_TMDB_API_KEY: stub-tmdb-key
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/setup-repo
+      - run: pnpm build
+
+  e2e-web:
+    name: e2e-web (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/setup-repo
+      # The spec is hermetic (Supabase + TMDB are intercepted; the build uses stub env via
+      # playwright.config webServer), so no secrets are required.
+      - name: Install Playwright Chromium
+        run: pnpm --filter movies exec playwright install --with-deps chromium
+      - name: Run web smoke
+        run: pnpm --filter movies e2e
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report
+          path: |
+            apps/movies/playwright-report/
+            apps/movies/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  secrets:
+    name: secrets (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0 # full history so gitleaks scans every commit
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+
+  # Single required check: green only if every needed job succeeded or was skipped.
+  ci-gate:
+    name: ci-gate
+    if: always()
+    needs: [format, lint, typecheck, test, build, e2e-web, secrets]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all gates passed
+        run: |
+          if ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}; then
+            echo "A required job failed or was cancelled: ${{ join(needs.*.result, ', ') }}"
+            exit 1
+          fi
+          echo "All gates passed: ${{ join(needs.*.result, ', ') }}"

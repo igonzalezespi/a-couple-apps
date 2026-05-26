@@ -1,0 +1,53 @@
+name: Native e2e (label-gated)
+
+# Expensive native Maestro runs. Opt-in: only runs when the PR carries the
+# `ci:e2e-native` label, so it never blocks normal PRs and `ci-gate` stays fast.
+# It is also WIP: it requires native build config (ios.bundleIdentifier /
+# android.package in apps/movies/app.config.ts) which is not set yet (ROADMAP
+# Phase 10). The preflight step fails fast with a clear message until then.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    if: contains(github.event.pull_request.labels.*.name, 'ci:e2e-native')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/setup-repo
+
+      - name: Preflight (native build config required)
+        run: |
+          if ! grep -q "android" apps/movies/app.config.ts || ! grep -Eq "package|bundleIdentifier" apps/movies/app.config.ts; then
+            echo "::error::Native e2e needs ios.bundleIdentifier / android.package in apps/movies/app.config.ts (ROADMAP Phase 10). Skipping is expected until then."
+            exit 1
+          fi
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Build debug APK (Expo prebuild + Gradle)
+        run: |
+          pnpm --filter movies exec expo prebuild -p android --no-install
+          cd apps/movies/android && ./gradlew assembleDebug
+
+      - name: Run Maestro flow on emulator
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a # v2.37.0
+        with:
+          api-level: 34
+          arch: x86_64
+          profile: pixel_6
+          script: |
+            adb install -r apps/movies/android/app/build/outputs/apk/debug/app-debug.apk
+            maestro test .maestro/movies-watchlist.yaml
