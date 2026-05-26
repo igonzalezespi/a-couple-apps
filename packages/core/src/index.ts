@@ -1,3 +1,14 @@
+/**
+ * `@aca/core` -- the single data boundary (only importer of `@supabase/supabase-js`).
+ *
+ * Schema typing is generic: this package exports `BaseDatabase` (the cross-app `public` +
+ * `shared` schemas only) and the generic `createSupabaseClient<DB>` / `AppSupabaseClient<DB>` /
+ * `useSupabase<DB>()`, all defaulting to `BaseDatabase`. A per-app schema is NOT defined here --
+ * an app composes `<App>Database = BaseDatabase & { <schema>: {...} }` and passes it to the
+ * generic hook so `client.schema(...)` is typed (see `apps/movies/src/lib/database.ts` and the
+ * "Adding an app" recipe in `ARCHITECTURE.md`). `Database` remains as a deprecated alias of
+ * `BaseDatabase` for back-compat.
+ */
 import { type BaseDatabase } from './types';
 
 export {

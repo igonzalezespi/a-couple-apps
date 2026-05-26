@@ -178,10 +178,14 @@ between "functional" and "opened every Friday." (From the 2026-05 product review
 
 **Goal:** Second app — shared plans/events list, proving app-addition is trivial and the UI is identical.
 
-**Prerequisite (do first -- see the 2026-05 review):** decouple per-app schema types from
-`@aca/core` (today `packages/core/src/types.ts` hard-codes the `movies` schema, and it is dead
-code -- the app uses untyped `.schema('movies')`) and introduce per-app i18n namespaces. Without
-this, adding `apps/plans` forces edits to shared packages, breaking this phase's own acceptance.
+**Prerequisite (✅ landed -- `decouple-app-schema-i18n`):** per-app schema types and i18n strings
+are decoupled from the shared packages, so adding `apps/plans` no longer forces edits to them.
+`@aca/core` now exports a cross-app `BaseDatabase` (`public` + `shared`) and a generic Supabase
+client/hook; an app composes `<App>Database = BaseDatabase & { <schema>: ... }` for typed
+`client.schema(...)`. `@aca/i18n` now has a `common` namespace + `fallbackNS` plus
+`registerAppNamespace` / `useAppLocale(ns)`, so an app owns its namespace. See the "Adding an
+app" recipe in `ARCHITECTURE.md`; `apps/movies` is the worked example. (Originally flagged in the
+2026-05 review, when `packages/core/src/types.ts` hard-coded the `movies` schema.)
 
 **Sequencing note:** the product review recommends shipping Phase 6.5 (a loved movies v1) and a
 first release *before* App 2, so the second app builds on a validated pattern rather than

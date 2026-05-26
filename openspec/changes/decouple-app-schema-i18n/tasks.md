@@ -24,8 +24,8 @@
 
 ## 5. Docs
 
-- [ ] 5.1 ARCHITECTURE + the `@aca/core` / `@aca/i18n` notes: document the BaseDatabase + namespace pattern as the "add an app" recipe
-- [ ] 5.2 CHANGELOG; ROADMAP Phase 7 prerequisite note
+- [x] 5.1 ARCHITECTURE + the `@aca/core` / `@aca/i18n` notes: document the BaseDatabase + namespace pattern as the "add an app" recipe
+- [x] 5.2 CHANGELOG; ROADMAP Phase 7 prerequisite note
 
 ## Out of Scope
 
