@@ -1,25 +1,26 @@
 ## 1. Core: BaseDatabase + generic client
 
-- [ ] 1.1 `packages/core/src/types.ts`: define `BaseDatabase` (`public` + `shared`); remove the hard-coded `movies` block
-- [ ] 1.2 `packages/core/src/client.ts`: make `createSupabaseClient<DB extends BaseDatabase = BaseDatabase>` + `AppSupabaseClient<DB extends BaseDatabase = BaseDatabase>` generic; re-export `BaseDatabase`
-- [ ] 1.3 Core tests: the generic client stays typed; defaults compile; the mock-based tests are unchanged
+- [x] 1.1 `packages/core/src/types.ts`: define `BaseDatabase` (`public` + `shared`); remove the hard-coded `movies` block. `packages/core/src/index.ts`: export `BaseDatabase`; keep `Database` as a deprecated alias (`export type Database = BaseDatabase`) for back-compat
+- [x] 1.2 `packages/core/src/client.ts`: make `createSupabaseClient<DB extends BaseDatabase = BaseDatabase>` + `AppSupabaseClient<DB extends BaseDatabase = BaseDatabase>` generic; re-export `BaseDatabase`. `packages/core/src/provider.tsx`: make `useSupabase<DB extends BaseDatabase = BaseDatabase>(): AppSupabaseClient<DB>` generic (cast at the hook return; `SupabaseContext` + `CoreProviderProps.client` stay at the base default `AppSupabaseClient`)
+- [x] 1.3 Core tests: the generic client + `useSupabase<DB>()` stay typed; defaults compile; the mock-based tests are unchanged
 
 ## 2. Movies: compose its own schema
 
-- [ ] 2.1 `apps/movies/src/lib/database.ts` (new): `MoviesDatabase = BaseDatabase & { movies: { ... watchlist_items ... } }`
-- [ ] 2.2 Type the movies Supabase client with `MoviesDatabase`; confirm `client.schema('movies')` stays typed; no behavior change
+- [x] 2.1 `apps/movies/src/lib/database.ts` (new): `MoviesDatabase = BaseDatabase & { movies: { ... watchlist_items ... } }`
+- [x] 2.2 Type the movies Supabase client with `MoviesDatabase`; call `useSupabase<MoviesDatabase>()` at the watchlist hooks (`apps/movies/src/hooks/useWatchlist.ts`), e.g. via a one-line app-local `useMoviesSupabase = () => useSupabase<MoviesDatabase>()`, so `client.schema('movies')` stays typed; no behavior change
+- [x] 2.3 Verify `pnpm typecheck` is green for both `packages/core` and `apps/movies` after the schema slice (guards the consumption-boundary regression)
 
 ## 3. i18n: namespaces + accessor
 
-- [ ] 3.1 `@aca/i18n`: register a `common` namespace; expose app-namespace registration + a generic `useAppLocale(namespace)`
-- [ ] 3.2 Split the shared `common` strings from app strings; keep en/es parity per namespace
-- [ ] 3.3 Update the i18n tests: per-namespace parity (common); `useLocale` / `useAppLocale` resolve from the right namespace
+- [ ] 3.1 `@aca/i18n`: register a `common` namespace as the default ns; expose app-namespace registration (with i18next `fallbackNS: 'common'` for app namespaces) + a generic `useAppLocale(namespace)` returning `{ t, language, languages, setLanguage }` (`t` bound to `namespace`; `language`/`languages`/`setLanguage` read/drive the i18n instance, namespace-independent)
+- [ ] 3.2 Split the shared `common` strings from app strings per the D2 allocation; split the key guard -- define `CommonTranslationKey` in `@aca/i18n` and type the `common` `es` bundle `Record<CommonTranslationKey, string>`; keep en/es parity per namespace
+- [ ] 3.3 Update the i18n tests: extend `packages/i18n/src/locales/parity.test.ts` for the `common` namespace; `useLocale` / `useAppLocale` resolve from the right namespace (incl. a movies-key-with-common-fallback case and that `useAppLocale` exposes `language`/`setLanguage`)
 
 ## 4. Movies i18n call sites
 
-- [ ] 4.1 Move the movies UI strings into a `movies` namespace owned by `apps/movies`; register it at startup
-- [ ] 4.2 Swap the ~50 movies `t()` sites to `useMoviesLocale()` (binding `useAppLocale('movies')`)
-- [ ] 4.3 Update the movies component string assertions (meaning unchanged)
+- [ ] 4.1 Move the movies UI strings into a `movies` namespace owned by `apps/movies`; register it at startup with `fallbackNS: 'common'`. Define `MoviesTranslationKey` and type the movies `es` bundle `Record<MoviesTranslationKey, string>`
+- [ ] 4.2 Swap the 44 movies `t()` sites across 5 files (`HomeScreen.tsx`, `SearchScreen.tsx`, `Watchlist.tsx`, `CurrentPersonBadge.tsx`, `PersonGate.tsx`) to `useMoviesLocale()` (binding `useAppLocale('movies')`); common keys resolve via `fallbackNS`. Keep `language`/`setLanguage` working in `HomeScreen`/`SearchScreen` (now from `useMoviesLocale()`)
+- [ ] 4.3 Add a movies-side parity test (en/es) for the `movies` namespace; update the movies component string assertions (meaning unchanged)
 
 ## 5. Docs
 

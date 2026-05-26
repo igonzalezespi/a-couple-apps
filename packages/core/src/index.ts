@@ -1,10 +1,15 @@
+import { type BaseDatabase } from './types';
+
 export {
   createSupabaseClient,
   type AppSupabaseClient,
   type SupabaseEnv,
   type CreateSupabaseClientOptions
 } from './client';
-export { type Database } from './types';
+export { type BaseDatabase } from './types';
+
+/** @deprecated Use `BaseDatabase` (apps compose their own schema on top). Kept for back-compat. */
+export type Database = BaseDatabase;
 export { createQueryClient } from './query';
 export { CoreProvider, useSupabase, type CoreProviderProps } from './provider';
 export {
