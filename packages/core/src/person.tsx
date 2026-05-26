@@ -52,11 +52,19 @@ export function PersonProvider({ people, storage, children }: PersonProviderProp
 
   useEffect(() => {
     let active = true;
-    void storage.getItem(STORAGE_KEY).then((id) => {
-      if (!active) return;
-      setPersonId(id);
-      setLoading(false);
-    });
+    void storage
+      .getItem(STORAGE_KEY)
+      .then((id) => {
+        if (!active) return;
+        setPersonId(id);
+        setLoading(false);
+      })
+      .catch(() => {
+        // A failed read (unavailable/corrupt storage) must not hang the app on the loading
+        // spinner; fall through to the picker with no selection.
+        if (!active) return;
+        setLoading(false);
+      });
     return () => {
       active = false;
     };

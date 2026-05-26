@@ -12,12 +12,14 @@ export function CurrentPersonBadge() {
   if (!person) return null;
   return (
     <XStack
+      accessible
       gap="$2"
       alignItems="center"
       paddingHorizontal="$4"
       paddingTop="$3"
       accessibilityLabel={t('youArePerson', { name: person.displayName })}
     >
+      {/* Decorative dot + name are grouped under the XStack's a11y label (accessible above). */}
       <YStack width={10} height={10} borderRadius={5} backgroundColor="$primary" />
       <Text fontWeight="600">{person.displayName}</Text>
     </XStack>

@@ -89,6 +89,11 @@ export function useSetTonightPick() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, pick }: { id: string; pick: boolean }): Promise<void> => {
+      if (pick && !person) {
+        // Setting a pick attributes it to the current person; refuse rather than silently
+        // clearing it (picked_by + picked_at must be set together per the DB CHECK).
+        throw new Error("Cannot set tonight's pick without an active person");
+      }
       const values =
         pick && person
           ? { picked_at: new Date().toISOString(), picked_by: person.id }
