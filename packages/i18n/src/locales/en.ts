@@ -13,30 +13,8 @@ export const en = {
   loading: 'Loading...',
   whoAreYou: 'Who is using this?',
   switchPerson: 'Switch person',
-  youArePerson: 'You are {{name}}',
-  search: 'Search',
-  searchPlaceholder: 'Search movies',
-  searchPrompt: 'Search for a movie.',
-  noResults: 'No results.',
-  searchError: 'Something went wrong. Try again.',
-  watchlist: 'Watchlist',
-  watched: 'Watched',
-  markWatched: 'Mark watched',
-  watchlistEmpty: "Nothing here yet. Add a movie you'd like to watch together.",
-  added: 'Added',
-  alreadyOnWatchlist: 'Already on your watchlist.',
-  poster: '{{title}} poster',
-  toWatch: 'To watch',
-  addedByYou: 'Added by you',
-  addedByPartner: 'Added by your partner',
-  addedByName: 'Added by {{name}}',
-  addFirstMovie: 'Search for a movie',
-  pickForTonight: 'Pick for tonight',
-  tonightsPick: "Tonight's pick",
-  clearPick: 'Clear pick',
-  pickedByYou: 'Chosen by you',
-  pickedByName: 'Chosen by {{name}}'
+  youArePerson: 'You are {{name}}'
 } as const;
 
-/** The translation keys every locale must provide. */
-export type TranslationKey = keyof typeof en;
+/** The common (shared/shell) translation keys every locale must provide. */
+export type CommonTranslationKey = keyof typeof en;

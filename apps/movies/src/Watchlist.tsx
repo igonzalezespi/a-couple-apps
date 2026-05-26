@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
 
 import { useCurrentPerson } from '@aca/core';
-import { useLocale } from '@aca/i18n';
 import { Button, Card, Image, Text, XStack, YStack } from '@aca/ui';
 
 import {
@@ -11,6 +10,7 @@ import {
   useWatchlist,
   useWatchlistRealtime
 } from './hooks/useWatchlist';
+import { useMoviesLocale } from './i18n';
 import { posterUrl } from './lib/tmdb';
 import { type WatchlistItem } from './lib/watchlist';
 
@@ -20,7 +20,7 @@ import { type WatchlistItem } from './lib/watchlist';
  * (query order) with a distinct treatment; either partner can set or clear it.
  */
 export function Watchlist() {
-  const { t } = useLocale();
+  const { t } = useMoviesLocale();
   const router = useRouter();
   const { person, people } = useCurrentPerson();
   useWatchlistRealtime();
@@ -112,7 +112,7 @@ function WatchlistRow({
   onRemove: () => void;
   onTogglePick: () => void;
 }) {
-  const { t } = useLocale();
+  const { t } = useMoviesLocale();
   const year = item.release_date ? item.release_date.slice(0, 4) : null;
   const poster = posterUrl(item.poster_path);
   return (

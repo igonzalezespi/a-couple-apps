@@ -9,8 +9,10 @@ import {
   type AppSupabaseClient,
   type PersonStorage
 } from '@aca/core';
-import { createI18n, I18nProvider } from '@aca/i18n';
+import { I18nProvider } from '@aca/i18n';
 import { UIProvider } from '@aca/ui';
+
+import { createMoviesI18n } from '../i18n';
 
 /**
  * A minimal Supabase client stand-in. There is no auth anymore, and component tests mock the
@@ -55,7 +57,7 @@ export function renderWithProviders(
 ): RenderResult {
   return render(
     <UIProvider>
-      <I18nProvider i18n={createI18n(language)}>
+      <I18nProvider i18n={createMoviesI18n(language)}>
         <PersonProvider people={TEST_PEOPLE} storage={memoryStorage(currentPersonId)}>
           <CoreProvider client={client} queryClient={queryClient}>
             {ui}

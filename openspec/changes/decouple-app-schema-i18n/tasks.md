@@ -12,15 +12,15 @@
 
 ## 3. i18n: namespaces + accessor
 
-- [ ] 3.1 `@aca/i18n`: register a `common` namespace as the default ns; expose app-namespace registration (with i18next `fallbackNS: 'common'` for app namespaces) + a generic `useAppLocale(namespace)` returning `{ t, language, languages, setLanguage }` (`t` bound to `namespace`; `language`/`languages`/`setLanguage` read/drive the i18n instance, namespace-independent)
-- [ ] 3.2 Split the shared `common` strings from app strings per the D2 allocation; split the key guard -- define `CommonTranslationKey` in `@aca/i18n` and type the `common` `es` bundle `Record<CommonTranslationKey, string>`; keep en/es parity per namespace
-- [ ] 3.3 Update the i18n tests: extend `packages/i18n/src/locales/parity.test.ts` for the `common` namespace; `useLocale` / `useAppLocale` resolve from the right namespace (incl. a movies-key-with-common-fallback case and that `useAppLocale` exposes `language`/`setLanguage`)
+- [x] 3.1 `@aca/i18n`: register a `common` namespace as the default ns; expose app-namespace registration (with i18next `fallbackNS: 'common'` for app namespaces) + a generic `useAppLocale(namespace)` returning `{ t, language, languages, setLanguage }` (`t` bound to `namespace`; `language`/`languages`/`setLanguage` read/drive the i18n instance, namespace-independent)
+- [x] 3.2 Split the shared `common` strings from app strings per the D2 allocation; split the key guard -- define `CommonTranslationKey` in `@aca/i18n` and type the `common` `es` bundle `Record<CommonTranslationKey, string>`; keep en/es parity per namespace
+- [x] 3.3 Update the i18n tests: extend `packages/i18n/src/locales/parity.test.ts` for the `common` namespace; `useLocale` / `useAppLocale` resolve from the right namespace (incl. a movies-key-with-common-fallback case and that `useAppLocale` exposes `language`/`setLanguage`)
 
 ## 4. Movies i18n call sites
 
-- [ ] 4.1 Move the movies UI strings into a `movies` namespace owned by `apps/movies`; register it at startup with `fallbackNS: 'common'`. Define `MoviesTranslationKey` and type the movies `es` bundle `Record<MoviesTranslationKey, string>`
-- [ ] 4.2 Swap the 44 movies `t()` sites across 5 files (`HomeScreen.tsx`, `SearchScreen.tsx`, `Watchlist.tsx`, `CurrentPersonBadge.tsx`, `PersonGate.tsx`) to `useMoviesLocale()` (binding `useAppLocale('movies')`); common keys resolve via `fallbackNS`. Keep `language`/`setLanguage` working in `HomeScreen`/`SearchScreen` (now from `useMoviesLocale()`)
-- [ ] 4.3 Add a movies-side parity test (en/es) for the `movies` namespace; update the movies component string assertions (meaning unchanged)
+- [x] 4.1 Move the movies UI strings into a `movies` namespace owned by `apps/movies`; register it at startup with `fallbackNS: 'common'`. Define `MoviesTranslationKey` and type the movies `es` bundle `Record<MoviesTranslationKey, string>`
+- [x] 4.2 Swap the 44 movies `t()` sites across 5 files (`HomeScreen.tsx`, `SearchScreen.tsx`, `Watchlist.tsx`, `CurrentPersonBadge.tsx`, `PersonGate.tsx`) to `useMoviesLocale()` (binding `useAppLocale('movies')`); common keys resolve via `fallbackNS`. Keep `language`/`setLanguage` working in `HomeScreen`/`SearchScreen` (now from `useMoviesLocale()`)
+- [x] 4.3 Add a movies-side parity test (en/es) for the `movies` namespace; update the movies component string assertions (meaning unchanged)
 
 ## 5. Docs
 
