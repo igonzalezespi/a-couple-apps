@@ -194,11 +194,17 @@ duplicating an unproven UX. Define the plans product shape (what a "plan/event" 
 **Tasks** _(separate OpenSpec change)_
 - Expo app scaffold (same pattern as App 1); Supabase `plans` schema (plans/events tables) + RLS.
 - Create/edit/complete plans; date handling; realtime sync; UI from `@aca/ui` only.
+- **Final step -- plan searcher:** a discovery tool over a committed, zone-split source catalog
+  (seeded from `docs/plans-investigation.md`) that, given a date + location + categories, ranks
+  which curated sources to check and generates a paste-ready AI search prompt (no scraping, no AI
+  API); a result can prefill a new plan.
 
 **Acceptance criteria**
 - Adding the app required no edits to shared package internals.
 - Visually identical to App 1 (same tokens/themes); runs on all three platforms.
 - Tests + Maestro flow + Playwright smoke pass.
+- The plan searcher ranks sources and generates an AI prompt offline from the committed catalog,
+  and a result can be added to the plans list.
 
 **Packages touched:** consumes `ui`, `core`, `i18n`, `couple-config`; adds `apps/plans`
 
