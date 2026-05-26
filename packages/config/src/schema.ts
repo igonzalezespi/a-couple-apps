@@ -5,10 +5,15 @@ export const LANGUAGES = ['en', 'es'] as const;
 export const languageSchema = z.enum(LANGUAGES);
 export type Language = z.infer<typeof languageSchema>;
 
+/** A person's favorite accent color; drives the app theme while they are the active person. */
+export const accentColorSchema = z.enum(['red', 'purple']);
+export type AccentColor = z.infer<typeof accentColorSchema>;
+
 /** One member of the couple. */
 export const personSchema = z.object({
   id: z.string().min(1, 'person.id must not be empty'),
-  displayName: z.string().min(1, 'person.displayName must not be empty')
+  displayName: z.string().min(1, 'person.displayName must not be empty'),
+  color: accentColorSchema.optional()
 });
 export type Person = z.infer<typeof personSchema>;
 

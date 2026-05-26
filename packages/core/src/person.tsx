@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 export interface Person {
   id: string;
   displayName: string;
+  /** Optional favorite accent color (couple.config); re-skins the app when this person is active. */
+  color?: 'red' | 'purple' | undefined;
 }
 
 /**

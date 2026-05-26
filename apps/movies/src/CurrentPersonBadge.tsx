@@ -1,0 +1,25 @@
+import { useCurrentPerson } from '@aca/core';
+import { useLocale } from '@aca/i18n';
+import { Text, XStack, YStack } from '@aca/ui';
+
+/**
+ * Shows who is currently using the app (name + a dot in their accent color) on every screen. The
+ * dot uses `$primary`, which the person's color already re-skinned, so it matches their theme.
+ */
+export function CurrentPersonBadge() {
+  const { person } = useCurrentPerson();
+  const { t } = useLocale();
+  if (!person) return null;
+  return (
+    <XStack
+      gap="$2"
+      alignItems="center"
+      paddingHorizontal="$4"
+      paddingTop="$3"
+      accessibilityLabel={t('youArePerson', { name: person.displayName })}
+    >
+      <YStack width={10} height={10} borderRadius={5} backgroundColor="$primary" />
+      <Text fontWeight="600">{person.displayName}</Text>
+    </XStack>
+  );
+}

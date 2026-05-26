@@ -11,11 +11,13 @@ import { defineCoupleConfig } from '@aca/config';
 export default defineCoupleConfig({
   config: {
     people: [
-      { id: 'personA', displayName: 'Person A' },
-      { id: 'personB', displayName: 'Person B' }
+      // `color` is each person's favorite accent (red | purple); the app re-skins to whoever is
+      // the active person. Optional -- omit it to use the couple-wide theme below.
+      { id: 'personA', displayName: 'Person A', color: 'red' },
+      { id: 'personB', displayName: 'Person B', color: 'purple' }
     ],
     defaultLanguage: 'en',
-    // Optional: re-skin both apps without touching packages/ui.
+    // Optional couple-wide re-skin (used when a person has no `color`); no packages/ui edit needed.
     theme: {
       // primary: '#5B8DEF',
       // accent: '#E8A23D'

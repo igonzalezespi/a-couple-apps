@@ -7,6 +7,10 @@ node_modules/
 .env.*
 !.env.example
 
+# Per-instance private config (real names + colors). The committed template is
+# couple.config.example.ts; copy it to couple.config.ts and fill in your couple.
+couple.config.ts
+
 # Expo / React Native
 .expo/
 .expo-shared/

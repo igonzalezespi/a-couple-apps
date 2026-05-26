@@ -4,6 +4,8 @@ import { useCurrentPerson } from '@aca/core';
 import { useLocale } from '@aca/i18n';
 import { Button, Card, Screen, Text, YStack } from '@aca/ui';
 
+import { CurrentPersonBadge } from './CurrentPersonBadge';
+
 /**
  * No login: pick which member of the couple is using this device. The choice is persisted and
  * switchable (the app is built for one couple with their own backend, so identity is a local
@@ -41,5 +43,11 @@ export function PersonGate({ children }: { children: ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  // Once someone is selected, show a persistent identity badge above every screen.
+  return (
+    <YStack flex={1}>
+      <CurrentPersonBadge />
+      <YStack flex={1}>{children}</YStack>
+    </YStack>
+  );
 }
