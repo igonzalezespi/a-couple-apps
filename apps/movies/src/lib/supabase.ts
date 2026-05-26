@@ -1,6 +1,8 @@
 import { parseSupabaseEnv } from '@aca/config';
 import { createSupabaseClient } from '@aca/core';
 
+import { type MoviesDatabase } from './database';
+
 // Expo inlines only EXPO_PUBLIC_* vars into the client bundle, so the app reads
 // its Supabase config from those (mirrors of SUPABASE_URL / SUPABASE_ANON_KEY).
 // Bracket access satisfies `noPropertyAccessFromIndexSignature`; Expo's env plugin
@@ -13,5 +15,6 @@ const env = parseSupabaseEnv({
 /**
  * The app's single Supabase client (created once). There is no auth/session: the app talks to
  * the couple's own project with the anon key, and identity is the locally-selected person.
+ * Typed with `MoviesDatabase` so schema-qualified calls (`.schema('movies')`) are typed.
  */
-export const supabase = createSupabaseClient(env);
+export const supabase = createSupabaseClient<MoviesDatabase>(env);

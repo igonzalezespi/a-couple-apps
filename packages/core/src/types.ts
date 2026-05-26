@@ -1,12 +1,15 @@
 type EmptyRecord = Record<string, never>;
 
 /**
- * Minimal placeholder of the Supabase database shape. `public` and `shared` carry no tables
- * yet (there is no auth -- identity is a local person choice, see couple.config -- so no
- * `profiles`); per-app schemas (`movies`, `plans`) are added by their app changes. Regenerate
- * from the real project with `supabase gen types typescript` once it grows.
+ * The cross-app Supabase database shape: only the schemas every app shares
+ * (`public`, `shared`). Both carry no tables yet -- there is no auth (identity is a
+ * local person choice, see couple.config, so no `profiles`). Per-app schemas
+ * (`movies`, `plans`) are NOT defined here; each app composes its own database type
+ * as `BaseDatabase & { <schema>: ... }` and passes it to the generic client/hook (see
+ * `apps/movies/src/lib/database.ts`). Regenerate the per-app schema blocks from the
+ * real project with `supabase gen types typescript` once they grow.
  */
-export type Database = {
+export type BaseDatabase = {
   public: {
     Tables: EmptyRecord;
     Views: EmptyRecord;
@@ -16,53 +19,6 @@ export type Database = {
   };
   shared: {
     Tables: EmptyRecord;
-    Views: EmptyRecord;
-    Functions: EmptyRecord;
-    Enums: EmptyRecord;
-    CompositeTypes: EmptyRecord;
-  };
-  movies: {
-    Tables: {
-      watchlist_items: {
-        Row: {
-          id: string;
-          tmdb_id: number;
-          title: string;
-          poster_path: string | null;
-          release_date: string | null;
-          watched: boolean;
-          added_by: string | null;
-          picked_at: string | null;
-          picked_by: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          tmdb_id: number;
-          title: string;
-          poster_path?: string | null;
-          release_date?: string | null;
-          watched?: boolean;
-          added_by?: string | null;
-          picked_at?: string | null;
-          picked_by?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          tmdb_id?: number;
-          title?: string;
-          poster_path?: string | null;
-          release_date?: string | null;
-          watched?: boolean;
-          added_by?: string | null;
-          picked_at?: string | null;
-          picked_by?: string | null;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-    };
     Views: EmptyRecord;
     Functions: EmptyRecord;
     Enums: EmptyRecord;
