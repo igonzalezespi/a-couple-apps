@@ -2,10 +2,10 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 
 import { useQuery } from '@aca/core';
-import { useLocale } from '@aca/i18n';
 import { Button, Card, Image, Input, Screen, Text, XStack, YStack } from '@aca/ui';
 
 import { useAddToWatchlist, useWatchlist } from './hooks/useWatchlist';
+import { useMoviesLocale } from './i18n';
 import { posterUrl, searchMovies, type MovieResult } from './lib/tmdb';
 import { type NewWatchlistItem } from './lib/watchlist';
 
@@ -23,7 +23,7 @@ function isUniqueViolation(error: unknown): boolean {
 /** Search TMDB in the configured language; add a result to the shared watchlist. */
 export function SearchScreen() {
   const router = useRouter();
-  const { t, language } = useLocale();
+  const { t, language } = useMoviesLocale();
   const add = useAddToWatchlist();
   const { data: watchlist } = useWatchlist();
   const [term, setTerm] = useState('');
@@ -106,7 +106,7 @@ function Results({
   onWatchlist: Set<number>;
   onAdd: (movie: MovieResult) => void;
 }) {
-  const { t } = useLocale();
+  const { t } = useMoviesLocale();
   if (query.length === 0) return <Text color="$colorMuted">{t('searchPrompt')}</Text>;
   if (isLoading) return <Text color="$colorMuted">{t('loading')}</Text>;
   if (isError) return <Text color="$colorMuted">{t('searchError')}</Text>;
@@ -129,7 +129,7 @@ function MovieRow({
   added: boolean;
   onAdd: (movie: MovieResult) => void;
 }) {
-  const { t } = useLocale();
+  const { t } = useMoviesLocale();
   const year = movie.releaseDate ? movie.releaseDate.slice(0, 4) : null;
   const poster = posterUrl(movie.posterPath);
   return (

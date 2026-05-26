@@ -4,10 +4,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { getSharedConfig } from '@aca/config';
 import { CoreProvider, createQueryClient, PersonProvider } from '@aca/core';
-import { createI18n, I18nProvider, resolveLanguage } from '@aca/i18n';
+import { I18nProvider, resolveLanguage } from '@aca/i18n';
 import { createUIConfig } from '@aca/ui';
 
 import coupleConfig from '../../../couple.config';
+import { createMoviesI18n } from '../src/i18n';
 import { supabase } from '../src/lib/supabase';
 import { PersonGate } from '../src/PersonGate';
 import { PersonThemedUIProvider } from '../src/PersonThemedUIProvider';
@@ -17,7 +18,7 @@ const shared = getSharedConfig(coupleConfig);
 // dark_purple, ...). The active person's color selects the theme NAME at runtime (see
 // PersonThemedUIProvider); couple.config `theme` still re-skins the base couple-wide.
 const uiConfig = createUIConfig(shared.theme ?? {});
-const i18n = createI18n(resolveLanguage({ configDefault: shared.defaultLanguage }));
+const i18n = createMoviesI18n(resolveLanguage({ configDefault: shared.defaultLanguage }));
 const queryClient = createQueryClient();
 
 export default function RootLayout() {

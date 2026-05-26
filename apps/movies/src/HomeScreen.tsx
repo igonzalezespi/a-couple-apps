@@ -2,17 +2,17 @@ import { useRouter } from 'expo-router';
 
 import { getSharedConfig } from '@aca/config';
 import { useCurrentPerson } from '@aca/core';
-import { useLocale } from '@aca/i18n';
 import { Button, Card, Screen, Text } from '@aca/ui';
 
 import coupleConfig from '../../../couple.config';
+import { useMoviesLocale } from './i18n';
 import { Watchlist } from './Watchlist';
 
 const [personA, personB] = getSharedConfig(coupleConfig).people;
 
 /** The couple's home: renders from @aca/ui + @aca/i18n + @aca/config; switch which person you are. */
 export function HomeScreen() {
-  const { t, language, setLanguage } = useLocale();
+  const { t, language, setLanguage } = useMoviesLocale();
   const { clearPerson } = useCurrentPerson();
   const router = useRouter();
   return (

@@ -1,6 +1,7 @@
 import { useCurrentPerson } from '@aca/core';
-import { useLocale } from '@aca/i18n';
 import { Text, XStack, YStack } from '@aca/ui';
+
+import { useMoviesLocale } from './i18n';
 
 /**
  * Shows who is currently using the app (name + a dot in their accent color) on every screen. The
@@ -8,7 +9,7 @@ import { Text, XStack, YStack } from '@aca/ui';
  */
 export function CurrentPersonBadge() {
   const { person } = useCurrentPerson();
-  const { t } = useLocale();
+  const { t } = useMoviesLocale();
   if (!person) return null;
   return (
     <XStack

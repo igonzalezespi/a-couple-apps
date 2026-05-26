@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { en } from './en';
 import { es } from './es';
 
-describe('common locale key parity', () => {
+describe('movies locale key parity', () => {
   it('en and es declare exactly the same keys (no missing translations)', () => {
     expect(Object.keys(es).sort()).toEqual(Object.keys(en).sort());
   });

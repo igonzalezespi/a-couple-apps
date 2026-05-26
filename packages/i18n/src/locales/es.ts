@@ -1,7 +1,7 @@
-import { type TranslationKey } from './en';
+import { type CommonTranslationKey } from './en';
 
-// Typed as Record<TranslationKey, string> so a missing or extra key fails typecheck.
-export const es: Record<TranslationKey, string> = {
+// Typed as Record<CommonTranslationKey, string> so a missing or extra key fails typecheck.
+export const es: Record<CommonTranslationKey, string> = {
   appName: 'A Couple Apps',
   language: 'Idioma',
   english: 'Inglés',
@@ -16,27 +16,5 @@ export const es: Record<TranslationKey, string> = {
   loading: 'Cargando...',
   whoAreYou: '¿Quién está usando esto?',
   switchPerson: 'Cambiar de persona',
-  youArePerson: 'Eres {{name}}',
-  search: 'Buscar',
-  searchPlaceholder: 'Buscar películas',
-  searchPrompt: 'Busca una película.',
-  noResults: 'Sin resultados.',
-  searchError: 'Algo salió mal. Inténtalo de nuevo.',
-  watchlist: 'Lista',
-  watched: 'Vista',
-  markWatched: 'Marcar vista',
-  watchlistEmpty: 'Aún no hay nada. Añade una película para ver juntos.',
-  added: 'En la lista',
-  alreadyOnWatchlist: 'Ya está en tu lista.',
-  poster: 'Póster de {{title}}',
-  toWatch: 'Por ver',
-  addedByYou: 'Añadida por ti',
-  addedByPartner: 'Añadida por tu pareja',
-  addedByName: 'Añadida por {{name}}',
-  addFirstMovie: 'Buscar una película',
-  pickForTonight: 'Elegir para esta noche',
-  tonightsPick: 'Elección de esta noche',
-  clearPick: 'Quitar elección',
-  pickedByYou: 'Elegida por ti',
-  pickedByName: 'Elegida por {{name}}'
+  youArePerson: 'Eres {{name}}'
 };
