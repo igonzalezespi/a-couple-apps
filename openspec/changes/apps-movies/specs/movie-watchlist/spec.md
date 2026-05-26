@@ -1,21 +1,21 @@
 ## ADDED Requirements
 
-### Requirement: Authenticated access
+### Requirement: Person selection (no sign-in)
 
-The movie watchlist SHALL be available only to an authenticated member of the couple. Unauthenticated users SHALL be shown a sign-in screen; authentication SHALL use Supabase (email OTP) via `@aca/core`, and the session SHALL persist across launches (AsyncStorage on native, localStorage on web).
+The app SHALL NOT use authentication. On first launch it SHALL present a person picker offering the two configured people; until one is chosen, the watchlist SHALL NOT be shown. The selection SHALL persist across launches (AsyncStorage on native, the same storage on React Native Web) and SHALL be switchable, returning to the picker.
 
-#### Scenario: Sign-in gate
+#### Scenario: Person-selection gate
 
-- **GIVEN** no active session
+- **GIVEN** no stored person selection
 - **WHEN** the app launches
-- **THEN** the sign-in screen SHALL be shown, not the watchlist
+- **THEN** the person picker SHALL be shown, not the watchlist
 
-#### Scenario: Authenticated entry
+#### Scenario: Selected entry
 
-- **GIVEN** a valid session (via `@aca/core` `useSession`)
+- **GIVEN** a stored person selection
 - **WHEN** the app launches
 - **THEN** the watchlist SHALL be shown
-- **AND** signing out SHALL return to the sign-in screen
+- **AND** switching person SHALL return to the picker
 
 ### Requirement: Configured-language movie search
 
