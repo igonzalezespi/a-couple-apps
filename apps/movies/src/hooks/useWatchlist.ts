@@ -5,10 +5,10 @@ import {
   useCurrentPerson,
   useMutation,
   useQuery,
-  useQueryClient,
-  useSupabase
+  useQueryClient
 } from '@aca/core';
 
+import { useMoviesSupabase } from '../lib/useMoviesSupabase';
 import { watchlistItemContract, type NewWatchlistItem, type WatchlistItem } from '../lib/watchlist';
 
 const SCHEMA = 'movies';
@@ -22,7 +22,7 @@ const WATCHLIST_CHANNEL_ID = 'movies-watchlist';
 
 /** The shared watchlist, newest first. */
 export function useWatchlist() {
-  const client = useSupabase();
+  const client = useMoviesSupabase();
   return useQuery({
     queryKey: WATCHLIST_QUERY_KEY,
     queryFn: async (): Promise<WatchlistItem[]> => {
@@ -41,7 +41,7 @@ export function useWatchlist() {
 
 /** Add a movie, attributed to the current person (no auth; identity is the selected person). */
 export function useAddToWatchlist() {
-  const client = useSupabase();
+  const client = useMoviesSupabase();
   const { person } = useCurrentPerson();
   const queryClient = useQueryClient();
   return useMutation({
@@ -58,7 +58,7 @@ export function useAddToWatchlist() {
 
 /** Remove an item from the shared watchlist. */
 export function useRemoveFromWatchlist() {
-  const client = useSupabase();
+  const client = useMoviesSupabase();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string): Promise<void> => {
@@ -71,7 +71,7 @@ export function useRemoveFromWatchlist() {
 
 /** Mark an item watched / unwatched. */
 export function useSetWatched() {
-  const client = useSupabase();
+  const client = useMoviesSupabase();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, watched }: { id: string; watched: boolean }): Promise<void> => {
@@ -84,7 +84,7 @@ export function useSetWatched() {
 
 /** Set or clear the shared "tonight's pick". Setting one clears any other (enforced by a DB trigger). */
 export function useSetTonightPick() {
-  const client = useSupabase();
+  const client = useMoviesSupabase();
   const { person } = useCurrentPerson();
   const queryClient = useQueryClient();
   return useMutation({
@@ -111,7 +111,7 @@ export function useSetTonightPick() {
  * Unsubscribes on unmount.
  */
 export function useWatchlistRealtime(): void {
-  const client = useSupabase();
+  const client = useMoviesSupabase();
   const queryClient = useQueryClient();
   useEffect(() => {
     const channel = subscribeCoupleChannel(client, {
