@@ -21,6 +21,10 @@ All notable changes to this project are documented here. The format is based on
 - `apps/movies`: shared movie watchlist - no-login person selection, TMDB search in the configured
   language, add / remove / mark-watched, realtime sync between partners, full en/es i18n with
   loading/empty/error states, and accessibility labels.
+- Couple personalization: each person can have a favorite accent color (red/purple) that re-skins
+  the app to whoever is using it; the current person is shown on every screen; and `couple.config.ts`
+  is now per-instance + gitignored (only the placeholder `couple.config.example.ts` ships), so real
+  names + colors stay private.
 - Supabase schema: `shared` + `movies` schemas with RLS and `anon` role grants (no auth; the
   private build's anon key is the boundary) and the realtime publication.
 - Tests: Vitest + Testing Library unit/component suites, a hermetic Playwright web e2e smoke,
