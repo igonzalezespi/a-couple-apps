@@ -11,9 +11,16 @@
   "verifyStatus": "READY_WITH_WARNINGS",
   "verifyIterations": 2,
   "lastVerifyReportPath": "verify-report.md",
-  "archivedAt": null,
-  "prUrl": null,
-  "prNumber": null,
-  "deferredIssues": [],
+  "archivedAt": "2026-05-26T21:15:06.483Z",
+  "prUrl": "https://github.com/igonzalezespi/a-couple-apps/pull/12",
+  "prNumber": 12,
+  "deferredIssues": [
+    {
+      "id": "umbrella-phase8",
+      "number": 13,
+      "url": "https://github.com/igonzalezespi/a-couple-apps/issues/13",
+      "findingId": "umbrella-phase8"
+    }
+  ],
   "manualActionIssues": []
 }
