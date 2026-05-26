@@ -32,6 +32,8 @@ export type Database = {
           release_date: string | null;
           watched: boolean;
           added_by: string | null;
+          picked_at: string | null;
+          picked_by: string | null;
           created_at: string;
         };
         Insert: {
@@ -42,6 +44,8 @@ export type Database = {
           release_date?: string | null;
           watched?: boolean;
           added_by?: string | null;
+          picked_at?: string | null;
+          picked_by?: string | null;
           created_at?: string;
         };
         Update: {
@@ -52,6 +56,8 @@ export type Database = {
           release_date?: string | null;
           watched?: boolean;
           added_by?: string | null;
+          picked_at?: string | null;
+          picked_by?: string | null;
           created_at?: string;
         };
         Relationships: [];

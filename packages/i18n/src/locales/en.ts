@@ -30,7 +30,12 @@ export const en = {
   addedByYou: 'Added by you',
   addedByPartner: 'Added by your partner',
   addedByName: 'Added by {{name}}',
-  addFirstMovie: 'Search for a movie'
+  addFirstMovie: 'Search for a movie',
+  pickForTonight: 'Pick for tonight',
+  tonightsPick: "Tonight's pick",
+  clearPick: 'Clear pick',
+  pickedByYou: 'Chosen by you',
+  pickedByName: 'Chosen by {{name}}'
 } as const;
 
 /** The translation keys every locale must provide. */

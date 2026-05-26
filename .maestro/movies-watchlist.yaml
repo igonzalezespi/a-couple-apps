@@ -1,7 +1,7 @@
 # Movies watchlist - native e2e (Maestro).
 #
 # Mirrors the Playwright web smoke (apps/movies/e2e/movies.spec.ts): pick a person -> search ->
-# add -> mark watched. There is no auth -- identity is a local person choice. Runs on a
+# add -> pick -> mark watched. There is no auth -- identity is a local person choice. Runs on a
 # simulator/emulator (and the label-gated Android CI job). See .maestro/README.md, then:
 #   maestro test .maestro/movies-watchlist.yaml
 #
@@ -27,8 +27,10 @@ appId: com.acouple.movies
 - tapOn: 'Add'
 - assertVisible: 'Added'
 
-# Back on the watchlist, mark it watched.
+# Back on the watchlist: nominate tonight's pick, then mark watched (which clears the pick).
 - tapOn: 'Back'
 - assertVisible: 'The Matrix (1999)'
+- tapOn: 'Pick for tonight'
+- assertVisible: "Tonight's pick"
 - tapOn: 'Mark watched'
 - assertVisible: 'Watched'

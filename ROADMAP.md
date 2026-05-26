@@ -157,16 +157,13 @@ between "functional" and "opened every Friday." (From the 2026-05 product review
 - Split into "To watch" (the working list) and "Watched" (history).
 - Attribution: each item shows "Added by you / by your partner".
 - Empty state is a call to action; the language toggle is de-emphasized.
+- **Tonight's pick (headline feature).** Either partner nominates one unwatched movie; it floats
+  to the top with a distinct treatment, syncs live, and auto-clears when the movie is watched or
+  removed. (`picked_at` / `picked_by` on `watchlist_items` + a single-pick/clear-on-watched trigger.)
 
 **Tasks (remaining, by value)**
-- **Tonight's pick (headline feature).** Either partner nominates one unwatched movie as
-  tonight's pick; it floats to the top with a distinct treatment and the other partner sees it
-  live. Needs a small schema change (`picked_by` / `picked_at` on `watchlist_items`) + realtime
-  + one UI treatment + one sort rule. No new screens. This is the coordination primitive that
-  turns a list into a shared decision.
 - Movie detail view (`/movie/[id]`): overview, rating, year -- so a couple can choose from the list.
 - Optimistic watched toggle + undo-on-remove (instant feedback; safe shared deletes).
-- Auth polish: resend-code + differentiated expired/invalid-code messages.
 - Search-as-you-type (debounce) + a clear button; a real settings screen (move the language switch there).
 
 **Acceptance**

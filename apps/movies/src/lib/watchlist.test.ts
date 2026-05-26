@@ -10,6 +10,8 @@ const VALID_ROW = {
   release_date: '1999-03-31',
   watched: false,
   added_by: '22222222-2222-4222-8222-222222222222',
+  picked_at: '2024-02-01T00:00:00Z',
+  picked_by: '22222222-2222-4222-8222-222222222222',
   created_at: '2024-01-01T00:00:00Z'
 };
 
@@ -29,6 +31,13 @@ describe('watchlistItemContract', () => {
     const row = { ...VALID_ROW, release_date: null };
     const result = watchlistItemContract.parse(row);
     expect(result.release_date).toBeNull();
+  });
+
+  it('accepts a null tonight pick', () => {
+    const row = { ...VALID_ROW, picked_at: null, picked_by: null };
+    const result = watchlistItemContract.parse(row);
+    expect(result.picked_at).toBeNull();
+    expect(result.picked_by).toBeNull();
   });
 
   it('rejects a non-UUID id', () => {

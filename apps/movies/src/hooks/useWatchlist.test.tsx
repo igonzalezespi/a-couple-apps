@@ -15,6 +15,7 @@ import {
 import {
   useAddToWatchlist,
   useRemoveFromWatchlist,
+  useSetTonightPick,
   useSetWatched,
   useWatchlist,
   useWatchlistRealtime
@@ -102,6 +103,8 @@ const ROW = {
   release_date: '1999-03-31',
   watched: false,
   added_by: '22222222-2222-4222-8222-222222222222',
+  picked_at: null,
+  picked_by: null,
   created_at: '2024-01-01T00:00:00Z'
 };
 
@@ -115,6 +118,10 @@ describe('watchlist hooks', () => {
     expect(schema).toHaveBeenCalledWith('movies');
     expect(from).toHaveBeenCalledWith('watchlist_items');
     expect(builder.select).toHaveBeenCalledWith('*');
+    expect(builder.order).toHaveBeenCalledWith('picked_at', {
+      ascending: false,
+      nullsFirst: false
+    });
     expect(builder.order).toHaveBeenCalledWith('created_at', { ascending: false });
     expect(result.current.data).toEqual([ROW]);
   });
@@ -163,6 +170,36 @@ describe('watchlist hooks', () => {
     });
 
     expect(builder.update).toHaveBeenCalledWith({ watched: true });
+    expect(builder.eq).toHaveBeenCalledWith('id', 'the-id');
+  });
+
+  it('useSetTonightPick sets the pick with the current person id and a timestamp', async () => {
+    const { client, builder } = makeWatchlistClient({ data: null, error: null });
+    const { result } = renderHook(
+      () => ({ pick: useSetTonightPick(), current: useCurrentPerson() }),
+      { wrapper: makeWrapper(client) }
+    );
+    await waitFor(() => expect(result.current.current.person?.id).toBe('personA'));
+
+    await act(async () => {
+      await result.current.pick.mutateAsync({ id: 'the-id', pick: true });
+    });
+
+    expect(builder.update).toHaveBeenCalledWith(
+      expect.objectContaining({ picked_by: 'personA', picked_at: expect.any(String) })
+    );
+    expect(builder.eq).toHaveBeenCalledWith('id', 'the-id');
+  });
+
+  it('useSetTonightPick clears the pick (both columns null)', async () => {
+    const { client, builder } = makeWatchlistClient({ data: null, error: null });
+    const { result } = renderHook(() => useSetTonightPick(), { wrapper: makeWrapper(client) });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id: 'the-id', pick: false });
+    });
+
+    expect(builder.update).toHaveBeenCalledWith({ picked_at: null, picked_by: null });
     expect(builder.eq).toHaveBeenCalledWith('id', 'the-id');
   });
 
@@ -253,6 +290,20 @@ describe('watchlist hooks', () => {
 
     await act(async () => {
       await result.current.mutateAsync({ id: 'the-id', watched: true });
+    });
+
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['watchlist_items'] });
+  });
+
+  it('useSetTonightPick calls invalidateQueries with watchlist_items key on success', async () => {
+    const { client } = makeWatchlistClient({ data: null, error: null });
+    const queryClient = createQueryClient();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const Wrapper = makeProviders(client, queryClient);
+    const { result } = renderHook(() => useSetTonightPick(), { wrapper: Wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ id: 'the-id', pick: false });
     });
 
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ['watchlist_items'] });
