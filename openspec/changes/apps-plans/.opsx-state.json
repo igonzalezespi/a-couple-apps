@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "changeName": "apps-plans",
+  "createdAt": "2026-05-26T23:04:19.996Z",
+  "proposedAt": "2026-05-26T23:04:19.996Z",
+  "reviewedAt": null,
+  "reviewWaived": false,
+  "reviewWaiveReason": null,
+  "appliedAt": null,
+  "verifiedAt": null,
+  "verifyStatus": null,
+  "verifyIterations": 0,
+  "lastVerifyReportPath": null,
+  "archivedAt": null,
+  "prUrl": null,
+  "prNumber": null,
+  "deferredIssues": [],
+  "manualActionIssues": []
+}
