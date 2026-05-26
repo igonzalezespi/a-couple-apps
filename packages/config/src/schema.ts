@@ -21,7 +21,8 @@ export type Person = z.infer<typeof personSchema>;
 export const themeOverridesSchema = z
   .object({
     primary: z.string().optional(),
-    accent: z.string().optional()
+    accent: z.string().optional(),
+    onPrimary: z.string().optional()
   })
   .optional();
 export type ThemeOverrides = z.infer<typeof themeOverridesSchema>;

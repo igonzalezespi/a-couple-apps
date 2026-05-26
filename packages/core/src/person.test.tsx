@@ -29,11 +29,12 @@ function makeStorage(initial: string | null) {
 }
 
 function Probe() {
-  const { person, people, setPerson, clearPerson } = useCurrentPerson();
+  const { person, people, loading, setPerson, clearPerson } = useCurrentPerson();
   return (
     <>
       <span>person:{person ? person.displayName : 'none'}</span>
       <span>count:{people.length}</span>
+      <span>loading:{String(loading)}</span>
       <button onClick={() => setPerson('personB')}>pickB</button>
       <button onClick={() => clearPerson()}>clear</button>
     </>
@@ -81,5 +82,20 @@ describe('PersonProvider / useCurrentPerson', () => {
   it('falls back to no selection when the stored id is unknown', async () => {
     renderWith('ghost');
     await waitFor(() => expect(screen.getByText('person:none')).toBeTruthy());
+  });
+
+  it('resolves loading (does not hang) when the storage read rejects', async () => {
+    const storage: PersonStorage = {
+      getItem: () => Promise.reject(new Error('storage unavailable')),
+      setItem: () => Promise.resolve(),
+      removeItem: () => Promise.resolve()
+    };
+    render(
+      <PersonProvider people={PEOPLE} storage={storage}>
+        <Probe />
+      </PersonProvider>
+    );
+    await waitFor(() => expect(screen.getByText('loading:false')).toBeTruthy());
+    expect(screen.getByText('person:none')).toBeTruthy();
   });
 });
