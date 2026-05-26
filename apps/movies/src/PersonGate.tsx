@@ -2,10 +2,10 @@ import { type ReactNode } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCurrentPerson } from '@aca/core';
-import { useLocale } from '@aca/i18n';
 import { Button, Card, Screen, Text, YStack } from '@aca/ui';
 
 import { CurrentPersonBadge } from './CurrentPersonBadge';
+import { useMoviesLocale } from './i18n';
 
 /**
  * No login: pick which member of the couple is using this device. The choice is persisted and
@@ -14,7 +14,7 @@ import { CurrentPersonBadge } from './CurrentPersonBadge';
  */
 export function PersonGate({ children }: { children: ReactNode }) {
   const { person, people, loading, setPerson } = useCurrentPerson();
-  const { t } = useLocale();
+  const { t } = useMoviesLocale();
 
   if (loading) {
     return (
