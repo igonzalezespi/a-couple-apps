@@ -11,7 +11,7 @@
 
 | Dimension    | Metric                      | Value            | Threshold |
 | ------------ | --------------------------- | ---------------- | --------- |
-| Completeness | Tasks complete              | `12/12`          | --        |
+| Completeness | Tasks complete              | `13/13`          | --        |
 | Completeness | Requirements covered        | `3/3`            | `>= 0.80` |
 | Correctness  | Scenarios covered by tests  | `5/8`            | `>= 0.70` |
 | Correctness  | Requirements mapped to code | `3/3`            | --        |
@@ -62,12 +62,12 @@ _None_
 
 ## Deferred Work
 
-### Deferred 1: Render test for PersonThemedUIProvider accent selection
+### Deferred 1: Badge identity update test on person switch
 
 - **Origin**: WARNING from correctness / scenario_uncovered
 - **Finding ID**: 254dd023
 - **Why deferred**: requires human judgment (retroactive backfill; this verify must not add tests)
-- **Affected files**: `apps/movies/src/CurrentPersonBadge.test.tsx`, `apps/movies/src/PersonThemedUIProvider.tsx`
+- **Affected files**: `apps/movies/src/CurrentPersonBadge.test.tsx`
 
 **Propose command**:
 
@@ -160,4 +160,4 @@ _None_
 
 ## Final Assessment
 
-All 12 tasks are complete and evidenced against the repo: `couple.config.ts` is untracked and gitignored (`.gitignore:12`), the committed `couple.config.example.ts` carries only `Person A`/`Person B` placeholders with `red`/`purple` colors, the `no-personal-data` test targets the example, CI provides a placeholder config in `setup-repo`, the red/purple accent palettes plus `accentOverrides`/`buildThemes` live in `@aca/ui`, `personSchema`/`@aca/core` `Person` thread the optional `color`, `PersonThemedUIProvider` re-skins by switching the Tamagui theme name, and `CurrentPersonBadge` renders the current person (name + `$primary` dot) persistently in `PersonGate` on every screen with an i18n accessibility label (en + es). All 3 ADDED requirements map to code (3/3). The design decisions (D1 gitignore-the-example, D2 named-enum accent in the design system, D3 shell badge; Q1 -> `primary`, Q2 -> shell badge) are honored; the builder is realized as `accentOverrides` + a single multi-theme `buildThemes` rather than the design's tentative `themeForAccent` name -- a documented, runtime-safer refinement, not a deviation. Scenario test coverage is 5/8 (0.625), below the 0.70 archive-gate threshold: one gap is the on-device re-skin (recorded as a satisfied Manual Action), one is structural (gitignored config, no logic to test), and one (badge updates on switch) is deferred with its mechanism already covered in `@aca/core`. No CRITICAL findings; 2 WARNING + 2 SUGGESTION, all deferred per the retroactive-backfill constraint (no new tests added). Status: READY_WITH_WARNINGS.
+All 13 tasks are complete and evidenced against the repo: `couple.config.ts` is untracked and gitignored (`.gitignore:12`), the committed `couple.config.example.ts` carries only `Person A`/`Person B` placeholders with `red`/`purple` colors, the `no-personal-data` test targets the example, CI provides a placeholder config in `setup-repo`, the red/purple accent palettes plus `accentOverrides`/`buildThemes` live in `@aca/ui`, `personSchema`/`@aca/core` `Person` thread the optional `color`, `PersonThemedUIProvider` re-skins by switching the Tamagui theme name, and `CurrentPersonBadge` renders the current person (name + `$primary` dot) persistently in `PersonGate` on every screen with an i18n accessibility label (en + es). All 3 ADDED requirements map to code (3/3). The design decisions (D1 gitignore-the-example, D2 named-enum accent in the design system, D3 shell badge; Q1 -> `primary`, Q2 -> shell badge) are honored; the builder is realized as `accentOverrides` + a single multi-theme `buildThemes` rather than the design's tentative `themeForAccent` name -- a documented, runtime-safer refinement, not a deviation. Scenario test coverage is 5/8 (0.625), below the 0.70 archive-gate threshold: one gap is the on-device re-skin (recorded as a satisfied Manual Action), one is structural (gitignored config, no logic to test), and one (badge updates on switch) is deferred with its mechanism already covered in `@aca/core`. No CRITICAL findings; 2 WARNING + 2 SUGGESTION, all deferred per the retroactive-backfill constraint (no new tests added). Status: READY_WITH_WARNINGS.

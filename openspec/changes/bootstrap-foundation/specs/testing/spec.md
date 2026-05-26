@@ -18,7 +18,7 @@ The repository SHALL use Vitest for unit and component tests, configured per pac
 
 ### Requirement: Cross-platform end-to-end testing
 
-End-to-end coverage SHALL use Maestro for native (iOS/Android) flows under `.maestro/` and Playwright for the React Native Web build under `e2e/`. Both SHALL be runnable locally and wired into CI (label-gated).
+End-to-end coverage SHALL use Maestro for native (iOS/Android) flows under `.maestro/` and Playwright for the React Native Web build under `e2e/`. Both SHALL be runnable locally and wired into CI (the native flow is label-gated).
 
 #### Scenario: Web e2e runs against the RN-Web build
 
