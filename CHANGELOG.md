@@ -36,6 +36,18 @@ All notable changes to this project are documented here. The format is based on
   aggregate `ci-gate`, plus a label-gated native e2e scaffold for Android.
 - Docs: README, CONTRIBUTING, ARCHITECTURE, ROADMAP, and ADR-0001 (foundation stack).
 
+### Changed
+
+- `@aca/core` and `@aca/i18n` no longer carry any single app's schema or strings, so a new app
+  composes them instead of editing the shared packages (the Phase 7 "add an app" prerequisite).
+  `@aca/core` exports a cross-app `BaseDatabase` (`public` + `shared`) and a generic Supabase
+  client/hook (`createSupabaseClient<DB>`, `AppSupabaseClient<DB>`, `useSupabase<DB>()`); an app
+  composes `<App>Database = BaseDatabase & { <schema>: ... }` for typed `client.schema(...)`.
+  `@aca/i18n` adds a `common` default namespace with `fallbackNS`, plus `registerAppNamespace`
+  and a generic `useAppLocale(ns)`, so an app owns its namespace and shell strings fall through.
+  Backward-compatible: the generics default to `BaseDatabase`/`common`, untyped callers are
+  unchanged, and `Database` is kept as a deprecated alias of `BaseDatabase`.
+
 ### Notes
 
 - The app is not a hosted service: each couple self-hosts their own Supabase project and

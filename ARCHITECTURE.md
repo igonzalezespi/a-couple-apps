@@ -74,6 +74,65 @@ realtime: Postgres change -> supabase_realtime publication -> @aca/core channel
 - There is no sign-up surface to restrict: the boundary is the private build that ships the
   couple's anon key, not per-user accounts.
 
+## Adding an app
+
+A new app (e.g. `apps/plans`) composes the shared foundation; it never edits the shared
+packages to add its own data shape or strings. The shared packages stay app-agnostic:
+`@aca/core` carries only `BaseDatabase` (`public` + `shared`), and `@aca/i18n` carries only
+the `common` namespace. An app owns the rest, through two seams.
+
+**1. Typed Supabase schema -- compose `BaseDatabase`.** The app declares its own database type
+and binds a hook so `client.schema(...)` is typed, without importing `@supabase/supabase-js`:
+
+```ts
+// apps/<app>/src/lib/database.ts
+import { type BaseDatabase } from '@aca/core';
+
+export type PlansDatabase = BaseDatabase & {
+  plans: { Tables: { /* ... */ }; Views: ...; Functions: ...; Enums: ...; CompositeTypes: ... };
+};
+
+// apps/<app>/src/lib/use<App>Supabase.ts
+import { useSupabase } from '@aca/core';
+import { type PlansDatabase } from './database';
+
+export const usePlansSupabase = () => useSupabase<PlansDatabase>();
+```
+
+`createSupabaseClient<DB>`, `AppSupabaseClient<DB>`, and `useSupabase<DB>()` are generic and
+default to `BaseDatabase`, so untyped callers compile unchanged. Pass the app's type to keep
+schema-qualified calls (`client.schema('plans')`) typed. Regenerate the schema block from the
+real project with `supabase gen types typescript` once the tables grow. (Movies is the worked
+example: `apps/movies/src/lib/database.ts` + `useMoviesSupabase.ts`.)
+
+**2. App-owned i18n namespace -- register on the shared instance.** The app defines its own
+namespace and binds a locale hook; shared shell strings (`common`) fall through automatically:
+
+```ts
+// apps/<app>/src/i18n/index.ts
+import { createI18n, registerAppNamespace, useAppLocale } from '@aca/i18n';
+import { en } from './en';
+import { es } from './es';
+
+export const createPlansI18n = (language) => {
+  const instance = createI18n(language);          // common is defaultNS + fallbackNS
+  registerAppNamespace(instance, 'plans', { en, es });
+  return instance;
+};
+
+export const usePlansLocale = () => useAppLocale('plans'); // resolves plans, falls back to common
+```
+
+`useAppLocale(ns)` returns `{ t, language, languages, setLanguage }`; `language`/`setLanguage`
+are namespace-independent. Because `common` is the `fallbackNS`, a component mixing app and
+shell strings needs only the one app hook. Guard each locale with a per-namespace key type
+(`Record<<App>TranslationKey, string>` for `es`), mirroring `CommonTranslationKey` (in `@aca/i18n`)
+and `MoviesTranslationKey` (in `apps/movies`).
+
+**The rule:** shared packages hold cross-app shape only. Adding an app touches `apps/<app>/`
+(and its Supabase migration), never `@aca/core` or `@aca/i18n` internals -- which is exactly the
+Phase 7 acceptance criterion ("adding the app required no edits to shared package internals").
+
 ## Testing
 
 - **Unit/component:** Vitest + Testing Library (jsdom; a react-native -> react-native-web alias).
