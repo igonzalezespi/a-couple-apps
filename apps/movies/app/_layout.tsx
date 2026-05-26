@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { getSharedConfig } from '@aca/config';
 import { CoreProvider, createQueryClient, PersonProvider } from '@aca/core';
@@ -21,16 +22,18 @@ const queryClient = createQueryClient();
 
 export default function RootLayout() {
   return (
-    <I18nProvider i18n={i18n}>
-      <PersonProvider people={shared.people} storage={AsyncStorage}>
-        <PersonThemedUIProvider config={uiConfig}>
-          <CoreProvider client={supabase} queryClient={queryClient}>
-            <PersonGate>
-              <Stack screenOptions={{ headerShown: false }} />
-            </PersonGate>
-          </CoreProvider>
-        </PersonThemedUIProvider>
-      </PersonProvider>
-    </I18nProvider>
+    <SafeAreaProvider>
+      <I18nProvider i18n={i18n}>
+        <PersonProvider people={shared.people} storage={AsyncStorage}>
+          <PersonThemedUIProvider config={uiConfig}>
+            <CoreProvider client={supabase} queryClient={queryClient}>
+              <PersonGate>
+                <Stack screenOptions={{ headerShown: false }} />
+              </PersonGate>
+            </CoreProvider>
+          </PersonThemedUIProvider>
+        </PersonProvider>
+      </I18nProvider>
+    </SafeAreaProvider>
   );
 }

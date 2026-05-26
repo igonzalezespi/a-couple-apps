@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCurrentPerson } from '@aca/core';
 import { useLocale } from '@aca/i18n';
@@ -43,11 +44,12 @@ export function PersonGate({ children }: { children: ReactNode }) {
     );
   }
 
-  // Once someone is selected, show a persistent identity badge above every screen.
+  // Once someone is selected, show a persistent identity badge above every screen. SafeAreaView
+  // keeps the badge clear of the status bar / notch on native (no-op padding on web).
   return (
-    <YStack flex={1}>
+    <SafeAreaView edges={['top']} style={{ flex: 1 }}>
       <CurrentPersonBadge />
       <YStack flex={1}>{children}</YStack>
-    </YStack>
+    </SafeAreaView>
   );
 }
