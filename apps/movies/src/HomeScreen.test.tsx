@@ -14,6 +14,7 @@ vi.mock('./hooks/useWatchlist', () => ({
   useWatchlist: () => ({ data: [], isLoading: false, isError: false }),
   useSetWatched: () => ({ mutate: vi.fn() }),
   useRemoveFromWatchlist: () => ({ mutate: vi.fn() }),
+  useSetTonightPick: () => ({ mutate: vi.fn() }),
   useWatchlistRealtime: () => {}
 }));
 

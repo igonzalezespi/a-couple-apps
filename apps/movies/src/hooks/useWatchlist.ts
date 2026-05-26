@@ -30,6 +30,8 @@ export function useWatchlist() {
         .schema(SCHEMA)
         .from(TABLE)
         .select('*')
+        // The pick (at most one) floats to the top; then the rest newest-first.
+        .order('picked_at', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false });
       if (error) throw error;
       return watchlistItemContract.array().parse(data ?? []);
@@ -74,6 +76,24 @@ export function useSetWatched() {
   return useMutation({
     mutationFn: async ({ id, watched }: { id: string; watched: boolean }): Promise<void> => {
       const { error } = await client.schema(SCHEMA).from(TABLE).update({ watched }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
+  });
+}
+
+/** Set or clear the shared "tonight's pick". Setting one clears any other (enforced by a DB trigger). */
+export function useSetTonightPick() {
+  const client = useSupabase();
+  const { person } = useCurrentPerson();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, pick }: { id: string; pick: boolean }): Promise<void> => {
+      const values =
+        pick && person
+          ? { picked_at: new Date().toISOString(), picked_by: person.id }
+          : { picked_at: null, picked_by: null };
+      const { error } = await client.schema(SCHEMA).from(TABLE).update(values).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })

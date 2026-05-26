@@ -33,5 +33,10 @@ export const es: Record<TranslationKey, string> = {
   addedByYou: 'Añadida por ti',
   addedByPartner: 'Añadida por tu pareja',
   addedByName: 'Añadida por {{name}}',
-  addFirstMovie: 'Buscar una película'
+  addFirstMovie: 'Buscar una película',
+  pickForTonight: 'Elegir para esta noche',
+  tonightsPick: 'Elección de esta noche',
+  clearPick: 'Quitar elección',
+  pickedByYou: 'Elegida por ti',
+  pickedByName: 'Elegida por {{name}}'
 };

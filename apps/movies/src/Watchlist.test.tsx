@@ -11,13 +11,15 @@ vi.mock('expo-router', () => ({
 const h = vi.hoisted(() => ({
   result: { data: [] as unknown[] | undefined, isLoading: false, isError: false },
   setWatched: vi.fn(),
-  remove: vi.fn()
+  remove: vi.fn(),
+  setPick: vi.fn()
 }));
 
 vi.mock('./hooks/useWatchlist', () => ({
   useWatchlist: () => h.result,
   useSetWatched: () => ({ mutate: h.setWatched }),
   useRemoveFromWatchlist: () => ({ mutate: h.remove }),
+  useSetTonightPick: () => ({ mutate: h.setPick }),
   useWatchlistRealtime: () => {}
 }));
 
@@ -30,6 +32,8 @@ const ITEMS = [
     release_date: '1999-03-31',
     watched: false,
     added_by: 'personA',
+    picked_at: null,
+    picked_by: null,
     created_at: '2024-01-02T00:00:00Z'
   },
   {
@@ -40,6 +44,8 @@ const ITEMS = [
     release_date: '2014-10-24',
     watched: true,
     added_by: 'personA',
+    picked_at: null,
+    picked_by: null,
     created_at: '2024-01-01T00:00:00Z'
   }
 ];
@@ -51,6 +57,7 @@ describe('Watchlist', () => {
     h.result = { data: ITEMS, isLoading: false, isError: false };
     h.setWatched.mockClear();
     h.remove.mockClear();
+    h.setPick.mockClear();
   });
 
   afterEach(() => {
@@ -108,6 +115,33 @@ describe('Watchlist', () => {
     renderWithProviders(<Watchlist />, makeFakeClient().client, 'en', undefined, 'personB');
 
     expect((await screen.findAllByText('Added by Alex')).length).toBeGreaterThan(0);
+  });
+
+  it('offers a "Pick for tonight" action on an unwatched item', () => {
+    renderWatchlist();
+
+    expect(screen.getByRole('button', { name: 'Pick for tonight' })).toBeTruthy();
+  });
+
+  it('nominates an unwatched item as the tonight pick', () => {
+    renderWatchlist();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Pick for tonight' }));
+
+    expect(h.setPick).toHaveBeenCalledWith({ id: 'id-0', pick: true });
+  });
+
+  it('marks the picked item with a tonight treatment and clears it on demand', () => {
+    h.result = {
+      data: [{ ...ITEMS[0], picked_at: '2024-02-01T00:00:00Z', picked_by: 'personA' }, ITEMS[1]],
+      isLoading: false,
+      isError: false
+    };
+    renderWatchlist();
+
+    expect(screen.getByText(/Tonight's pick/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Clear pick' }));
+    expect(h.setPick).toHaveBeenCalledWith({ id: 'id-0', pick: false });
   });
 
   it('shows the loading state when data is still being fetched', () => {
