@@ -7,12 +7,13 @@
   "reviewWaived": true,
   "reviewWaiveReason": "Foundation approved by the maintainer via the Conventions Report + architecture + ROADMAP review (2026-05-24). Formal /osx:review waived: the review tooling is created by this very change (bootstrap).",
   "appliedAt": "2026-05-24T13:00:00.000Z",
-  "verifiedAt": null,
-  "verifyStatus": null,
-  "verifyIterations": 0,
-  "lastVerifyReportPath": null,
+  "verifiedAt": "2026-05-26T00:00:00Z",
+  "verifyStatus": "READY_WITH_WARNINGS",
+  "verifyIterations": 2,
+  "lastVerifyReportPath": "verify-report.md",
   "archivedAt": null,
   "prUrl": null,
   "prNumber": null,
-  "deferredIssues": []
+  "deferredIssues": [],
+  "manualActionIssues": []
 }

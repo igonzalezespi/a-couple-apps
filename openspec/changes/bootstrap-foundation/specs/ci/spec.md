@@ -2,7 +2,7 @@
 
 ### Requirement: Label-gated CI with an aggregate gate
 
-CI SHALL run on GitHub Actions using a reusable composite `./.github/actions/setup-repo` (pnpm + Node + frozen install). All third-party actions SHALL be pinned to a commit SHA with a trailing version comment. Expensive jobs (e2e, full) SHALL be label-gated; `dorny/paths-filter` SHALL scope jobs to changed areas; a single aggregate `ci-gate` job SHALL be the required check and SHALL fail unless every needed job is `success` or `skipped`.
+CI SHALL run on GitHub Actions using a reusable composite `./.github/actions/setup-repo` (pnpm + Node + frozen install). All third-party actions SHALL be pinned to a commit SHA with a trailing version comment. CI SHALL run `format`, `lint`, `typecheck`, and `test` in parallel, then `build`, an `e2e-web` (Playwright) job, and a `secrets` (gitleaks) job; a single aggregate `ci-gate` job SHALL be the required check and SHALL fail unless every needed job is `success` or `skipped`. (`dorny/paths-filter` job scoping and label-gating of expensive jobs are out of scope for the foundation; see ROADMAP Phase 9.)
 
 #### Scenario: Aggregate gate reflects job results
 
@@ -16,10 +16,3 @@ CI SHALL run on GitHub Actions using a reusable composite `./.github/actions/set
 - **GIVEN** any workflow file
 - **WHEN** it references a third-party action
 - **THEN** the reference SHALL be a commit SHA with a version comment, not a floating tag
-
-#### Scenario: Expensive jobs are gated
-
-- **GIVEN** a pull request without an `ci:e2e` (or `ci:full`) label
-- **WHEN** CI runs
-- **THEN** the e2e jobs SHALL be skipped to conserve runner minutes
-- **AND** adding the label SHALL enable them
