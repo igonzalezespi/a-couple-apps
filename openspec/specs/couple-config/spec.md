@@ -8,7 +8,7 @@ Provide a single, typed, per-instance configuration file that drives both apps -
 
 ### Requirement: Typed root configuration
 
-The repository SHALL provide a single root `couple.config.ts` validated by a zod schema in `packages/config`, shaped as `{ config: <shared>, movies: <app>, plans: <app> }`. The `config` (shared) block SHALL define the two people (each `{ id, displayName, color? }` where `color` is an optional favorite accent of `'red' | 'purple'`), `defaultLanguage` (`'en' | 'es'`), and optional `theme` overrides. Each app section SHALL carry that app's own settings plus an `enabled` flag. `@aca/config` SHALL validate the shared block strictly and expose typed accessors for the shared block and for each app's section. The loader SHALL fail with a readable error when the config is invalid.
+The repository SHALL provide a single root `couple.config.ts` validated by a zod schema in `packages/config`, shaped as `{ config: <shared>, movies: <app>, plans: <app> }` (the `plans` section is forward-looking; `apps/plans` ships in Phase 7). The `config` (shared) block SHALL define the two people (each `{ id, displayName, color? }` where `color` is an optional favorite accent of `'red' | 'purple'`), `defaultLanguage` (`'en' | 'es'`), and optional `theme` overrides. Each app section SHALL carry that app's own settings plus an `enabled` flag. `@aca/config` SHALL validate the shared block strictly and expose typed accessors for the shared block and for each app's section. The loader SHALL fail with a readable error when the config is invalid.
 
 #### Scenario: Valid config loads
 
