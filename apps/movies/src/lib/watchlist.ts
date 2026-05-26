@@ -15,6 +15,9 @@ export const watchlistItemContract = z.object({
   // The person id (from couple.config) who added it; no auth, so it's a config id, not a UUID.
   // Nullable to tolerate rows added before the no-auth migration.
   added_by: z.string().nullable(),
+  // Tonight's pick: both set together (a person id + when) or both null; at most one row is set.
+  picked_at: z.string().nullable(),
+  picked_by: z.string().nullable(),
   created_at: z.string()
 });
 

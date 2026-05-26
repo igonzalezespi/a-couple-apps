@@ -21,13 +21,15 @@ All notable changes to this project are documented here. The format is based on
 - `apps/movies`: shared movie watchlist - no-login person selection, TMDB search in the configured
   language, add / remove / mark-watched, realtime sync between partners, full en/es i18n with
   loading/empty/error states, and accessibility labels.
+- Tonight's pick: a single shared, realtime "Tonight's pick" over the watchlist - either partner
+  nominates one unwatched movie; it floats to the top with a distinct treatment, shows who chose
+  it, and auto-clears (DB trigger) when that movie is marked watched or removed.
 - Supabase schema: `shared` + `movies` schemas with RLS and `anon` role grants (no auth; the
   private build's anon key is the boundary) and the realtime publication.
 - Tests: Vitest + Testing Library unit/component suites, a hermetic Playwright web e2e smoke,
   and a Maestro native flow.
 - CI: GitHub Actions quality-gates (lint, typecheck, test, build, web e2e, gitleaks) behind an
-  aggregate `ci-gate`, plus a label-gated native e2e scaffold (written; activation pending a
-  `workflow`-scope push of `.github/workflows/`).
+  aggregate `ci-gate`, plus a label-gated native e2e scaffold for Android.
 - Docs: README, CONTRIBUTING, ARCHITECTURE, ROADMAP, and ADR-0001 (foundation stack).
 
 ### Notes

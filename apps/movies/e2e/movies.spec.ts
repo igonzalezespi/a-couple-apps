@@ -24,6 +24,8 @@ interface Row {
   release_date: string | null;
   watched: boolean;
   added_by: string | null;
+  picked_at: string | null;
+  picked_by: string | null;
   created_at: string;
 }
 
@@ -86,6 +88,8 @@ async function installStubs(page: Page, items: Row[]): Promise<void> {
         watched: it.watched ?? false,
         // The client now sends the selected person id; echo it back.
         added_by: it.added_by ?? null,
+        picked_at: null,
+        picked_by: null,
         created_at: new Date().toISOString()
       }));
       // Newest first, matching `.order('created_at', { ascending: false })`.
@@ -96,7 +100,27 @@ async function installStubs(page: Page, items: Row[]): Promise<void> {
       const id = idFromUrl(req.url());
       const patch = req.postDataJSON() as Partial<Row>;
       const row = items.find((r) => r.id === id);
-      if (row && typeof patch.watched === 'boolean') row.watched = patch.watched;
+      if (row) {
+        if (typeof patch.watched === 'boolean') row.watched = patch.watched;
+        // The pick columns are sent together (set) or as nulls (clear).
+        if ('picked_at' in patch) {
+          row.picked_at = patch.picked_at ?? null;
+          row.picked_by = patch.picked_by ?? null;
+        }
+        // Emulate the DB triggers: at most one pick, and marking watched clears the pick.
+        if (row.picked_at != null) {
+          for (const other of items) {
+            if (other.id !== row.id) {
+              other.picked_at = null;
+              other.picked_by = null;
+            }
+          }
+        }
+        if (row.watched) {
+          row.picked_at = null;
+          row.picked_by = null;
+        }
+      }
       return jsonResponse(route, row ? [row] : []);
     }
     if (method === 'DELETE') {
@@ -110,7 +134,7 @@ async function installStubs(page: Page, items: Row[]): Promise<void> {
 }
 
 test.describe('movies watchlist (web smoke)', () => {
-  test('pick a person, search, add a movie, mark it watched', async ({ page }) => {
+  test('pick a person, search, add, set tonight pick, then mark watched', async ({ page }) => {
     const items: Row[] = [];
     await installStubs(page, items);
 
@@ -137,10 +161,19 @@ test.describe('movies watchlist (web smoke)', () => {
     await page.getByRole('button', { name: 'Add' }).click();
     await expect(page.getByRole('button', { name: 'Added' })).toBeVisible();
 
-    // Back on the watchlist the movie shows and can be marked watched.
+    // Back on the watchlist the movie shows.
     await page.getByRole('button', { name: 'Back' }).click();
     await expect(page.getByText('The Matrix (1999)')).toBeVisible();
+
+    // Nominate it as tonight's pick: the "Tonight's pick" treatment appears and the action flips
+    // to "Clear pick".
+    await page.getByRole('button', { name: 'Pick for tonight' }).click();
+    await expect(page.getByText(/Tonight's pick/)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Clear pick' })).toBeVisible();
+
+    // Marking it watched moves it to history and clears the pick (DB trigger, emulated in the stub).
     await page.getByRole('button', { name: 'Mark watched' }).click();
     await expect(page.getByRole('button', { name: 'Watched' })).toBeVisible();
+    await expect(page.getByText(/Tonight's pick/)).toHaveCount(0);
   });
 });
