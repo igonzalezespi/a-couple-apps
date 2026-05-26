@@ -94,6 +94,10 @@ jobs:
         with:
           fetch-depth: 0 # full history so gitleaks scans every commit
       - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          # gitleaks-action requires GITHUB_TOKEN to scan pull_request events (the
+          # auto-provided token suffices; `contents: read` above is enough).
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Single required check: green only if every needed job succeeded or was skipped.
   ci-gate:
