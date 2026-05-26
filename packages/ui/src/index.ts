@@ -1,7 +1,11 @@
 export { config, createUIConfig, type Conf } from '../tamagui.config';
 export {
+  ACCENT_PALETTES,
+  accentOverrides,
   baseThemes,
+  buildThemes,
   createCoupleTheme,
+  type AccentColor,
   type CoupleTheme,
   type CoupleThemeColors,
   type ThemeOverrides

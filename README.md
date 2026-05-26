@@ -72,7 +72,7 @@ cd a-couple-apps
 pnpm install
 
 # 1. Configure your couple
-cp couple.config.example.ts couple.config.ts   # then edit names / language / theme
+cp couple.config.example.ts couple.config.ts   # gitignored; edit names, language, per-person color (red/purple)
 
 # 2. Configure secrets (.env.example documents both sets of vars)
 cp .env.example apps/movies/.env                 # the app reads EXPO_PUBLIC_* from here -- fill those in
@@ -96,12 +96,15 @@ client-safe (RLS enforces access); never put the `service_role` key in any clien
    add `shared` and `movies` (PostgREST only exposes `public` by default; the app calls
    `.schema('movies')`).
 4. **Fill `.env`** with your project URL + anon key and your TMDB key (step 2 of Quick start).
-5. **Fill `couple.config.ts`** with your two people, default language, and optional theme.
-   There is **no login** -- the app asks which of the two you are on first launch, so the
-   names you set here are exactly what each of you picks. No emails, no auth, no SMTP to set up.
+5. **Fill `couple.config.ts`** (copied from the example; it is **gitignored**, so your real names
+   never get committed) with your two people, default language, an optional per-person **favorite
+   color** (`red` | `purple`, which re-skins the app to whoever is using it), and an optional
+   couple-wide theme. There is **no login** -- the app asks which of the two you are on first
+   launch, so the names you set here are exactly what each of you picks. No emails, no auth, no
+   SMTP to set up.
 
-Keep your filled `couple.config.ts` and `.env` local to your instance -- do not push real
-personal data or keys to a public fork.
+Your `couple.config.ts` and `.env` are gitignored and stay local to your instance -- only the
+neutral `couple.config.example.ts` ships upstream. Never push real personal data or keys to a fork.
 
 ## Commands
 

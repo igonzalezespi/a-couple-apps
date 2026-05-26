@@ -18,3 +18,9 @@ runs:
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
+
+    # couple.config.ts is gitignored (per-instance, private). CI has none, so use the committed
+    # placeholder template -- the app and tests import couple.config.ts.
+    - name: Provide a placeholder couple.config.ts
+      shell: bash
+      run: '[ -f couple.config.ts ] || cp couple.config.example.ts couple.config.ts'
