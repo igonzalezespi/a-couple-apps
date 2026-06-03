@@ -320,6 +320,11 @@ describe('parseCliArgs', () => {
  *
  * Optionally seeds an in-flight proposal that authorizes the modification.
  *
+ * All git operations are hermetically isolated from the calling process's git
+ * environment: GIT_DIR, GIT_WORK_TREE, and GIT_INDEX_FILE are stripped from
+ * the child's env so that any value inherited from a Claude Code agent session
+ * (or CI) cannot redirect writes to the real repository.
+ *
  * @param {object} opts
  * @param {boolean} opts.includeAuthorizingProposal
  * @returns {{ repoRoot: string, baseSha: string, headSha: string, archivePath: string, cleanup: () => void }}
@@ -329,12 +334,20 @@ function buildTmpRepo({ includeAuthorizingProposal }) {
   const archivePath = 'openspec/changes/archive/2026-01-01-foo/design.md';
   const archiveDir = join(repoRoot, 'openspec/changes/archive/2026-01-01-foo');
 
-  const git = (...args) => execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' });
+  // Sanitize env: strip git plumbing variables that could redirect operations
+  // to the host repo when this code runs inside a Claude Code agent session.
+  const { GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE, ...safeEnv } = process.env;
+  void GIT_DIR; void GIT_WORK_TREE; void GIT_INDEX_FILE; // intentionally discarded
+
+  const git = (...args) =>
+    execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8', env: safeEnv });
 
   git('init', '--quiet', '--initial-branch=main');
-  git('config', 'user.email', 'test@example.com');
-  git('config', 'user.name', 'test');
-  git('config', 'commit.gpgsign', 'false');
+  // --local is explicit so that even if git walks up past the tmpdir it cannot
+  // write to any parent repo's config (belt-and-suspenders alongside the env strip).
+  git('config', '--local', 'user.email', 'test@example.com');
+  git('config', '--local', 'user.name', 'test');
+  git('config', '--local', 'commit.gpgsign', 'false');
 
   mkdirSync(archiveDir, { recursive: true });
   writeFileSync(join(archiveDir, 'design.md'), '# Original\n\nDecision 1: original choice.\n');
