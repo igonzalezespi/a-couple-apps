@@ -16,6 +16,15 @@
         "@expo/*",
         "react-native-*"
       ]
+    },
+    {
+      "description": "Group the Playwright npm runner with its container image so the test runner and the image it runs in bump in one PR (otherwise each is red alone on the web e2e gate)",
+      "groupName": "playwright",
+      "matchDatasources": ["npm", "docker"],
+      "matchPackageNames": [
+        "@playwright/test",
+        "mcr.microsoft.com/playwright"
+      ]
     }
   ]
 }
