@@ -121,11 +121,23 @@ jobs:
       - name: Lint PR commit messages
         run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to HEAD
 
+  openspec-validate:
+    name: openspec:validate
+    # PR-only: spec/change artifacts move with PRs. The aggregate ci-gate treats a skipped
+    # job as non-failing, so push-to-main stays green without re-validating.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/setup-repo
+      - name: Validate OpenSpec specs and changes (strict)
+        run: pnpm openspec:validate
+
   # Single required check: green only if every needed job succeeded or was skipped.
   ci-gate:
     name: ci-gate
     if: always()
-    needs: [format, lint, typecheck, test, build, e2e-web, secrets, commitlint]
+    needs: [format, lint, typecheck, test, build, e2e-web, secrets, commitlint, openspec-validate]
     runs-on: ubuntu-latest
     steps:
       - name: Verify all gates passed

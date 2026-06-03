@@ -1,5 +1,7 @@
 # A Couple Apps
 
+> Inherits the studio contract at `~/work/CLAUDE.md` (company layer) → this file (aca lead).
+
 Open-source monorepo of small cross-platform apps for couples (movie watchlist, plans/events). Expo + React Native + React Native Web — one codebase for iOS, Android, and web. Spec-driven (OpenSpec), AI-assisted.
 
 ## Persona
