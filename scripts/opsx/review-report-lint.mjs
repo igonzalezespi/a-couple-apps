@@ -95,7 +95,7 @@ export function lintReviewReportContent(contents, filePath) {
   }
 
   const unknown = actualNames.filter(
-    (name) => !REQUIRED_H2_SECTIONS.includes(/** @type {any} */ (name))
+    (name) => !(/** @type {readonly string[]} */ (REQUIRED_H2_SECTIONS).includes(name))
   );
   if (unknown.length > 0) {
     errors.push(

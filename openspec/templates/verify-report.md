@@ -6,7 +6,7 @@
   directory into openspec/changes/archive/YYYY-MM-DD-<name>/ on archive.
 
   Schema is STRICT. Heading order, heading depth, and section names
-  are parsed mechanically by scripts/opsx/verify-report-parser.ts.
+  are parsed mechanically by scripts/opsx/verify-report-parser.mjs.
   Do not rename, reorder, or omit H2 sections. Do not alter H3 sub-sections
   under "Findings". Empty sections MUST render as the literal "_None_".
 

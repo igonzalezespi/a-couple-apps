@@ -1,3 +1,11 @@
+# Fresh worktrees lack the gitignored couple.config.ts that app source imports,
+# so typecheck below would fail before it ever runs real code. Seed it from the
+# committed example (placeholders only); never commit the copy — it's gitignored.
+if [ ! -f couple.config.ts ]; then
+  cp couple.config.example.ts couple.config.ts
+  echo "pre-push: seeded couple.config.ts from couple.config.example.ts (gitignored placeholder)"
+fi
+
 # Mirror the CI gate so a green push implies green CI.
 pnpm install --frozen-lockfile
 pnpm format:check
