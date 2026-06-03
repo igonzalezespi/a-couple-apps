@@ -66,36 +66,21 @@ jobs:
   e2e-web:
     name: e2e-web (Playwright)
     runs-on: ubuntu-latest
-    # The Playwright browser download has hung indefinitely at 100% (runs sat 3h+ until
-    # cancelled — GitHub's default job timeout is 6h). Bound the job so a wedge fails fast.
+    # Bound the job — the upstream browser download has hung for hours when run on the
+    # bare runner (GitHub's default job timeout is 6h).
     timeout-minutes: 20
+    # Official Playwright image, version-matched to @playwright/test in pnpm-lock.yaml.
+    # Browsers ship preinstalled (PLAYWRIGHT_BROWSERS_PATH is baked into the image), so
+    # the cdn.playwright.dev download — which stalled 5/5 times from hosted runners on
+    # 2026-06-03 (connection opens, zero bytes; no stall timeout upstream) — leaves the
+    # pipeline entirely. Keep the tag in lockstep with the @playwright/test version.
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup-repo
-      # Cache the browser binaries so the flaky CDN download leaves the hot path entirely
-      # (playwright install skips the download on a warm cache).
-      - name: Cache Playwright browsers
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       # The spec is hermetic (Supabase + TMDB are intercepted; the build uses stub env via
       # playwright.config webServer), so no secrets are required.
-      - name: Install Playwright Chromium
-        # The download from cdn.playwright.dev has wedged repeatedly on runners (stalls
-        # silently mid-download or after 100%; the endpoint probes healthy). Playwright's
-        # downloader has no stall timeout, so bound each attempt and retry — a fresh
-        # connection succeeds, and the cache above removes the download once one run is green.
-        run: |
-          for attempt in 1 2 3; do
-            echo "playwright install — attempt ${attempt}"
-            if timeout 300 pnpm --filter movies exec playwright install --with-deps chromium; then
-              exit 0
-            fi
-            echo "attempt ${attempt} stalled or failed; retrying with a fresh connection"
-          done
-          echo "playwright install failed after 3 bounded attempts"
-          exit 1
       - name: Run web smoke
         run: pnpm --filter movies e2e
       - name: Upload report on failure
