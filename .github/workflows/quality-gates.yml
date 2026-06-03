@@ -66,9 +66,19 @@ jobs:
   e2e-web:
     name: e2e-web (Playwright)
     runs-on: ubuntu-latest
+    # The Playwright browser download has hung indefinitely at 100% (runs sat 3h+ until
+    # cancelled — GitHub's default job timeout is 6h). Bound the job so a wedge fails fast.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/setup-repo
+      # Cache the browser binaries so the flaky CDN download leaves the hot path entirely
+      # (playwright install skips the download on a warm cache).
+      - name: Cache Playwright browsers
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       # The spec is hermetic (Supabase + TMDB are intercepted; the build uses stub env via
       # playwright.config webServer), so no secrets are required.
       - name: Install Playwright Chromium
