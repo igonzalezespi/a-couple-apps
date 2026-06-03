@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "@aca/config": "workspace:*",
-    "i18next": "^25.7.2",
+    "i18next": "^26.0.0",
     "react-i18next": "^16.4.0"
   },
   "devDependencies": {
