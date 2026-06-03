@@ -2,7 +2,7 @@ name: Quality gates
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, develop]
   push:
     branches: [main]
   workflow_dispatch:
@@ -99,11 +99,25 @@ jobs:
           # auto-provided token suffices; `contents: read` above is enough).
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  commitlint:
+    name: commitlint
+    # PR-only: validate every commit in the PR range. On push there is no base SHA to
+    # diff against (the commit-msg husky hook already gates commits locally).
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0 # full history so the base..HEAD range is resolvable
+      - uses: ./.github/actions/setup-repo
+      - name: Lint PR commit messages
+        run: pnpm exec commitlint --from ${{ github.event.pull_request.base.sha }} --to HEAD
+
   # Single required check: green only if every needed job succeeded or was skipped.
   ci-gate:
     name: ci-gate
     if: always()
-    needs: [format, lint, typecheck, test, build, e2e-web, secrets]
+    needs: [format, lint, typecheck, test, build, e2e-web, secrets, commitlint]
     runs-on: ubuntu-latest
     steps:
       - name: Verify all gates passed

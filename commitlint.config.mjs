@@ -1,25 +1,46 @@
 export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
+    // Studio-canonical type-enum (identical across every repo): config-conventional's
+    // defaults plus the studio's `ops`. Set explicitly so the contract is enforced here,
+    // not merely inherited.
+    'type-enum': [
+      2,
+      'always',
+      [
+        'build',
+        'chore',
+        'ci',
+        'docs',
+        'feat',
+        'fix',
+        'ops',
+        'perf',
+        'refactor',
+        'revert',
+        'style',
+        'test'
+      ]
+    ],
     'scope-enum': [
       2,
       'always',
       [
-        'ui',
-        'config',
-        'i18n',
-        'core',
-        'eslint-config',
-        'typescript-config',
-        'movies',
-        'plans',
-        'openspec',
         'ci',
-        'docs',
+        'config',
+        'core',
         'deps',
-        'tooling',
+        'docs',
+        'eslint-config',
+        'i18n',
+        'movies',
+        'openspec',
+        'plans',
+        'release',
         'repo',
-        'release'
+        'tooling',
+        'typescript-config',
+        'ui'
       ]
     ],
     'body-max-line-length': [0]

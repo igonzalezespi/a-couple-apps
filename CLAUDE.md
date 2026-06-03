@@ -47,8 +47,8 @@ Open-source monorepo of small cross-platform apps for couples (movie watchlist, 
 ## Commits
 
 - Conventional: `type(scope): description`
-- Types: `feat`, `fix`, `docs`, `refactor`, `test`, `build`, `ci`, `chore`
-- Scopes: `ui`, `config`, `i18n`, `core`, `eslint-config`, `typescript-config`, `movies`, `plans`, `openspec`, `ci`, `docs`, `deps`
+- Types: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `ops`, `perf`, `refactor`, `revert`, `style`, `test`
+- Scopes: `ci`, `config`, `core`, `deps`, `docs`, `eslint-config`, `i18n`, `movies`, `openspec`, `plans`, `release`, `repo`, `tooling`, `typescript-config`, `ui`
 
 ## Project Knowledge
 
