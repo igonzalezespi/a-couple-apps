@@ -57,6 +57,11 @@ verify:
     # the PR body with the issue URL.
     create_deferred_issues: true
 
+    # When true, /opsx:archive runs `gh issue create` for each Manual Actions
+    # Required entry in verify-report.md and renders the PR body's Manual QA
+    # Checklist as links to those issues.
+    create_manual_action_issues: true
+
     # When true, /opsx:apply refuses to start implementation until
     # /osx:review has run and reviewedAt is set in .opsx-state.json
     # (or reviewWaived is explicitly true with a reason).
