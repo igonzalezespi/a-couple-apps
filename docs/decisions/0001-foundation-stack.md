@@ -1,10 +1,12 @@
-# ADR 0001: Foundation stack
+---
+status: accepted
+date: 2026-05-24
+decision-makers: [maintainer]
+---
 
-- Status: accepted
-- Date: 2026-05-24
-- Deciders: maintainer
+# ADR-0001: Foundation Stack
 
-## Context and problem statement
+## Context and Problem Statement
 
 A Couple Apps needs a foundation for several small apps shared by one couple (a movie
 watchlist first, plans/events next), running on iOS, Android, and web. The code is open
@@ -12,7 +14,7 @@ source but each couple self-hosts their own instance. The foundation must let ne
 added cheaply, keep both apps visually identical, centralize the data/auth layer, and keep
 zero personal data and no secrets in source.
 
-## Decision drivers
+## Decision Drivers
 
 - One codebase for iOS, Android, and web (small two-person team).
 - Adding an app should not require touching shared package internals.
@@ -21,7 +23,7 @@ zero personal data and no secrets in source.
 - Strong typing, a fast test/lint/format gate, and reproducible installs.
 - Spec-driven, AI-assisted development with durable per-change artifacts.
 
-## Considered options
+## Considered Options
 
 - **Runtime:** Expo + React Native + React Native Web vs. separate web (Next.js) + native (RN)
   vs. Flutter.
@@ -30,7 +32,7 @@ zero personal data and no secrets in source.
 - **State:** TanStack Query + Zustand vs. Redux Toolkit vs. context-only.
 - **Monorepo:** pnpm workspaces + Turborepo vs. npm/yarn workspaces, Nx.
 
-## Decision outcome
+## Decision Outcome
 
 Adopt one cross-platform codebase and a shared-package foundation:
 
@@ -47,15 +49,19 @@ Adopt one cross-platform codebase and a shared-package foundation:
 
 ### Consequences
 
-- Good: one codebase and one design system; adding an app is mostly additive (consume the
-  four shared packages); RLS + realtime come from the managed backend; the gate keeps `main`
-  green; strict typing + zod contracts guard the data boundary.
-- Bad / accepted trade-offs: Expo + RN + RNW has cross-platform edge cases (web keyboard
-  affordances, native-only APIs) that need care; Supabase couples the project to one vendor's
-  auth/realtime model; per-app schema types currently live in `packages/core` and should be
-  decoupled before the second app (tracked for Phase 7).
+**Good:**
+- One codebase and one design system.
+- Adding an app is mostly additive (consume the four shared packages).
+- RLS + realtime come from the managed backend.
+- The gate keeps `main` green.
+- Strict typing + zod contracts guard the data boundary.
 
-## More information
+**Bad / Accepted Trade-offs:**
+- Expo + RN + RNW has cross-platform edge cases (web keyboard affordances, native-only APIs) that need care.
+- Supabase couples the project to one vendor's auth/realtime model.
+- Per-app schema types currently live in `packages/core` and should be decoupled before the second app (tracked for Phase 7).
 
-See `ARCHITECTURE.md` for the resulting structure and `openspec/changes/bootstrap-foundation/`
-for the originating design.
+## Related Resources
+
+- `ARCHITECTURE.md` — the resulting structure
+- `openspec/changes/bootstrap-foundation/` — originating design
