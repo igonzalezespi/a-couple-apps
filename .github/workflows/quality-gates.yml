@@ -82,7 +82,20 @@ jobs:
       # The spec is hermetic (Supabase + TMDB are intercepted; the build uses stub env via
       # playwright.config webServer), so no secrets are required.
       - name: Install Playwright Chromium
-        run: pnpm --filter movies exec playwright install --with-deps chromium
+        # The download from cdn.playwright.dev has wedged repeatedly on runners (stalls
+        # silently mid-download or after 100%; the endpoint probes healthy). Playwright's
+        # downloader has no stall timeout, so bound each attempt and retry — a fresh
+        # connection succeeds, and the cache above removes the download once one run is green.
+        run: |
+          for attempt in 1 2 3; do
+            echo "playwright install — attempt ${attempt}"
+            if timeout 300 pnpm --filter movies exec playwright install --with-deps chromium; then
+              exit 0
+            fi
+            echo "attempt ${attempt} stalled or failed; retrying with a fresh connection"
+          done
+          echo "playwright install failed after 3 bounded attempts"
+          exit 1
       - name: Run web smoke
         run: pnpm --filter movies e2e
       - name: Upload report on failure
