@@ -73,7 +73,7 @@ Archive a completed change. This is the mechanical end-of-lifecycle step: it rea
    Get the full diff:
 
    ```bash
-   git fetch origin && git diff origin/main...HEAD
+   git fetch origin && git diff origin/develop...HEAD
    ```
 
    Use the **Agent tool** with `subagent_type: "code-reviewer"` — NOT the Skill tool. Pass the diff. Fix CRITICAL / WARNING findings before proceeding; acknowledge SUGGESTIONs. Never skip this step.
@@ -86,7 +86,7 @@ Archive a completed change. This is the mechanical end-of-lifecycle step: it rea
 
    ```bash
    git fetch origin
-   git rebase origin/main
+   git rebase origin/develop
    git push -u origin HEAD
    ```
 
