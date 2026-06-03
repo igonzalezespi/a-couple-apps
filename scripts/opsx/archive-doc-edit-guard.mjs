@@ -48,6 +48,17 @@ import { pathToFileURL } from 'node:url';
 const ARCHIVE_DESIGN_PATH_PATTERN = /^openspec\/changes\/archive\/[^/]+\/design\.md$/;
 const CHANGES_DIR = join('openspec', 'changes');
 
+// Strip git plumbing env vars from a process.env snapshot.
+// When this script runs inside a git hook, git sets GIT_DIR (and potentially
+// GIT_WORK_TREE / GIT_INDEX_FILE) in the environment. Every git subprocess
+// call already supplies an explicit cwd/repoRoot, so inheriting GIT_DIR would
+// override that and redirect operations to the hook's repo rather than the
+// intended one. This is critical for the integration tests, which build temp
+// repos and call runGuard() with repoRootOverride — the temp repo SHAs are not
+// valid in the host repo that GIT_DIR points at.
+const { GIT_DIR: _gd, GIT_WORK_TREE: _gwt, GIT_INDEX_FILE: _gif, ...SAFE_ENV } = process.env;
+void _gd; void _gwt; void _gif; // intentionally discarded
+
 /**
  * @typedef {object} ParsedDiff
  * @property {string[]} modifiedArchiveDesignPaths
@@ -362,7 +373,8 @@ export function formatRejectionMessage(decision) {
 function readStagedDiff(repoRoot) {
   return execFileSync('git', ['diff', '--cached', '--name-status', '--diff-filter=M'], {
     cwd: repoRoot,
-    encoding: 'utf8'
+    encoding: 'utf8',
+    env: SAFE_ENV
   });
 }
 
@@ -377,7 +389,8 @@ function readStagedDiff(repoRoot) {
 function readRangeDiff(repoRoot, base, head) {
   return execFileSync('git', ['diff', '--name-status', '--diff-filter=M', `${base}..${head}`], {
     cwd: repoRoot,
-    encoding: 'utf8'
+    encoding: 'utf8',
+    env: SAFE_ENV
   });
 }
 
@@ -387,7 +400,10 @@ function readRangeDiff(repoRoot, base, head) {
  * @returns {string}
  */
 function resolveRepoRoot() {
-  const output = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' });
+  const output = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+    encoding: 'utf8',
+    env: SAFE_ENV
+  });
   return output.trim();
 }
 
