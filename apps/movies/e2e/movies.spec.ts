@@ -1,11 +1,20 @@
 import { expect, test, type Page, type Route } from '@playwright/test';
 
+import { getSharedConfig } from '@aca/config';
+
+import e2eCoupleConfig from './fixtures/couple.config.e2e';
+
 /**
  * Web smoke test: pick who you are -> search -> add -> mark watched, against the exported RN-Web
  * build. There is no auth; Supabase REST and TMDB are intercepted, so the run is hermetic (no
  * secrets, no network, no backend). The REST endpoint is backed by an in-memory list so
  * add/list/mark-watched behave like the real table.
+ *
+ * Person names come from the SAME fixture the webServer build is aliased to (see metro.config.js +
+ * playwright.config.ts), so the spec is decoupled from any local couple.config.ts — it passes for
+ * any developer (with or without a private config) and in CI.
  */
+const [personA] = getSharedConfig(e2eCoupleConfig).people;
 
 // The build is served from localhost but talks to https://stub.supabase.test and TMDB, so the
 // browser issues CORS preflights; every stubbed response must echo these headers.
@@ -140,8 +149,9 @@ test.describe('movies watchlist (web smoke)', () => {
 
     await page.goto('/');
 
-    // No auth: pick which person you are (couple.config placeholders: Person A / Person B).
-    await page.getByRole('button', { name: 'Person A' }).click();
+    // No auth: pick which person you are. The name comes from the e2e fixture the build is aliased
+    // to, so this is not coupled to any local couple.config.ts.
+    await page.getByRole('button', { name: personA.displayName }).click();
 
     // Home with an empty watchlist + its call to action.
     await expect(page.getByRole('button', { name: 'Switch person' })).toBeVisible();

@@ -35,7 +35,11 @@ export default defineConfig({
       EXPO_NO_DOTENV: '1',
       EXPO_PUBLIC_SUPABASE_URL: 'https://stub.supabase.test',
       EXPO_PUBLIC_SUPABASE_ANON_KEY: 'stub-anon-key',
-      EXPO_PUBLIC_TMDB_API_KEY: 'stub-tmdb-key'
+      EXPO_PUBLIC_TMDB_API_KEY: 'stub-tmdb-key',
+      // Make the build bake in the fixed e2e couple config (people names, language) instead of the
+      // developer's private, gitignored couple.config.ts — see metro.config.js. The spec reads the
+      // same fixture, so the test is hermetic for any developer and in CI.
+      ACA_E2E: '1'
     }
   }
 });
