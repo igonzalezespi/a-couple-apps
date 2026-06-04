@@ -1,3 +1,4 @@
+# INTENTIONAL-SPECIFIC: public repo (GitHub-hosted CI only) — permanent free unlimited minutes.
 name: Native e2e (label-gated)
 
 # Expensive native Maestro runs. Opt-in: only runs when the PR carries the

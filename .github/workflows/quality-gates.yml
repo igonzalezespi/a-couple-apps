@@ -1,3 +1,4 @@
+# INTENTIONAL-SPECIFIC: public repo (GitHub-hosted CI only) — permanent free unlimited minutes.
 name: Quality gates
 
 on:
