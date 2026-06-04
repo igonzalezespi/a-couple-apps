@@ -25,3 +25,17 @@ from, so drift is auditable from either side.
 
 Keep the script names, CLI verbs, and template schemas identical across repos;
 only the invocation runner (plain `node`, zero-dep) is allowed to differ.
+
+## Known opsx pitfalls
+
+- `openspec validate --strict` does **not** check that `MODIFIED`/`RENAMED`
+  delta headers resolve against the base specs — only `/opsx:archive` does. A
+  delta whose header names a requirement/spec that does not exist in the base
+  will pass `validate` and only fail at archive time. Cross-check
+  `MODIFIED`/`RENAMED` headers against the base spec by hand at propose time
+  (bit `a private TS monorepo` `p2-29` twice).
+- Manual-action GitHub issues use the `[manual]` title prefix and the
+  `opsx:manual-action` + `opsx:manual-action:<origin-change>` labels (see
+  `.claude/commands/opsx/archive.md` step 16). Deferred-work issues use a plain
+  title (no prefix) and the `opsx:deferred` labels. Keep the `[manual]` prefix
+  so the two backlogs stay separable.
