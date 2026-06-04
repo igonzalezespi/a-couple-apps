@@ -1,20 +1,21 @@
-import expo from 'eslint-config-expo/flat.js';
-import prettier from 'eslint-config-prettier';
+import studioExpo from '@studio/eslint-config/expo';
 
 import { crossPackagePatterns } from './base.mjs';
 
 /**
- * ESLint config for Expo apps: eslint-config-expo (React Native rules) plus our
- * workspace boundaries. We add only *rules* on top of Expo's flat config (which
- * already registers the typescript-eslint/react/react-native plugins) to avoid
- * the "plugin redefined" conflict that spreading our base would cause.
+ * ESLint config for Expo apps.
+ *
+ * Thin wrapper over the studio shared Expo preset (`@studio/eslint-config/expo`,
+ * which composes eslint-config-expo + Prettier). It intentionally does NOT
+ * spread the studio base: Expo's flat config already registers the
+ * typescript-eslint / react / react-native plugins, so spreading base would
+ * trigger ESLint's "plugin redefined" conflict. We add only the repo-specific
+ * workspace boundary (a core rule, no plugin needed).
  */
 export default [
-  ...expo,
+  ...studioExpo,
   {
     rules: {
-      // eslint-config-expo already provides the typescript-eslint rules; we add
-      // only the workspace boundary (a core rule, no plugin needed).
       'no-restricted-imports': [
         'error',
         {
@@ -29,6 +30,5 @@ export default [
         }
       ]
     }
-  },
-  prettier
+  }
 ];

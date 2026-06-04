@@ -1,6 +1,4 @@
-import js from '@eslint/js';
-import prettier from 'eslint-config-prettier';
-import tseslint from 'typescript-eslint';
+import studioBase from '@studio/eslint-config/base';
 
 /** Relative imports that reach into another workspace package. */
 export const crossPackagePatterns = [
@@ -12,33 +10,25 @@ export const crossPackagePatterns = [
 ];
 
 /**
- * Shared flat ESLint config for A Couple Apps.
+ * A Couple Apps ESLint base config.
  *
- * Boundary rules: apps depend on packages; packages never depend on apps;
- * cross-package imports use the `@aca/*` workspace alias (never relative paths);
- * and apps never import `@supabase/supabase-js` directly (they use `@aca/core`).
+ * Thin wrapper over the studio shared base (`@studio/eslint-config/base`, which
+ * carries the TS + security + sonarjs + jsdoc + Prettier core). This file adds
+ * only the repo-specific workspace boundary policy the shared base deliberately
+ * omits: apps depend on packages; packages never depend on apps; cross-package
+ * imports use the `@aca/*` alias (never relative paths); and apps never import
+ * `@supabase/supabase-js` directly (they go through `@aca/core`).
  */
 export default [
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...studioBase,
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'error',
-      // Allow `interface X extends Y {}`: used for module augmentation (e.g. Tamagui config types).
-      '@typescript-eslint/no-empty-object-type': [
-        'error',
-        { allowInterfaces: 'with-single-extends' }
-      ],
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
-      ],
-      '@typescript-eslint/consistent-type-imports': [
-        'error',
-        { prefer: 'type-imports', fixStyle: 'inline-type-imports' }
-      ],
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
+      // sonarjs/no-unused-vars (new via the studio base) duplicates
+      // @typescript-eslint/no-unused-vars, which this repo already runs with the
+      // `^_` ignore convention. The sonarjs copy does not honour `^_`, so it
+      // errors on idiomatic omit-by-destructure bindings (`const { x: _omitted,
+      // ...rest } = o`). Defer to the TS-aware rule (sonarjs recommends this).
+      'sonarjs/no-unused-vars': 'off',
       'no-restricted-imports': ['error', { patterns: crossPackagePatterns }]
     }
   },
@@ -60,6 +50,5 @@ export default [
         }
       ]
     }
-  },
-  prettier
+  }
 ];
