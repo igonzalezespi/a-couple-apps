@@ -16,9 +16,26 @@ export default {
       dependencies: ['@aca/**'],
       packages: ['**'],
       pinVersion: 'workspace:*'
+    },
+    {
+      // Shared studio configs are consumed as git-ref deps pinned to a tag
+      // (`github:igonzalezespi/...#vX.Y.Z`), not semver ranges — exempt from
+      // version unification.
+      label: 'Ignore studio git-ref shared configs (not semver ranges)',
+      dependencies: ['@studio/**'],
+      packages: ['**'],
+      isIgnored: true
     }
   ],
   semverGroups: [
+    {
+      // A `github:...#tag` specifier is not a semver range, so the caret-range
+      // policy below reports it as UnsupportedMismatch — exclude it here.
+      label: 'Ignore studio git-ref shared configs (not semver ranges)',
+      dependencies: ['@studio/**'],
+      packages: ['**'],
+      isIgnored: true
+    },
     {
       label: 'Use caret ranges for prod and dev dependencies',
       range: '^',
