@@ -2,7 +2,7 @@
   "name": "@aca/eslint-config",
   "version": "0.1.0",
   "dependencies": {
-    "@studio/eslint-config": "github:igonzalezespi/eslint-config#v0.1.0"
+    "@studio/eslint-config": "github:igonzalezespi/eslint-config#v0.1.1"
   },
   "devDependencies": {
     "eslint": "^9.17.0"
