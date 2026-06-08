@@ -1,0 +1,42 @@
+# INTENTIONAL-SPECIFIC: public repo (GitHub-hosted CI only) — permanent free unlimited minutes.
+name: Require semver label
+
+# Every PR into develop must carry exactly one semver:* label — it drives the next
+# release version on the develop->main merge. This check is ADVISORY for now: it is
+# its own status (NOT part of ci-gate), and branch protection is a separate decision.
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, labeled, unlabeled, synchronize]
+
+concurrency:
+  group: require-semver-label-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  require-semver-label:
+    name: require-semver-label
+    runs-on: ubuntu-latest
+    steps:
+      - name: Exactly one semver:* label
+        shell: bash
+        env:
+          # github.event.pull_request.labels is the live label set for the PR.
+          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          set -euo pipefail
+          count="$(printf '%s' "$LABELS_JSON" | node -e '
+            const names = JSON.parse(require("fs").readFileSync(0, "utf8"));
+            const semver = names.filter((n) => /^semver:(major|minor|patch|none)$/.test(n));
+            console.log(semver.length);
+          ')"
+          if [ "$count" -eq 1 ]; then
+            echo "OK: exactly one semver:* label present."
+            exit 0
+          fi
+          echo "::error::This PR has ${count} semver:* labels; exactly one of semver:major|minor|patch|none is required."
+          echo "Add exactly one of: semver:major, semver:minor, semver:patch, semver:none."
+          exit 1

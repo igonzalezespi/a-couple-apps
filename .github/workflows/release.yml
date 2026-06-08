@@ -1,0 +1,97 @@
+# INTENTIONAL-SPECIFIC: public repo (GitHub-hosted CI only) — permanent free unlimited minutes.
+name: Release
+
+# Cut a release on the develop->main merge. aca is NEVER built or published from CI:
+# the release is a version bump + CHANGELOG promotion + tag + GitHub Release ONLY.
+# No EAS, no build, no publish, no store submit, no build number, and NO secrets —
+# every developer compiles aca themselves with their own config. Only the automatic
+# GITHUB_TOKEN is used.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never run two releases concurrently and never cancel an in-flight one — a release
+# commits, tags, and pushes, so a cancelled run could leave the repo half-released.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write # commit the version bump, push the tag, create the GitHub Release
+  pull-requests: read # compute-release-version reads merged PR semver:* labels
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0 # full history + tags so compute-release-version sees the last release tag
+
+      - name: Read current version
+        id: current
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Current version: $version"
+
+      - name: Compute release version
+        id: compute
+        uses: igonzalezespi/studio-ci/compute-release-version@1b9e329cf760cfa4d05e0f99d5e7109b66f5571b # v0.3.0
+        with:
+          current-version: ${{ steps.current.outputs.version }}
+          tag-prefix: v
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: No release (bump=none)
+        if: steps.compute.outputs.should-release != 'true'
+        shell: bash
+        run: |
+          echo "No release: bump=${{ steps.compute.outputs.bump }}. Nothing to cut."
+
+      - name: Apply version
+        id: apply
+        if: steps.compute.outputs.should-release == 'true'
+        uses: igonzalezespi/studio-ci/apply-version@1b9e329cf760cfa4d05e0f99d5e7109b66f5571b # v0.3.0
+        with:
+          version: ${{ steps.compute.outputs.next-version }}
+          kind: expo # writes root package.json AND apps/movies/app.config.ts (no build number)
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Promote changelog
+        id: changelog
+        if: steps.compute.outputs.should-release == 'true'
+        uses: igonzalezespi/studio-ci/changelog-release@1b9e329cf760cfa4d05e0f99d5e7109b66f5571b # v0.3.0
+        with:
+          version: ${{ steps.compute.outputs.next-version }}
+          changelog-path: CHANGELOG.md
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit, tag, push, and create the GitHub Release
+        if: steps.compute.outputs.should-release == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEXT_VERSION: ${{ steps.compute.outputs.next-version }}
+          NEXT_TAG: ${{ steps.compute.outputs.next-tag }}
+          FILES_CHANGED: ${{ steps.apply.outputs.files-changed }}
+          NOTES: ${{ steps.changelog.outputs.notes }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage the manifests apply-version wrote, plus the promoted changelog.
+          git add $FILES_CHANGED CHANGELOG.md
+          git commit -m "chore(release): ${NEXT_TAG}"
+          git tag "$NEXT_TAG"
+          git push origin HEAD --tags
+
+          # --notes via env (not YAML interpolation) so multiline notes are passed verbatim.
+          gh release create "$NEXT_TAG" --title "$NEXT_TAG" --notes "$NOTES"
+          echo "Released $NEXT_TAG."

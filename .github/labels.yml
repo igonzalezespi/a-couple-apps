@@ -1,0 +1,16 @@
+# Release semver labels — the lead applies exactly ONE per PR into develop.
+# The highest semver:* across the PRs merged since the last release drives the
+# next version on the develop->main merge (see .github/workflows/release.yml).
+# Synced to the repo with: gh label create <name> --color <color> --description <desc> --force
+- name: 'semver:major'
+  color: 'b60205'
+  description: 'Breaking change — bumps the major version on the next release.'
+- name: 'semver:minor'
+  color: '0e8a16'
+  description: 'Backwards-compatible feature — bumps the minor version.'
+- name: 'semver:patch'
+  color: 'fbca04'
+  description: 'Backwards-compatible fix — bumps the patch version.'
+- name: 'semver:none'
+  color: 'c5def5'
+  description: 'No release impact (docs/chore/ci) — does not trigger a release.'
