@@ -8,7 +8,7 @@ Development is spec-driven: each phase (or sub-feature) is an OpenSpec change
 → archive→PR). The foundation itself is the `bootstrap-foundation` change in
 `openspec/changes/`.
 
-Conventions are inherited from the maintainer's `a Flutter project` and `a private TS monorepo` repos:
+Conventions are inherited from the maintainer's other (private) repos:
 pnpm + Turborepo, strict TypeScript, Vitest + Testing Library + Playwright,
 Conventional Commits + Husky, label-gated CI with an aggregate `ci-gate`, English-only
 source/docs. Runtime is React Native + Expo (iOS/Android/web from one codebase),

@@ -19,7 +19,7 @@
 - [x] 3.2 Create `openspec/{specs/,changes/archive/,templates/,schemas/,manual-checks/}`; copy `templates/{verify-report.md,review-report.md}` and `schemas/opsx-state.schema.json` from the reference spine
 - [x] 3.3 Port `scripts/opsx/*.mjs` (state, project-config, verify-report-parser, verify-report-lint, review-report-lint, lint-tasks-md, lint-manual-checks, archive-doc-edit-guard, post-archive-safety-check) WITH their `__tests__`; prune Flutter/other-repo-specific linters per design D8
 - [x] 3.4 Port `.claude/` — `agents/` (code-reviewer, software-architect, product-owner, technical-writer, frontend-react→react-native, e2e-automation, unit-test-generator), `commands/{opsx,osx}/*.md`, `skills/` (openspec-*, osx-*, sdd-workflow), `settings.json` (PostToolUse format/lint + Stop typecheck), `settings.local.json` (perms)
-- [x] 3.5 Add a root `CLAUDE.md` (persona, proactive behaviors, coding standards, commands cheat-sheet, commit scopes, project knowledge pointers, tech stack) in the `a private TS monorepo` style
+- [x] 3.5 Add a root `CLAUDE.md` (persona, proactive behaviors, coding standards, commands cheat-sheet, commit scopes, project knowledge pointers, tech stack) in the private TS monorepo's style
 - [x] 3.6 Acceptance: `pnpm opsx:tasks-md:lint` + `pnpm opsx:verify-report:lint` run clean against THIS change's own `tasks.md`; `node --test scripts/opsx/**/*.test.mjs` passes
 
 ## 4. `packages/ui` — Tamagui design system

@@ -5,8 +5,8 @@
 This repository (`a-couple-apps`) is the **canonical source** of the opsx
 tooling — the zero-dependency Node scripts under `scripts/opsx/`, their report
 templates under `openspec/templates/`, and the `opsx:*` npm scripts in
-`package.json`. The sibling repos (`a private TS monorepo`, `a Flutter project`) sync this tooling
-from here; `a Flutter project` is co-canonical.
+`package.json`. The maintainer's sibling private repos sync this tooling
+from here; one of them is co-canonical.
 
 When the tooling changes, update the provenance comment on the first line of
 this file to the short SHA of the `a-couple-apps` `develop` commit the synced
@@ -33,7 +33,7 @@ only the invocation runner (plain `node`, zero-dep) is allowed to differ.
   delta whose header names a requirement/spec that does not exist in the base
   will pass `validate` and only fail at archive time. Cross-check
   `MODIFIED`/`RENAMED` headers against the base spec by hand at propose time
-  (bit `a private TS monorepo` `p2-29` twice).
+  (bit a sibling private repo on `p2-29` twice).
 - Manual-action GitHub issues use the `[manual]` title prefix and the
   `opsx:manual-action` + `opsx:manual-action:<origin-change>` labels (see
   `.claude/commands/opsx/archive.md` step 16). Deferred-work issues use a plain

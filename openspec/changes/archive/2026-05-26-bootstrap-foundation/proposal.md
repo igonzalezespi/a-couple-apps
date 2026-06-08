@@ -1,6 +1,6 @@
 ## Why
 
-"A Couple Apps" is a new open-source monorepo that will host several small apps for couples (first two: a shared movie watchlist and a shared plans/events list). There is no code yet. Before any feature work, the repository needs a foundation that makes adding a new cross-platform app trivial, keeps both apps visually identical from a single source of truth, ships zero personal data in source, and is governed by the same spec-driven workflow used in the maintainer's `a Flutter project` and `a private TS monorepo` projects.
+"A Couple Apps" is a new open-source monorepo that will host several small apps for couples (first two: a shared movie watchlist and a shared plans/events list). There is no code yet. Before any feature work, the repository needs a foundation that makes adding a new cross-platform app trivial, keeps both apps visually identical from a single source of truth, ships zero personal data in source, and is governed by the same spec-driven workflow used in the maintainer's other (private) projects.
 
 This change establishes that foundation. It is intentionally infrastructure-only: it scaffolds the monorepo, the shared packages, the configuration and secrets model, the i18n layer, the data/auth layer, the testing and CI spine, the OpenSpec/opsx workflow (which this very change is authored in, so the foundation is self-hosting), and open-source hygiene. The two end-user apps are explicitly out of scope and will land as their own changes once the foundation is approved and applied.
 
@@ -8,7 +8,7 @@ The design reuses the maintainer's existing conventions wherever they are langua
 
 ## What Changes
 
-- Scaffold a **pnpm workspaces + Turborepo** monorepo with `apps/*` (Expo apps) and `packages/*` (shared libraries), mirroring `a private TS monorepo`'s layout and tooling.
+- Scaffold a **pnpm workspaces + Turborepo** monorepo with `apps/*` (Expo apps) and `packages/*` (shared libraries), mirroring the maintainer's private TS monorepo's layout and tooling.
 - Establish **cross-platform delivery** via Expo + React Native + React Native Web so every app runs on iOS, Android, and web from one codebase.
 - Create the shared packages: `ui` (Tamagui design system, the single source of truth so both apps look identical), `config` (typed loader + zod schema for `couple.config.ts`), `i18n` (en/es translations + language switching that also drives external data language), `core` (Supabase client, auth, shared data hooks, realtime), plus `eslint-config` and `typescript-config`.
 - Add a single root **`couple.config.ts`** validated by a zod schema, shaped `{ config: <shared>, movies, plans }`: the `config` block holds shared settings (the two people, default language `en` | `es`, optional theme overrides) and each app section holds its own settings plus an `enabled` flag. It ships with a committed **neutral placeholder**; no personal names ever appear in source.

@@ -1,11 +1,11 @@
 ## Context
 
-This is the first change in a brand-new repository. The maintainer has two reference projects whose conventions this monorepo must inherit:
+This is the first change in a brand-new repository. The maintainer has two reference projects (private repos) whose conventions this monorepo must inherit:
 
-- `a Flutter project` (Flutter) — single package, but the origin of the OpenSpec/opsx SDD workflow, the "pre-push mirrors CI" discipline, SHA-pinned actions, CI-minute frugality, and documented dependency holds.
-- `a private TS monorepo` (React/TypeScript) — a pnpm + Turborepo monorepo: shared `eslint-config`/`typescript-config` packages, strict TS, Vitest + Playwright, commitlint + Husky + lint-staged, zod-validated config + `SENSITIVE_ENV_VARS`, label-gated CI with an aggregate `ci-gate`, MADR ADRs, and the same OpenSpec/opsx machinery as `a Flutter project`.
+- a Flutter project — single package, but the origin of the OpenSpec/opsx SDD workflow, the "pre-push mirrors CI" discipline, SHA-pinned actions, CI-minute frugality, and documented dependency holds.
+- a private TS monorepo (React/TypeScript) — a pnpm + Turborepo monorepo: shared `eslint-config`/`typescript-config` packages, strict TS, Vitest + Playwright, commitlint + Husky + lint-staged, zod-validated config + `SENSITIVE_ENV_VARS`, label-gated CI with an aggregate `ci-gate`, MADR ADRs, and the same OpenSpec/opsx machinery as the Flutter project.
 
-The new project is **React Native + Expo** (cross-platform iOS/Android/web), which neither reference repo is. The tooling/process spine carries over from `a private TS monorepo`; the runtime layer is new and Expo-shaped.
+The new project is **React Native + Expo** (cross-platform iOS/Android/web), which neither reference repo is. The tooling/process spine carries over from the private TS monorepo; the runtime layer is new and Expo-shaped.
 
 Constraints:
 
@@ -74,34 +74,34 @@ a-couple-apps/
 
 ### Package boundaries
 
-- **Apps depend on packages; packages never depend on apps.** Enforced in `eslint-config` via `no-restricted-imports` (no cross-package relative paths; use workspace aliases), mirroring `a private TS monorepo`.
+- **Apps depend on packages; packages never depend on apps.** Enforced in `eslint-config` via `no-restricted-imports` (no cross-package relative paths; use workspace aliases), mirroring the private TS monorepo.
 - **`ui` is presentation-only** — no data, no Supabase, no config I/O. It receives a resolved theme. This is the single source of truth for look-and-feel; both apps render identically because they import the same primitives.
 - **`config` is pure** — parses/validates `couple.config.ts` and env; depends on nothing but `zod`.
 - **`i18n` depends on `config`** (for default language) and is otherwise standalone.
-- **`core` is the only data boundary** — Supabase client, auth, realtime, and shared hooks live here; apps never import `@supabase/supabase-js` directly. Request/response shapes are zod contracts in `core/src/contracts.ts` (the `a private TS monorepo` "all shapes match a contract" rule).
+- **`core` is the only data boundary** — Supabase client, auth, realtime, and shared hooks live here; apps never import `@supabase/supabase-js` directly. Request/response shapes are zod contracts in `core/src/contracts.ts` (the private TS monorepo's "all shapes match a contract" rule).
 - **`eslint-config` / `typescript-config`** are leaf config packages consumed by every workspace.
 
 ### Tech choices (with short justifications)
 
 | Concern | Choice | Why | Reference |
 |---|---|---|---|
-| Monorepo | pnpm workspaces + Turborepo | The maintainer's existing monorepo tooling; trivial app addition; task caching | `a private TS monorepo` |
+| Monorepo | pnpm workspaces + Turborepo | The maintainer's existing monorepo tooling; trivial app addition; task caching | private TS monorepo |
 | Runtime | Expo + React Native + React Native Web | One codebase → iOS/Android/web; satisfies the "React + React Native" requirement | new (Expo) |
 | Routing | Expo Router (file-based) | Standard Expo navigation; works across native + web | new |
 | Design system | Tamagui | Purpose-built cross-platform tokens/themes + compiler; one source of truth, identical native+web; light/dark/custom themes map cleanly to `couple.config` overrides | chosen (Q1) |
 | Data/server-state | TanStack Query | Caching/sync/refetch over Supabase; realtime updates feed the cache | new |
-| Local/UI state | Zustand | The maintainer's `a private TS monorepo` choice; minimal | `a private TS monorepo` |
+| Local/UI state | Zustand | The maintainer's private TS monorepo choice; minimal | private TS monorepo |
 | Backend | Supabase (free tier) + realtime | Mandated; auth + Postgres + realtime in one | required |
-| Config validation | zod (`couple.config.ts`) | `a private TS monorepo`'s typed-config pattern; placeholders, no personal data | `a private TS monorepo` |
+| Config validation | zod (`couple.config.ts`) | the private TS monorepo's typed-config pattern; placeholders, no personal data | private TS monorepo |
 | i18n | i18next + react-i18next + expo-localization | De-facto RN i18n; device-locale detection overridden by config; drives TMDB language | new |
-| Lint/format | ESLint flat + typescript-eslint + eslint-config-expo + Prettier | `a private TS monorepo` shared-config-package pattern + Expo's RN rules | `a private TS monorepo` + Expo |
-| Types | strict TS, `base.json` + `react-native.json` | `a private TS monorepo` strictness (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) + RN variant | `a private TS monorepo` |
-| Unit/component tests | Vitest + @testing-library/react-native | `a private TS monorepo` Vitest + RN-flavored Testing Library | `a private TS monorepo` (adapted) |
-| e2e | Maestro (native) + Playwright (web) | Maestro = Expo's recommended native e2e; Playwright reuses `a private TS monorepo` knowledge for the RN-Web build | chosen (Q3) |
-| Commits/hooks | Conventional Commits + commitlint + Husky + lint-staged | `a private TS monorepo` exactly; "pre-push mirrors CI" from `a Flutter project` | both |
-| CI | composite setup action, SHA-pinned, paths-filter, label-gated, aggregate `ci-gate` | `a private TS monorepo` spine + `a Flutter project` frugality | both |
+| Lint/format | ESLint flat + typescript-eslint + eslint-config-expo + Prettier | private TS monorepo shared-config-package pattern + Expo's RN rules | private TS monorepo + Expo |
+| Types | strict TS, `base.json` + `react-native.json` | private TS monorepo strictness (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) + RN variant | private TS monorepo |
+| Unit/component tests | Vitest + @testing-library/react-native | private TS monorepo Vitest + RN-flavored Testing Library | private TS monorepo (adapted) |
+| e2e | Maestro (native) + Playwright (web) | Maestro = Expo's recommended native e2e; Playwright reuses private TS monorepo knowledge for the RN-Web build | chosen (Q3) |
+| Commits/hooks | Conventional Commits + commitlint + Husky + lint-staged | private TS monorepo exactly; "pre-push mirrors CI" from the Flutter project | both |
+| CI | composite setup action, SHA-pinned, paths-filter, label-gated, aggregate `ci-gate` | private TS monorepo spine + Flutter project frugality | both |
 | SDD | OpenSpec + opsx/osx (pruned) | Both repos' shared workflow; this change is authored in it | both |
-| Release | tag → EAS build + Keep-a-Changelog | `a Flutter project` tag-triggered builds + `a private TS monorepo` changelog | both |
+| Release | tag → EAS build + Keep-a-Changelog | Flutter project tag-triggered builds + private TS monorepo changelog | both |
 | Deps | Renovate + syncpack | Both repos | both |
 | License | MIT + author attribution | Portfolio + forkable; not over-engineered | requested |
 
@@ -131,7 +131,7 @@ a-couple-apps/
 
 ### D1: pnpm + Turborepo monorepo with `apps/*` + `packages/*`
 
-Adopt `a private TS monorepo`'s exact monorepo spine: `pnpm-workspace.yaml` (`apps/*`, `packages/*`), `turbo.json` task graph, `.npmrc` (`engine-strict`, `only-allow pnpm`), `.nvmrc`, syncpack for internal `workspace:*` ranges.
+Adopt the private TS monorepo's exact monorepo spine: `pnpm-workspace.yaml` (`apps/*`, `packages/*`), `turbo.json` task graph, `.npmrc` (`engine-strict`, `only-allow pnpm`), `.nvmrc`, syncpack for internal `workspace:*` ranges.
 
 **Why**: It is the maintainer's established convention and the explicit fallback in the brief. Turborepo caching keeps CI cheap; pnpm workspaces make app addition trivial.
 
@@ -151,21 +151,21 @@ Each app is an Expo app using Expo Router; the web target is React Native Web. A
 
 **Why**: Tamagui is built for exactly this — typed cross-platform tokens, named themes (light/dark/custom), and an optimizing compiler so the same component renders identically on native and web. It makes "both apps look identical" a structural guarantee, not a discipline.
 
-**Alternative considered**: NativeWind v4 (simpler, Tailwind tokens) and vanilla StyleSheet + a typed theme object (closest to `a private TS monorepo`'s plain-CSS philosophy). Both are viable; Tamagui was chosen for its first-class theming/token system and design-system ergonomics. (Selected in Q1.)
+**Alternative considered**: NativeWind v4 (simpler, Tailwind tokens) and vanilla StyleSheet + a typed theme object (closest to the private TS monorepo's plain-CSS philosophy). Both are viable; Tamagui was chosen for its first-class theming/token system and design-system ergonomics. (Selected in Q1.)
 
 ### D4: `core` is the only data boundary; TanStack Query + Zustand; Supabase realtime
 
 All Supabase access, auth, and realtime live in `packages/core`. Server cache/sync uses TanStack Query; realtime subscriptions invalidate/update the query cache so both users stay in sync. Local UI state uses Zustand. Apps never import `@supabase/supabase-js` directly; they call `@aca/core` hooks. Shapes are zod contracts in `core/src/contracts.ts`. Backend layout: **one Supabase project** with a `shared` Postgres schema for cross-app data (the couple, profiles) and a dedicated schema per app (`movies`, `plans`); the foundation ships only the `shared` schema plus auth/realtime plumbing, and each app change adds its own schema with RLS.
 
-**Why**: Mirrors `a Flutter project`'s "pure domain core, repositories as the only data boundary" and `a private TS monorepo`'s "all shapes match a zod contract." Centralizing Supabase keeps apps thin and realtime consistent. TanStack Query is the standard server-state layer for Supabase; Zustand matches `a private TS monorepo`.
+**Why**: Mirrors the Flutter project's "pure domain core, repositories as the only data boundary" and the private TS monorepo's "all shapes match a zod contract." Centralizing Supabase keeps apps thin and realtime consistent. TanStack Query is the standard server-state layer for Supabase; Zustand matches the private TS monorepo.
 
 **Alternative considered**: Legend-State with the Supabase sync plugin (offline-first, reactive). Rejected for now — newer, less familiar; revisit if offline becomes a requirement. Plain hand-rolled hooks over `supabase-js` — rejected: more boilerplate, manual cache/realtime wiring.
 
 ### D5: `couple.config.ts` (zod) holds all personal data; source ships neutral placeholders
 
-A single root `couple.config.ts` validated by `packages/config`'s zod schema is split by section: `{ config: <shared>, movies: <app>, plans: <app> }`. The `config` block holds everything shared across apps — the two people (`{ id, displayName }` × 2), `defaultLanguage: 'en' | 'es'`, and optional `theme` overrides. Each app key holds that app's own settings plus an `enabled` flag (so an app can be configured but turned off; presence + `enabled` replaces a separate `enabledApps` list). `@aca/config` validates the `config` block strictly and exposes typed accessors (`getSharedConfig()`, `getAppConfig('movies')`); each app contributes its own zod slice for its section via a `defineCoupleConfig` helper, so app config stays co-located with the app while living in one root file. `couple.config.example.ts` is the documented template with placeholders (e.g. `personA`, `personB`); the upstream repo commits a neutral placeholder `couple.config.ts` so the apps run on clone — names like "Ivan" never appear in source.
+A single root `couple.config.ts` validated by `packages/config`'s zod schema is split by section: `{ config: <shared>, movies: <app>, plans: <app> }`. The `config` block holds everything shared across apps — the two people (`{ id, displayName }` × 2), `defaultLanguage: 'en' | 'es'`, and optional `theme` overrides. Each app key holds that app's own settings plus an `enabled` flag (so an app can be configured but turned off; presence + `enabled` replaces a separate `enabledApps` list). `@aca/config` validates the `config` block strictly and exposes typed accessors (`getSharedConfig()`, `getAppConfig('movies')`); each app contributes its own zod slice for its section via a `defineCoupleConfig` helper, so app config stays co-located with the app while living in one root file. `couple.config.example.ts` is the documented template with placeholders (e.g. `personA`, `personB`); the upstream repo commits a neutral placeholder `couple.config.ts` so the apps run on clone — real personal names never appear in source.
 
-**Why**: Directly enforces "zero hardcoded personal data" and "names must never appear in source." zod gives a typed, validated, documented single entry point and extends `a private TS monorepo`'s config pattern.
+**Why**: Directly enforces "zero hardcoded personal data" and "names must never appear in source." zod gives a typed, validated, documented single entry point and extends the private TS monorepo's config pattern.
 
 **Alternative considered**: JSON/YAML config. Rejected — loses type-safety and the ability to express typed theme overrides; a `.ts` file validated by zod is both typed and ergonomic.
 
@@ -173,7 +173,7 @@ A single root `couple.config.ts` validated by `packages/config`'s zod schema is 
 
 `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `TMDB_API_KEY` live in `.env` (gitignored), with a committed `.env.example`. Client-exposed values use Expo's `EXPO_PUBLIC_*` convention. `packages/config/src/env.ts` provides typed parsers and exports `SENSITIVE_ENV_VARS`; gitleaks runs in pre-push and CI.
 
-**Why**: Config (who/what/look) and secrets (keys) have different lifecycles and audiences. This is `a private TS monorepo`'s exact model and keeps secrets out of the typed config surface and out of git.
+**Why**: Config (who/what/look) and secrets (keys) have different lifecycles and audiences. This is the private TS monorepo's exact model and keeps secrets out of the typed config surface and out of git.
 
 **Alternative considered**: Putting keys in `couple.config.ts`. Rejected — conflates secrets with shareable config and risks committing keys.
 
@@ -189,7 +189,7 @@ A single root `couple.config.ts` validated by `packages/config`'s zod schema is 
 
 Port the language-agnostic SDD spine verbatim: `openspec/{config.yaml, project.md, specs/, changes/, templates/, schemas/, manual-checks/}`, the `.opsx-state.json` lifecycle + JSON schema, `scripts/opsx/{state,project-config,verify-report-parser,verify-report-lint,review-report-lint,lint-tasks-md,lint-manual-checks,archive-doc-edit-guard,post-archive-safety-check}.mjs`, and the `.claude/` agents + `opsx`/`osx` commands + `openspec-*`/`osx-*`/`sdd-workflow` skills. Tune `config.yaml`'s `context:` block and `quick-change` disqualifiers for this stack.
 
-**Prune** (do NOT port): `a Flutter project`'s Flutter-specific Dart gates (`a11y_ux_lint.dart`, `engine_complexity.dart`, `engine_duplication_check.dart`, `keep_alive_justification_check.dart`), `audit-roadmap-pointer-lint`/`preflight-gate-presence-lint`/`medium-deferrals-lint` (project-specific to those repos), the `vgv-*` Flutter skills, and the web-server CI jobs (trivy/sbom/lighthouse/oss-validation) + npm-publish provenance. Stryker mutation testing is deferred (not adopted in the foundation).
+**Prune** (do NOT port): the Flutter project's Flutter-specific Dart gates (`a11y_ux_lint.dart`, `engine_complexity.dart`, `engine_duplication_check.dart`, `keep_alive_justification_check.dart`), `audit-roadmap-pointer-lint`/`preflight-gate-presence-lint`/`medium-deferrals-lint` (project-specific to the private repos), the `vgv-*` Flutter skills, and the web-server CI jobs (trivy/sbom/lighthouse/oss-validation) + npm-publish provenance. Stryker mutation testing is deferred (not adopted in the foundation).
 
 **Why**: The maintainer asked for "full opsx but not the things we will not use." The spine (proposal/design/tasks/delta-specs, RFC-2119 + GIVEN/WHEN/THEN, verify/review reports, archive→PR, manual-checks) is the high-value, language-agnostic crown jewel and ports cleanly. The pruned items are either Flutter-only or specific to the other repos' audit history.
 
@@ -197,17 +197,17 @@ Port the language-agnostic SDD spine verbatim: `openspec/{config.yaml, project.m
 
 ### D9: e2e = Maestro (native) + Playwright (web); unit/component = Vitest + Testing Library Native
 
-Maestro YAML flows under `.maestro/` cover iOS/Android; Playwright under `e2e/` drives the React Native Web build (`expo start --web` / exported web). Vitest + `@testing-library/react-native` cover unit/component, with coverage thresholds (global 80, critical packages 85) and `type-coverage` ≥ 95, mirroring `a private TS monorepo`.
+Maestro YAML flows under `.maestro/` cover iOS/Android; Playwright under `e2e/` drives the React Native Web build (`expo start --web` / exported web). Vitest + `@testing-library/react-native` cover unit/component, with coverage thresholds (global 80, critical packages 85) and `type-coverage` ≥ 95, mirroring the private TS monorepo.
 
 **Why**: Covers all three targets. Maestro is Expo's recommended, low-friction native e2e; Playwright reuses the maintainer's existing web-e2e knowledge against the real RN-Web output. (Selected in Q3.)
 
 **Alternative considered**: Detox + Playwright (heavier, flakier, not in the reference repos) and Maestro-only (no automated web e2e). Rejected per Q3.
 
-### D10: CI spine from `a private TS monorepo`, frugality from `a Flutter project`
+### D10: CI spine from the private TS monorepo, frugality from the Flutter project
 
 A composite `./.github/actions/setup-repo` (pnpm + Node + frozen install), all third-party actions SHA-pinned with a version comment, `dorny/paths-filter` to scope jobs, label-gated expensive jobs (`ci:e2e`, `ci:full`), `concurrency` groups, and a final `ci-gate` aggregator that fails unless every needed job is `success`/`skipped`. `.husky/pre-push` mirrors the CI gates so a green push implies green CI.
 
-**Why**: Combines `a private TS monorepo`'s robust gate aggregation with `a Flutter project`'s CI-minute thrift (GitHub Free plan). The pre-push-mirrors-CI rule (from both repos) keeps cloud minutes low.
+**Why**: Combines the private TS monorepo's robust gate aggregation with the Flutter project's CI-minute thrift (GitHub Free plan). The pre-push-mirrors-CI rule (from both repos) keeps cloud minutes low.
 
 **Alternative considered**: Run everything on every push. Rejected — wasteful on free-tier minutes and slow feedback.
 
@@ -215,9 +215,9 @@ A composite `./.github/actions/setup-repo` (pnpm + Node + frozen install), all t
 
 `LICENSE` is MIT with the maintainer's copyright line; `README.md` credits the author and links the portfolio context. A short "Fork this for your own couple" section documents the clone → `cp couple.config.example.ts couple.config.ts` → `cp .env.example .env` → fill-in flow.
 
-**Why**: The brief asks for MIT + light author credit for a portfolio repo, "not much." MIT is the simplest permissive license; attribution lives in `LICENSE` + README rather than per-file headers (lighter than `a private TS monorepo`'s FSL headers).
+**Why**: The brief asks for MIT + light author credit for a portfolio repo, "not much." MIT is the simplest permissive license; attribution lives in `LICENSE` + README rather than per-file headers (lighter than the private TS monorepo's FSL headers).
 
-**Alternative considered**: `a private TS monorepo`'s FSL + per-file license headers. Rejected — heavier than requested for a small portfolio repo.
+**Alternative considered**: the private TS monorepo's FSL + per-file license headers. Rejected — heavier than requested for a small portfolio repo.
 
 ## Risks / Trade-offs
 
