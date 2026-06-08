@@ -10,6 +10,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.8",
     "jsdom": "^29.0.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -30,6 +31,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",

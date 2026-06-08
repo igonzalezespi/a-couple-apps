@@ -1,0 +1,74 @@
+# INTENTIONAL-SPECIFIC: public repo (GitHub-hosted CI only) — permanent free unlimited minutes.
+name: coverage
+
+# Activity-driven weekly coverage. This repo's runners are GitHub-hosted (always
+# on), so a cron would work — but every studio repo uses the identical
+# activity-driven shape for homogeneity: it fires on every push to develop and a
+# shared composite action throttles execution to at most once per 7 days by
+# inspecting this workflow's own run history. Coverage is deliberately NOT part
+# of quality-gates.yml's ci-gate: it never blocks a PR.
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch: {}
+
+# Top-level concurrency block: coalesce redundant pushes on the same ref;
+# coverage is a heavy job and the newest commit's numbers are the ones we want.
+concurrency:
+  group: coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+# `actions: read` is required by the gate step so the throttle action can read
+# this workflow's run history via the Actions API.
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  # Throttle gate: emits stale=true only if the last successful coverage run on
+  # develop is older than max-age-days (or there is none). Keeps coverage to
+  # ≤1 run / 7 days without a cron.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      stale: ${{ steps.coverage-stale.outputs.stale }}
+    steps:
+      - name: Check coverage staleness
+        id: coverage-stale
+        uses: igonzalezespi/studio-ci/coverage-stale-gate@ee758bb135348b559a94a4d5f8f4e0bae9248f21 # v0.2.0
+        with:
+          workflow: coverage.yml
+          branch: develop
+          max-age-days: '7'
+
+  coverage:
+    needs: gate
+    if: needs.gate.outputs.stale == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-repo
+
+      # Non-blocking by design: a coverage failure must never wedge develop.
+      # Each workspace package writes its own coverage/lcov.info (Vitest v8); the
+      # upload step globs all of them.
+      - name: Full test suite with coverage
+        continue-on-error: true
+        run: pnpm test:coverage
+
+      # PUBLIC repo, zero secrets: we publish the per-package lcov reports as a
+      # build artifact rather than uploading to Codecov, which would either need a
+      # CODECOV_TOKEN secret (forbidden here) or rely on flaky tokenless uploads.
+      # The artifact is the deterministic, secret-free choice; a maintainer can
+      # download and merge the lcov files locally if a trend view is wanted.
+      - name: Upload lcov coverage reports
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-lcov
+          path: |
+            apps/*/coverage/lcov.info
+            packages/*/coverage/lcov.info
+          if-no-files-found: warn
+          retention-days: 14

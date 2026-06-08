@@ -60,6 +60,7 @@
     "prepare": "husky",
     "sync": "syncpack fix-mismatches && syncpack format",
     "test": "pnpm test:opsx && turbo run test",
+    "test:coverage": "turbo run test:coverage",
     "test:opsx": "node --test scripts/opsx/*.test.mjs",
     "typecheck": "turbo run typecheck"
   },
