@@ -31,7 +31,7 @@
       "prettier --write"
     ]
   },
-  "packageManager": "pnpm@10.25.0",
+  "packageManager": "pnpm@10.34.1",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
