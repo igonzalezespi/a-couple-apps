@@ -28,6 +28,7 @@
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.2.14",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.8",
     "eslint-config-expo": "^56.0.4",
     "jsdom": "^29.0.1",
     "serve": "^14.2.6",
@@ -41,6 +42,7 @@
     "e2e": "playwright test",
     "lint": "eslint .",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "web": "expo start --web"
   }
