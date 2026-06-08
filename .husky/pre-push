@@ -19,3 +19,12 @@ if command -v gitleaks >/dev/null 2>&1; then
 else
   echo "gitleaks not installed; skipping local scan (CI enforces it)"
 fi
+
+# This is a PUBLIC repo: block any reference to a private project from reaching the remote.
+# The denylist is private (studio repo only); no-op off-studio (fork, where ~/work is absent).
+GUARD="${STUDIO_ROOT:-$HOME/work}/security/check-private-refs.sh"
+if [ -x "$GUARD" ]; then
+  git fetch origin develop --quiet 2>/dev/null || true
+  CHANGED=$(git diff --name-only --diff-filter=ACM origin/develop...HEAD 2>/dev/null || true)
+  [ -n "$CHANGED" ] && "$GUARD" $CHANGED
+fi
