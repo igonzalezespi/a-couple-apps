@@ -34,6 +34,12 @@ All notable changes to this project are documented here. The format is based on
   and a Maestro native flow.
 - CI: GitHub Actions quality-gates (lint, typecheck, test, build, web e2e, gitleaks) behind an
   aggregate `ci-gate`, plus a label-gated native e2e scaffold for Android.
+- Release mechanism: one `semver:*` label per PR drives the next version, and the `develop`->`main`
+  merge cuts a release that is a version bump (root `package.json` + `apps/movies/app.config.ts`) +
+  CHANGELOG promotion + `vX.Y.Z` tag + GitHub Release ONLY - aca is never built or published from CI
+  and uses no secrets (only the automatic `GITHUB_TOKEN`). An advisory `require-semver-label` PR
+  check (its own status, not part of `ci-gate`) nudges the one-label rule. Consumes the studio's
+  shared, SHA-pinned release actions.
 - Docs: README, CONTRIBUTING, ARCHITECTURE, ROADMAP, and ADR-0001 (foundation stack).
 
 ### Changed

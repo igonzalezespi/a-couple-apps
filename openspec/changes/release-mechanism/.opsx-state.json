@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "changeName": "release-mechanism",
+  "createdAt": "2026-06-09T00:00:00.000Z",
+  "proposedAt": "2026-06-09T00:00:00.000Z",
+  "reviewedAt": null,
+  "reviewWaived": false,
+  "appliedAt": null,
+  "verifiedAt": null,
+  "verifyStatus": null,
+  "verifyIterations": 0,
+  "lastVerifyReportPath": null,
+  "archivedAt": null,
+  "prUrl": null,
+  "prNumber": null,
+  "deferredIssues": [],
+  "manualActionIssues": []
+}
