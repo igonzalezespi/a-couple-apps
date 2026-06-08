@@ -1,3 +1,19 @@
 pnpm lint-staged
 pnpm exec syncpack lint
 node scripts/opsx/archive-doc-edit-guard.mjs --mode=staged
+
+# Commit-time secret scan (staged diff only, sub-second). Skip if gitleaks is absent — CI
+# enforces it non-bypassably — but never swallow a real detection.
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact || exit 1
+else
+  echo "gitleaks not installed; skipping local secret scan (CI enforces it)"
+fi
+
+# This is a PUBLIC repo: block any reference to a private project. The denylist is private
+# (studio repo only); this guard is a no-op off-studio (e.g. a fork, where ~/work is absent).
+GUARD="${STUDIO_ROOT:-$HOME/work}/security/check-private-refs.sh"
+if [ -x "$GUARD" ]; then
+  STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+  [ -n "$STAGED" ] && "$GUARD" $STAGED
+fi

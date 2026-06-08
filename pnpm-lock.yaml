@@ -196,7 +196,7 @@ importers:
     dependencies:
       '@studio/eslint-config':
         specifier: github:igonzalezespi/eslint-config#v0.1.1
-        version: https://codeload.github.com/igonzalezespi/eslint-config/tar.gz/6d834450c88ca55196edfbfbee5f4371d411187e(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+        version: https://codeload.github.com/igonzalezespi/eslint-config/tar.gz/89abf7402aa9bf25cb421a3fae8915952408530b(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
     devDependencies:
       eslint:
         specifier: ^9.17.0
@@ -240,7 +240,7 @@ importers:
     dependencies:
       '@studio/tsconfig':
         specifier: github:igonzalezespi/tsconfig#v0.1.0
-        version: https://codeload.github.com/igonzalezespi/tsconfig/tar.gz/9b0603de343a6ad65a959c71fd3bf63d2812e1d3(typescript@5.9.3)
+        version: https://codeload.github.com/igonzalezespi/tsconfig/tar.gz/e9d347bbb5152a155a919ad1e317dab1c7f72698(typescript@5.9.3)
 
   packages/ui:
     dependencies:
@@ -2015,14 +2015,14 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@studio/eslint-config@https://codeload.github.com/igonzalezespi/eslint-config/tar.gz/6d834450c88ca55196edfbfbee5f4371d411187e':
-    resolution: {gitHosted: true, integrity: sha512-bhsEe7VdwSX/nuXa7JHaPQT08sWsXEJrbjrzoqoCxc2hCNZZ3DiESWAGen2TyV+rU0+tbCRGnJ5p6zSKhZh6zQ==, tarball: https://codeload.github.com/igonzalezespi/eslint-config/tar.gz/6d834450c88ca55196edfbfbee5f4371d411187e}
+  '@studio/eslint-config@https://codeload.github.com/igonzalezespi/eslint-config/tar.gz/89abf7402aa9bf25cb421a3fae8915952408530b':
+    resolution: {gitHosted: true, integrity: sha512-znyrzIzYLut1wVGPgfAiLO70pcpCFy2tydYkWagoz36/IMctU1tHMjKx66by2faeS98HjmeTZkY1lQG/tIiFnw==, tarball: https://codeload.github.com/igonzalezespi/eslint-config/tar.gz/89abf7402aa9bf25cb421a3fae8915952408530b}
     version: 0.1.0
     peerDependencies:
       eslint: '>=9'
 
-  '@studio/tsconfig@https://codeload.github.com/igonzalezespi/tsconfig/tar.gz/9b0603de343a6ad65a959c71fd3bf63d2812e1d3':
-    resolution: {gitHosted: true, integrity: sha512-fbKqpJaqQszqxuoB20j4yNwfABcUTgHiylfQxzPsW4QJsBtYP2iZedDqcJ5tRv6iLR7LiSCc8PhekajADpsLYA==, tarball: https://codeload.github.com/igonzalezespi/tsconfig/tar.gz/9b0603de343a6ad65a959c71fd3bf63d2812e1d3}
+  '@studio/tsconfig@https://codeload.github.com/igonzalezespi/tsconfig/tar.gz/e9d347bbb5152a155a919ad1e317dab1c7f72698':
+    resolution: {gitHosted: true, integrity: sha512-DGc5iuTbxvH9tKR8M+pFpqXNoEBuu6Z+NbUBKRFBH5MwPOu70eGD6EXCiz2Px/TFZ+6VAfqZ/NlMnP+2i/lOMQ==, tarball: https://codeload.github.com/igonzalezespi/tsconfig/tar.gz/e9d347bbb5152a155a919ad1e317dab1c7f72698}
     version: 0.1.0
     peerDependencies:
       typescript: '>=5.5'
@@ -2199,9 +2199,6 @@ packages:
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
-
-  '@tybys/wasm-util@0.10.2':
-    resolution: {integrity: sha512-RoBvJ2X0wuKlWFIjrwffGw1IqZHKQqzIchKaadZZfnNpsAYp2mM0h36JtPCjNDAHGgYez/15uMBpfGwchhiMgg==}
 
   '@types/aria-query@5.0.4':
     resolution: {integrity: sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==}
@@ -3444,12 +3441,6 @@ packages:
 
   expo-constants@56.0.16:
     resolution: {integrity: sha512-6tsiN+gmTUPp/atyA+uY9Tg8VOdXdmb4s/3TVGolfn6A/oCAraw1pcPZX5XllyD+xUguxB6eBSFAT8494hZVMA==}
-    peerDependencies:
-      expo: '*'
-      react-native: '*'
-
-  expo-constants@56.0.17:
-    resolution: {integrity: sha512-bU8iU1+7cI7QzfGQVnz2C1nlbXD08YPwD6h8ZEuNspgUuD2prXfmrhrdLe1GjCPYGw4hB3BNjWPjpenNyyymfQ==}
     peerDependencies:
       expo: '*'
       react-native: '*'
@@ -7591,7 +7582,7 @@ snapshots:
     dependencies:
       '@emnapi/core': 1.9.2
       '@emnapi/runtime': 1.9.2
-      '@tybys/wasm-util': 0.10.2
+      '@tybys/wasm-util': 0.10.1
     optional: true
 
   '@nodelib/fs.scandir@2.1.5':
@@ -7982,7 +7973,7 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@studio/eslint-config@https://codeload.github.com/igonzalezespi/eslint-config/tar.gz/6d834450c88ca55196edfbfbee5f4371d411187e(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
+  '@studio/eslint-config@https://codeload.github.com/igonzalezespi/eslint-config/tar.gz/89abf7402aa9bf25cb421a3fae8915952408530b(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
       '@eslint/js': 10.0.1(eslint@9.39.4(jiti@2.6.1))
       eslint: 9.39.4(jiti@2.6.1)
@@ -7999,7 +7990,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@studio/tsconfig@https://codeload.github.com/igonzalezespi/tsconfig/tar.gz/9b0603de343a6ad65a959c71fd3bf63d2812e1d3(typescript@5.9.3)':
+  '@studio/tsconfig@https://codeload.github.com/igonzalezespi/tsconfig/tar.gz/e9d347bbb5152a155a919ad1e317dab1c7f72698(typescript@5.9.3)':
     dependencies:
       typescript: 5.9.3
 
@@ -8184,11 +8175,6 @@ snapshots:
     optional: true
 
   '@tybys/wasm-util@0.10.1':
-    dependencies:
-      tslib: 2.8.1
-    optional: true
-
-  '@tybys/wasm-util@0.10.2':
     dependencies:
       tslib: 2.8.1
     optional: true
@@ -9704,14 +9690,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  expo-constants@56.0.17(expo@56.0.4)(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4)):
-    dependencies:
-      '@expo/env': 2.3.0
-      expo: 56.0.4(@babel/core@7.29.7)(@expo/dom-webview@56.0.5)(@expo/metro-runtime@56.0.12)(expo-router@56.2.6)(react-dom@19.2.4(react@19.2.4))(react-native-web@0.21.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-native-worklets@0.7.4(@babel/core@7.29.7)(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4))(react@19.2.4))(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
-      react-native: 0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4)
-    transitivePeerDependencies:
-      - supports-color
-
   expo-file-system@56.0.7(expo@56.0.4)(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4)):
     dependencies:
       expo: 56.0.4(@babel/core@7.29.7)(@expo/dom-webview@56.0.5)(@expo/metro-runtime@56.0.12)(expo-router@56.2.6)(react-dom@19.2.4(react@19.2.4))(react-native-web@0.21.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-native-worklets@0.7.4(@babel/core@7.29.7)(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4))(react@19.2.4))(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
@@ -9737,7 +9715,7 @@ snapshots:
 
   expo-linking@56.0.11(expo@56.0.4)(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4))(react@19.2.4):
     dependencies:
-      expo-constants: 56.0.17(expo@56.0.4)(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4))
+      expo-constants: 56.0.16(expo@56.0.4)(react-native@0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4))
       invariant: 2.2.4
       react: 19.2.4
       react-native: 0.85.3(@babel/core@7.29.7)(@types/react@19.2.17)(react@19.2.4)
