@@ -17,6 +17,21 @@ permissions:
   contents: read
 
 jobs:
+  # Path-gating (shared detector): classify the PR so a docs-only change runs only doc checks
+  # and the heavy jobs (lint/typecheck/test/build/e2e) skip when nothing functional changed. On
+  # push/dispatch the gate is bypassed — the full suite always validates the protected line.
+  changes:
+    name: detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      functional: ${{ steps.d.outputs.functional }}
+      e2e_relevant: ${{ steps.d.outputs.e2e_relevant }}
+      docs: ${{ steps.d.outputs.docs }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - id: d
+        uses: igonzalezespi/studio-ci/detect-changes@v0.1.2
+
   format:
     name: format:check
     runs-on: ubuntu-latest
@@ -27,6 +42,8 @@ jobs:
 
   lint:
     name: lint
+    needs: changes
+    if: needs.changes.outputs.functional == 'true' || github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -35,6 +52,8 @@ jobs:
 
   typecheck:
     name: typecheck
+    needs: changes
+    if: needs.changes.outputs.functional == 'true' || github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -43,6 +62,8 @@ jobs:
 
   test:
     name: test
+    needs: changes
+    if: needs.changes.outputs.functional == 'true' || github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -51,6 +72,8 @@ jobs:
 
   build:
     name: build
+    needs: changes
+    if: needs.changes.outputs.functional == 'true' || github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     # Stub public env so the export is well-formed; the app reads real values at runtime
     # from each instance's own .env. No secrets needed to verify the bundle builds.
@@ -66,6 +89,9 @@ jobs:
 
   e2e-web:
     name: e2e-web (Playwright)
+    needs: changes
+    # docs-only / ci-only → skip; any functional change (incl. deps that can break the bundle) → run.
+    if: needs.changes.outputs.functional == 'true' || github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     # Bound the job — the upstream browser download has hung for hours when run on the
     # bare runner (GitHub's default job timeout is 6h).
@@ -134,17 +160,26 @@ jobs:
       - name: Validate OpenSpec specs and changes (strict)
         run: pnpm openspec:validate
 
-  # Single required check: green only if every needed job succeeded or was skipped.
+  # Single required check (shared composite): green iff every needed job succeeded or was
+  # skipped; only failure/cancelled fails it — so path-gated skips never wedge the merge.
   ci-gate:
     name: ci-gate
     if: always()
-    needs: [format, lint, typecheck, test, build, e2e-web, secrets, commitlint, openspec-validate]
+    needs:
+      [
+        changes,
+        format,
+        lint,
+        typecheck,
+        test,
+        build,
+        e2e-web,
+        secrets,
+        commitlint,
+        openspec-validate
+      ]
     runs-on: ubuntu-latest
     steps:
-      - name: Verify all gates passed
-        run: |
-          if ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}; then
-            echo "A required job failed or was cancelled: ${{ join(needs.*.result, ', ') }}"
-            exit 1
-          fi
-          echo "All gates passed: ${{ join(needs.*.result, ', ') }}"
+      - uses: igonzalezespi/studio-ci/ci-gate@v0.1.2
+        with:
+          needs-json: ${{ toJSON(needs) }}
