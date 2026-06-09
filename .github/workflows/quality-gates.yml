@@ -153,7 +153,7 @@ jobs:
     # 2026-06-03 (connection opens, zero bytes; no stall timeout upstream) — leaves the
     # pipeline entirely. Keep the tag in lockstep with the @playwright/test version.
     container:
-      image: mcr.microsoft.com/playwright:v1.58.2-noble
+      image: mcr.microsoft.com/playwright:v1.60.0-noble@sha256:9bd26ad900bb5e0f4dee75839e957a89ae89c2b7ab1e76050e559790e946b948
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - uses: ./.github/actions/setup-repo
