@@ -1,9 +1,11 @@
 # INTENTIONAL-SPECIFIC: public repo (GitHub-hosted CI only) — permanent free unlimited minutes.
 name: Require semver label
 
-# Every PR into develop must carry exactly one semver:* label — it drives the next
-# release version on the develop->main merge. This check is ADVISORY for now: it is
-# its own status (NOT part of ci-gate), and branch protection is a separate decision.
+# Every PR into develop must carry at least one semver:* label — it drives the next
+# release version on the develop->main merge; the highest (major>minor>patch>none) wins,
+# so a grouped bot PR may legitimately carry several (e.g. semver:minor + semver:patch).
+# This check is ADVISORY for now: it is its own status (NOT part of ci-gate), and branch
+# protection is a separate decision.
 on:
   pull_request:
     branches: [develop]
@@ -21,7 +23,7 @@ jobs:
     name: require-semver-label
     runs-on: ubuntu-latest
     steps:
-      - name: Exactly one semver:* label
+      - name: At least one semver:* label
         shell: bash
         env:
           # github.event.pull_request.labels is the live label set for the PR.
@@ -33,10 +35,10 @@ jobs:
             const semver = names.filter((n) => /^semver:(major|minor|patch|none)$/.test(n));
             console.log(semver.length);
           ')"
-          if [ "$count" -eq 1 ]; then
-            echo "OK: exactly one semver:* label present."
+          if [ "$count" -ge 1 ]; then
+            echo "OK: ${count} semver:* label(s) present; the highest (major>minor>patch>none) drives the release bump."
             exit 0
           fi
-          echo "::error::This PR has ${count} semver:* labels; exactly one of semver:major|minor|patch|none is required."
-          echo "Add exactly one of: semver:major, semver:minor, semver:patch, semver:none."
+          echo "::error::This PR has no semver:* label; at least one of semver:major|minor|patch|none is required."
+          echo "Add at least one of: semver:major, semver:minor, semver:patch, semver:none (the highest drives the release bump)."
           exit 1
