@@ -26,5 +26,9 @@ GUARD="${STUDIO_ROOT:-$HOME/work}/security/check-private-refs.sh"
 if [ -x "$GUARD" ]; then
   git fetch origin develop --quiet 2>/dev/null || true
   CHANGED=$(git diff --name-only --diff-filter=ACM origin/develop...HEAD 2>/dev/null || true)
-  [ -n "$CHANGED" ] && "$GUARD" $CHANGED
+  # Explicit if: the previous `[ -n ... ] && guard` one-liner exited 1 on an empty
+  # CHANGED (e.g. `git push --delete`), aborting the push with nothing to scan.
+  if [ -n "$CHANGED" ]; then
+    "$GUARD" $CHANGED
+  fi
 fi
