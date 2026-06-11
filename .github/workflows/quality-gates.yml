@@ -31,6 +31,57 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - id: d
         uses: igonzalezespi/studio-ci/detect-changes@v0.1.2
+        with:
+          # The action's generic defaults miss this repo's layout (scripts/, supabase/,
+          # root tool configs, .maestro/), so a PR touching only those would classify as
+          # non-functional and merge with every test job skipped. CAVEAT: this input
+          # REPLACES the defaults wholesale — every bucket must be restated here; an
+          # omitted bucket silently stops matching anything.
+          filters: |
+            docs:
+              - '**/*.md'
+              - 'docs/**'
+              - 'openspec/**'
+              - '.claude/**'
+              - '.agents/**'
+              - 'skills-lock.json'
+              - '.env.example'
+            ci:
+              - '.github/**'
+              - '.husky/**'
+              - 'renovate.json'
+            deps:
+              - '**/pnpm-lock.yaml'
+              - '**/package.json'
+              - 'pnpm-workspace.yaml'
+              - '.npmrc'
+              - '.nvmrc'
+            code:
+              - 'apps/**'
+              - 'packages/**'
+              - 'scripts/**'
+              - 'supabase/**'
+              - 'openspec/schemas/**'
+              - 'openspec/templates/**'
+              - 'turbo.json'
+              - 'tsconfig.json'
+              - 'couple.config.example.ts'
+              - '*.mjs'
+              - '.syncpackrc.mjs'
+              - '.maestro/**'
+            e2e_relevant:
+              - 'apps/**'
+              - 'packages/**'
+              - 'supabase/migrations/**'
+              - '.maestro/**'
+            db_migration:
+              - 'supabase/migrations/**'
+            i18n:
+              - '**/locales/**'
+              - '**/i18n/**'
+            assets:
+              - 'assets/**'
+              - 'apps/**/assets/**'
 
   format:
     name: format:check
