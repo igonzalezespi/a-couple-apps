@@ -35,15 +35,19 @@ jobs:
     steps:
       - name: Check coverage staleness
         id: coverage-stale
-        uses: igonzalezespi/studio-ci/coverage-stale-gate@cf4fc0ce9be8989414d8cf6908ceee21ac2ea33f # v0.3.1
+        uses: igonzalezespi/studio-ci/coverage-stale-gate@97c9edc9585db016f69754d80e7beb4a3419bc6f # v0.3.2
         with:
           workflow: coverage.yml
           branch: develop
           max-age-days: '7'
+          # Job-level staleness: throttled runs (coverage skipped) conclude
+          # `success` and must not refresh the 7-day clock.
+          job: coverage
 
   coverage:
     needs: gate
-    if: needs.gate.outputs.stale == 'true'
+    # workflow_dispatch bypasses the throttle: a manual run must run.
+    if: needs.gate.outputs.stale == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
