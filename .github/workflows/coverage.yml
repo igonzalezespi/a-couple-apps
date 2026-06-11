@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Check coverage staleness
         id: coverage-stale
-        uses: igonzalezespi/studio-ci/coverage-stale-gate@ee758bb135348b559a94a4d5f8f4e0bae9248f21 # v0.2.0
+        uses: igonzalezespi/studio-ci/coverage-stale-gate@cf4fc0ce9be8989414d8cf6908ceee21ac2ea33f # v0.3.1
         with:
           workflow: coverage.yml
           branch: develop
