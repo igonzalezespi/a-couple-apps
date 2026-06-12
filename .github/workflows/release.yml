@@ -42,7 +42,7 @@ jobs:
 
       - name: Compute release version
         id: compute
-        uses: igonzalezespi/studio-ci/compute-release-version@cf4fc0ce9be8989414d8cf6908ceee21ac2ea33f # v0.3.1
+        uses: igonzalezespi/studio-ci/compute-release-version@97c9edc9585db016f69754d80e7beb4a3419bc6f # v0.3.2
         with:
           current-version: ${{ steps.current.outputs.version }}
           tag-prefix: v
@@ -57,7 +57,7 @@ jobs:
       - name: Apply version
         id: apply
         if: steps.compute.outputs.should-release == 'true'
-        uses: igonzalezespi/studio-ci/apply-version@cf4fc0ce9be8989414d8cf6908ceee21ac2ea33f # v0.3.1
+        uses: igonzalezespi/studio-ci/apply-version@97c9edc9585db016f69754d80e7beb4a3419bc6f # v0.3.2
         with:
           version: ${{ steps.compute.outputs.next-version }}
           kind: expo # writes root package.json AND apps/movies/app.config.ts (no build number)
@@ -66,7 +66,7 @@ jobs:
       - name: Promote changelog
         id: changelog
         if: steps.compute.outputs.should-release == 'true'
-        uses: igonzalezespi/studio-ci/changelog-release@cf4fc0ce9be8989414d8cf6908ceee21ac2ea33f # v0.3.1
+        uses: igonzalezespi/studio-ci/changelog-release@97c9edc9585db016f69754d80e7beb4a3419bc6f # v0.3.2
         with:
           version: ${{ steps.compute.outputs.next-version }}
           changelog-path: CHANGELOG.md
